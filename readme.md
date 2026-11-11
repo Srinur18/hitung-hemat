@@ -17,6 +17,20 @@ Proyek ini dikembangkan dengan model ADDIE. Dasar perancangannya adalah wawancar
 - **Simulasi struk belanja**, **Jelaskan ke Teman**, dan **Cek kewajaran**.
 - **Pre/post-test literasi**, **skala usaha mental**, dan **ekspor CSV**. Data siswa hanya berupa kode, tanpa nama.
 
+## Coba Langsung
+
+| | Link |
+|---|---|
+| 🌐 **Versi web** (buka di browser HP/laptop) | https://srinur18.github.io/hitung-hemat/ |
+| 📱 **APK Android** | https://github.com/Srinur18/hitung-hemat/raw/main/release/HitungHemat-v0.1.0-debug.apk |
+| 💻 **Kode sumber** | https://github.com/Srinur18/hitung-hemat |
+
+Memperbarui versi web setelah kode berubah (dari folder `APK`, Git Bash):
+
+```bash
+source ~/hh-tools/env.sh && bash scripts/deploy-web.sh
+```
+
 ## Unduh & Pasang APK
 
 APK siap pakai: [`release/HitungHemat-v0.1.0-debug.apk`](release/HitungHemat-v0.1.0-debug.apk) (4 MB, Android 5.1+).
