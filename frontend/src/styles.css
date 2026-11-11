@@ -18,8 +18,10 @@
   --c-muted: #5a3d48;
   --c-focus: #237a4b; /* hijau palet, digelapkan: teks putih 5.31:1 */
   --c-line: #f7b8c9;
-  --radius: 16px;
-  --font: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --radius: 20px;
+  --font: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  --shadow-chunky: 0 4px 0 rgb(42 29 36 / 0.14);
   color-scheme: light;
 }
 
@@ -51,7 +53,6 @@ h2 { font-size: 20px; font-weight: 600; margin: 4px 0 8px; }
 .card { background: var(--c-surface); border-radius: var(--radius); padding: 14px 16px; }
 .btn { min-height: 52px; border-radius: 14px; border: 1.5px solid var(--c-line); background: var(--c-surface); padding: 0 18px; font-weight: 600; }
 .btn-primary { background: var(--c-focus); border-color: var(--c-focus); color: #fff; }
-.btn:disabled { opacity: 0.45; }
 .btn-block { width: 100%; }
 .actions { display: flex; gap: 10px; margin-top: auto; padding-top: 12px; }
 .actions .btn { flex: 1; }
@@ -135,5 +136,80 @@ h2 { font-size: 20px; font-weight: 600; margin: 4px 0 8px; }
 .receipt .line { display: flex; justify-content: space-between; }
 .receipt hr { border: 0; border-top: 1px dashed var(--c-muted); }
 input[type='range'] { width: 100%; height: 44px; }
+
+/* ================= Gaya "mainan" (referensi UI pemilik produk) ================= */
+h1, h2, .step-title, .btn, .option, .chip, .module .id, .numpad button, .answer { font-family: var(--font-display); }
+.card, .problem-text, .option, .box, .answer, .feedback { box-shadow: var(--shadow-chunky); }
+.btn { border-radius: 18px; box-shadow: 0 5px 0 rgb(42 29 36 / 0.18); transition: transform 0.08s, box-shadow 0.08s; }
+.btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 rgb(42 29 36 / 0.18); }
+.btn-primary { box-shadow: 0 5px 0 #17573a; }
+.btn-primary:active:not(:disabled) { box-shadow: 0 2px 0 #17573a; }
+.numpad button { box-shadow: 0 4px 0 #d4b100; transition: transform 0.08s; }
+.numpad button:active { transform: translateY(3px); box-shadow: 0 1px 0 #d4b100; }
+.chip { background: #fff; box-shadow: 0 3px 0 rgb(42 29 36 / 0.12); }
+.module .id {
+  display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+  background: var(--c-yellow); color: var(--c-text); box-shadow: 0 3px 0 #d4b100;
+}
+
+/* ---- maskot Kiko ---- */
+.mascot { flex: none; overflow: visible; animation: bob 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes bob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-5px) rotate(-1.5deg); } }
+.kiko-says { display: flex; align-items: flex-end; gap: 6px; }
+.bubble {
+  position: relative; background: #fff; border-radius: 18px; padding: 10px 14px; font-weight: 700;
+  font-family: var(--font-display); box-shadow: var(--shadow-chunky); margin-bottom: 24px;
+}
+.bubble::before {
+  content: ''; position: absolute; left: -9px; bottom: 14px; border: 10px solid transparent;
+  border-right-color: #fff; border-left: 0;
+}
+.hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; padding-top: 8px; }
+.hero .title {
+  font-family: var(--font-display); font-size: 34px; font-weight: 700; margin: 0; color: #fff;
+  text-shadow: 0 3px 0 var(--c-header), 0 -2px 0 var(--c-header), 2px 0 0 var(--c-header), -2px 0 0 var(--c-header);
+  letter-spacing: 0.5px;
+}
+.feedback .mascot { animation: none; }
+.feedback.with-kiko { display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; }
+
+/* ---- hiasan latar ---- */
+.screen { position: relative; z-index: 1; }
+.decor { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; transition: opacity 0.3s; }
+.decor .d { position: absolute; }
+.d-sun { top: 64px; right: -34px; width: 120px; }
+.d-cloud1 { top: 132px; left: -26px; width: 118px; opacity: 0.95; }
+.d-cloud2 { top: 300px; right: -36px; width: 104px; opacity: 0.9; }
+.d-star1 { top: 236px; left: 8px; width: 28px; }
+.d-star2 { top: 96px; left: 46%; width: 22px; }
+.d-tag { top: 46%; left: 4px; width: 50px; }
+.d-coin { top: 58%; right: 8px; width: 38px; }
+.d-ground { bottom: 0; left: 0; width: 100%; height: 110px; }
+.d-tree-l { bottom: 58px; left: -14px; width: 66px; }
+.d-tree-r { bottom: 74px; right: -10px; width: 54px; }
+.d-bush-l { bottom: 8px; left: 18px; width: 92px; }
+.d-bush-r { bottom: 4px; right: 26px; width: 80px; }
+.float { animation: floaty 4s ease-in-out infinite; }
+.d-coin.float { animation-delay: -1.3s; }
+.d-star1.float { animation-delay: -2.1s; }
+@keyframes floaty { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-8px) rotate(4deg); } }
+/* layar soal: hanya matahari & satu awan samar; bukit/pohon/semak/benda melayang disembunyikan
+   (tampak kusam bila diredupkan dan menambah beban ekstrinsik di belakang tombol angka) */
+.decor.calm { opacity: 0.6; }
+.decor.calm .float, .decor.calm .d-cloud2, .decor.calm .d-ground,
+.decor.calm .d-tree-l, .decor.calm .d-tree-r, .decor.calm .d-bush-l, .decor.calm .d-bush-r { display: none; }
+
+/* teks soal menempel di atas saat menggulir → tidak perlu bolak-balik mencari angka (EL02) */
+.problem-text.sticky-q { position: sticky; top: 64px; z-index: 1; }
+
+/* tombol nonaktif: padat, tidak transparan di atas hiasan */
+.btn:disabled, .btn-primary:disabled {
+  opacity: 1; background: #fbe3e8; color: #9b7f89; border-color: #f3c0cc; box-shadow: none;
+}
+@media (min-width: 640px) {
+  .d-cloud1 { left: 8%; width: 160px; } .d-cloud2 { right: 8%; width: 140px; }
+  .d-tag { left: 12%; width: 70px; } .d-coin { right: 12%; width: 54px; }
+  .d-tree-l { left: 6%; width: 90px; } .d-tree-r { right: 6%; width: 76px; }
+}
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

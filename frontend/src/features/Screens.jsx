@@ -8,6 +8,7 @@ import { API_URL, syncEvents } from '../data/sync.js';
 import { parsePercent, parseRupiah } from '../domain/money.js';
 import { t } from '../i18n/id.js';
 import { Header, NumberPad, Stars } from '../ui/components.jsx';
+import { KikoSays } from '../ui/Mascot.jsx';
 
 const CODE_RE = /^[A-Za-z0-9_-]{2,16}$/;
 
@@ -20,7 +21,10 @@ export function Onboarding({ onDone }) {
       <Header title={t.appName} />
       {stage === 'code' ? (
         <div className="stack grow">
-          <h2>{t.welcome}</h2>
+          <div className="hero">
+            <h2 className="title">{t.appName}</h2>
+            <KikoSays mood="wave" size={110}>Halo, aku Kiko! {t.welcome}</KikoSays>
+          </div>
           <label className="stack small">
             {t.codeLabel}
             <input
@@ -38,7 +42,7 @@ export function Onboarding({ onDone }) {
         </div>
       ) : (
         <div className="stack grow">
-          <h2>{t.consentTitle}</h2>
+          <KikoSays mood="think" size={84}>{t.consentTitle}</KikoSays>
           <p className="card">{t.consentBody}</p>
           <div className="actions">
             <button className="btn" onClick={() => setStage('code')}>{t.back}</button>
@@ -80,7 +84,7 @@ export function Quiz({ kind, items, title, intro, onDone }) {
       <Header title={title} sub={i >= 0 ? `${i + 1}/${items.length}` : ''} />
       {i < 0 ? (
         <div className="stack grow">
-          <p className="card">{intro}</p>
+          <KikoSays mood="wave" size={96}>{intro}</KikoSays>
           <div className="actions">
             <button className="btn btn-primary" onClick={() => setI(0)}>{t.start}</button>
           </div>
@@ -117,6 +121,7 @@ export function Remedial({ onDone }) {
     <div className="screen">
       <Header title={t.remedialTitle} sub={`${i + 1}/${diagnostic.remedial.length}`} />
       <div className="stack grow">
+        <KikoSays mood="think" size={80}>Kita siapkan bekal dulu, ya!</KikoSays>
         <div className="card stack">
           <div className="step-title">{card.title}</div>
           <div>{card.body}</div>
@@ -134,6 +139,7 @@ export function Remedial({ onDone }) {
 
 export function LearningMap({ progress, profile, onOpen, onPosttest, onResearch }) {
   const allDone = modules.every((m) => progress[m.id]?.completed);
+  const nextModule = modules.find((m) => !progress[m.id]?.completed);
   return (
     <div className="screen">
       <Header
@@ -142,6 +148,9 @@ export function LearningMap({ progress, profile, onOpen, onPosttest, onResearch 
         right={<button className="icon-btn" onClick={onResearch} aria-label={t.research}>⚙</button>}
       />
       <div className="stack">
+        <KikoSays mood={allDone ? 'cheer' : 'wave'} size={92}>
+          {allDone ? 'Hebat! Semua modul selesai.' : nextModule ? `Yuk, mulai ${nextModule.id}: ${nextModule.title}` : 'Yuk, lanjut belajar!'}
+        </KikoSays>
         {modules.map((m, k) => {
           const p = progress[m.id];
           const unlocked = k === 0 || progress[modules[k - 1].id]?.completed;

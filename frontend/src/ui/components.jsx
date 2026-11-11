@@ -4,6 +4,7 @@ import { glossary } from '../content/index.js';
 import { formatValue } from '../domain/money.js';
 import { parseText } from '../domain/text.js';
 import { t } from '../i18n/id.js';
+import Mascot from './Mascot.jsx';
 
 export function Header({ title, sub, onBack, right }) {
   return (
@@ -143,11 +144,12 @@ export function NumberPad({ value, onChange, kind = 'rupiah', role }) {
   );
 }
 
-export function Feedback({ kind, children }) {
+export function Feedback({ kind, children, kiko = false }) {
   if (!children) return null;
   return (
-    <div className={`feedback ${kind}`} role="status">
-      {children}
+    <div className={`feedback ${kind} ${kiko ? 'with-kiko' : ''}`} role="status">
+      {kiko && <Mascot mood={kind === 'good' ? 'cheer' : 'think'} size={44} />}
+      <span>{children}</span>
     </div>
   );
 }

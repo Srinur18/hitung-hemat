@@ -40,6 +40,23 @@ Warna semantik **hanya** dipakai untuk peran besaran. Warna lain bersifat netral
 
 **Aturan:** angka berwarna (peran besaran) **hanya** boleh tampil di atas putih, karena di atas pink muda kontrasnya cuma ~3,6:1. Pola garis berkelok dari gambar referensi **tidak** dipakai karena tergolong hiasan yang mengganggu fokus (EL03, DS03).
 
+### 2.1 Hiasan Latar & Maskot (permintaan pemilik produk, 11 Nov 2026)
+
+Pemilik produk meminta tampilan yang lebih ramai dan lucu, dengan referensi UI permainan anak dan karakter rubah. Ini **sengaja menyeimbangkan** daya tarik (motivasi, DS01 "bikin kayak game") dengan temuan EL03/DS03 (hiasan mengganggu fokus):
+
+| Layar | Hiasan | Alasan |
+|---|---|---|
+| Pembuka, tes (pengantar), peta belajar, ringkasan modul | **Penuh**: matahari, awan, bukit, pohon, semak berbunga, benda melayang (label %, koin Rp, bintang) | Tidak ada tugas hitung; tujuannya motivasi |
+| Contoh, eksplorasi struk, jelaskan ke teman | Penuh, tetapi semua isi berada di kartu putih | Beban rendah; siswa tidak sedang menghitung sendiri |
+| **Mengerjakan soal** (lengkapi/latihan/tantangan) | **Tenang**: hanya matahari & satu awan, diredupkan; bukit, pohon, semak, dan benda melayang **disembunyikan** | Menjaga beban ekstrinsik rendah saat memori kerja paling sibuk |
+
+- Hiasan memakai tema materi (label %, koin Rp) dan palet yang sama. Hiasan berada di belakang konten, tidak bisa diketuk, dan disembunyikan dari pembaca layar.
+- **Kiko si Rubah**: maskot **orisinal**, digambar sebagai SVG (bukan salinan maskot merek lain). Rubah berkacamata ungu, kaus pink berlengan kuning dengan logo label harga %, dan sepatu pink. Ekspresinya ada tiga: melambai, bersorak, dan berpikir.
+- Peran Kiko adalah **agen pedagogis**, bukan dekorasi: ia menyapa, menyampaikan instruksi, memberi umpan balik benar/salah (ikon kecil 44px di kotak umpan balik), dan "memberi" petunjuk.
+- Animasi (Kiko bergoyang, benda melayang) mati otomatis bila pengguna memilih *kurangi gerakan*.
+- **Teks soal menempel di atas layar** saat menggulir, sehingga angka soal selalu terlihat ketika siswa mengetik jawaban (EL02, split-attention).
+- Font bulat dibundel offline: **Fredoka** (judul, tombol, angka) dan **Nunito** (isi).
+
 ## 3. Tipografi & Ukuran
 
 | Elemen | Ukuran | Bobot |

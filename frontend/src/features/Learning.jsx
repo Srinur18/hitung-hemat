@@ -59,7 +59,7 @@ export function Explore({ moduleId, onDone }) {
         <hr />
         <div className="line"><span>BAYAR</span><b className="n" style={{ color: 'var(--c-result)' }}>{formatRp(price - disc)}</b></div>
       </div>
-      <label className="stack small">
+      <label className="stack small card">
         Geser persen diskon: <b>{formatBp(pct)}</b>
         <input
           type="range" min="0" max="5000" step="500" value={pct}

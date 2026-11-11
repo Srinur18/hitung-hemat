@@ -10,6 +10,7 @@ import { parseText } from '../domain/text.js';
 import { t } from '../i18n/id.js';
 import SceneHost from '../three/SceneHost.jsx';
 import { BoxDiagram, Feedback, FormulaDock, NumberPad, RichText, Sheet } from '../ui/components.jsx';
+import Mascot from '../ui/Mascot.jsx';
 import { sceneParams } from './sceneParams.js';
 
 const MARK_TARGETS = { price: 'price', pct: 'percent', p1: 'percent', p2: 'percent', pA: 'percent', pB: 'percent', final: 'result' };
@@ -67,7 +68,10 @@ function HintSheet({ problem, step, idx, hint, onNext, onClose }) {
   );
   return (
     <Sheet onClose={onClose}>
-      <h2>{t.hint}</h2>
+      <div className="row">
+        <Mascot mood="think" size={56} />
+        <h2>{t.hint} dari Kiko</h2>
+      </div>
       {step.hints.slice(0, Math.min(3, hint.level)).map((h, i) => (
         <div key={i} className="card hint">
           <div className="step-label">Petunjuk {i + 1}</div>
@@ -191,7 +195,7 @@ export default function ProblemSolver({ problem, moduleId, sceneKind, mode, leve
 
   return (
     <div className="stack grow">
-      <RichText text={problem.text} vars={problem.vars} signaling={signal} />
+      <RichText text={problem.text} vars={problem.vars} signaling={signal} className="problem-text sticky-q" />
       <BoxDiagram boxes={problem.boxes} vars={problem.vars} known={known} />
       {kind && (
         <div className="row">
@@ -231,7 +235,7 @@ export default function ProblemSolver({ problem, moduleId, sceneKind, mode, leve
             <div className="step-title">{step.label}</div>
           </div>
           <FormulaDock key={step.id} formula={step.formula} defaultOpen={sc.formulaOpen || completion} />
-          <Feedback kind={fb?.kind}>{fb?.text}</Feedback>
+          <Feedback kind={fb?.kind} kiko>{fb?.text}</Feedback>
           {step.input === 'choice' ? (
             <div className="options">
               {step.options.map((o, i) => (
@@ -264,7 +268,10 @@ export default function ProblemSolver({ problem, moduleId, sceneKind, mode, leve
 
       {sheet === 'offer' && (
         <Sheet onClose={() => setSheet(null)}>
+          <div className="row">
+          <Mascot mood="think" size={56} />
           <h2>{t.wantHint}</h2>
+        </div>
           <div className="actions">
             <button className="btn" onClick={() => setSheet(null)}>{t.tryAgain}</button>
             <button className="btn btn-primary" onClick={() => openHint(true)}>{t.hint}</button>

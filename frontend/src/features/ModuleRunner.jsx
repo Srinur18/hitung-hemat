@@ -8,6 +8,7 @@ import { randomSeed } from '../domain/rng.js';
 import { isMastered, masteryLevel, stars } from '../domain/scaffold.js';
 import { t } from '../i18n/id.js';
 import { Header, Stars } from '../ui/components.jsx';
+import Mascot from '../ui/Mascot.jsx';
 import { EffortRating, ExplainCards, Explore, WorkedExample } from './Learning.jsx';
 import ProblemSolver from './ProblemSolver.jsx';
 
@@ -34,7 +35,7 @@ function expand(module) {
   return tasks;
 }
 
-export default function ModuleRunner({ module, studentCode, saved, onExit }) {
+export default function ModuleRunner({ module, studentCode, saved, onExit, onSolvingChange }) {
   const tasks = useMemo(() => expand(module), [module]);
   const [i, setI] = useState(0);
   const [history, setHistory] = useState([]);
@@ -55,6 +56,12 @@ export default function ModuleRunner({ module, studentCode, saved, onExit }) {
       logEvent('problem_start', { moduleId: module.id, problemId: problem.id, payload: { stage: task.kind, process: problem.process, seed: task.seed } });
     }
   }, [problem]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Beri tahu App kapan siswa sedang mengerjakan soal → hiasan latar diredupkan.
+  const solving = phase === 'tasks' && ['completion', 'independent', 'transfer'].includes(task?.kind);
+  useEffect(() => {
+    onSolvingChange?.(solving);
+  }, [solving, onSolvingChange]);
 
   const next = () => (i + 1 < tasks.length ? setI(i + 1) : setPhase('effort'));
 
@@ -89,9 +96,12 @@ export default function ModuleRunner({ module, studentCode, saved, onExit }) {
   } else if (phase === 'summary') {
     body = (
       <div className="stack grow">
-        <h2>{t.summaryTitle}</h2>
-        <div className="card stack">
-          <div style={{ fontSize: 28 }}><Stars n={result.stars} /></div>
+        <div className="hero">
+          <Mascot mood="cheer" size={140} />
+          <h2 className="title">{t.summaryTitle}</h2>
+        </div>
+        <div className="card stack" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 34, color: '#e0a800' }}><Stars n={result.stars} /></div>
           <div>{module.goal}</div>
           <div className="muted small">
             {result.mastered ? 'Kamu sudah menguasai modul ini.' : 'Ulangi modul ini kapan saja untuk menambah bintang.'}
