@@ -1,20 +1,23 @@
 /* Token desain (design.md §2). Warna semantik HANYA untuk peran besaran. */
-/* Tema cerah: pink + hijau pastel. Warna peran besaran (price/percent/discount/result)
-   tetap dipertahankan & digelapkan sedikit agar kontras ≥ 4.5:1 di atas latar pastel. */
+/* Tema "Vibe": palet putih, kuning, pink muda, pink terang, hijau, biru (referensi pemilik produk).
+   Latar = pink muda; konten berangka selalu di atas kartu PUTIH agar warna peran besaran
+   tetap kontras ≥ 4.5:1. Tanpa pola hiasan (EL03/DS03). */
 :root {
   --c-price: #1a56c4;
   --c-percent: #9a4600;
   --c-discount: #b3261e;
   --c-result: #146c33;
-  --c-bg: #fff0f5; /* pink pastel */
-  --c-bg-2: #e6f7ea; /* hijau pastel */
-  --c-surface: #e3f6e8; /* kartu: hijau pastel */
-  --c-surface-2: #ffe1ec; /* aksen: pink pastel */
-  --c-surface-3d: #b9e4c6;
+  --c-bg: #ffa8b0; /* pink muda (palet) */
+  --c-header: #1677d2; /* biru palet, sedikit digelapkan: teks putih 4.56:1 */
+  --c-yellow: #ffd600; /* kuning palet */
+  --c-pink: #f863a8; /* pink terang palet (aksen garis) */
+  --c-surface: #ffffff; /* kartu: putih palet */
+  --c-surface-2: #ffd600; /* tombol angka: kuning */
+  --c-surface-3d: #ffd600;
   --c-text: #2a1d24;
-  --c-muted: #6b5a63;
-  --c-focus: #c42e66; /* pink tegas untuk tombol utama */
-  --c-line: #f2c4d5;
+  --c-muted: #5a3d48;
+  --c-focus: #237a4b; /* hijau palet, digelapkan: teks putih 5.31:1 */
+  --c-line: #f7b8c9;
   --radius: 16px;
   --font: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color-scheme: light;
@@ -23,8 +26,7 @@
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
 body {
-  background: linear-gradient(165deg, #ffe3ee 0%, var(--c-bg) 40%, var(--c-bg-2) 100%) fixed;
-  background-color: var(--c-bg);
+  background: var(--c-bg);
   color: var(--c-text);
   font-family: var(--font);
   font-size: 16px;
@@ -34,9 +36,10 @@ body {
 button { font: inherit; color: inherit; }
 
 .screen { max-width: 520px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; padding: 0 16px 16px; }
-.header { position: sticky; top: 0; z-index: 2; background: rgb(255 227 238 / 0.92); backdrop-filter: blur(6px); display: flex; align-items: center; gap: 8px; min-height: 52px; border-bottom: 1px solid var(--c-line); margin: 0 -16px 12px; padding: 0 12px; }
-.header h1 { font-size: 17px; font-weight: 600; margin: 0; flex: 1; }
-.header .sub { font-size: 13px; color: var(--c-muted); }
+.header { position: sticky; top: 0; z-index: 2; background: var(--c-header); color: #fff; display: flex; align-items: center; gap: 8px; min-height: 56px; border-bottom: 5px solid var(--c-yellow); margin: 0 -16px 14px; padding: 0 12px; }
+.header h1 { font-size: 17px; font-weight: 700; margin: 0; flex: 1; }
+.header .sub { font-size: 13px; color: #fff; font-weight: 500; }
+.header .icon-btn { color: #fff; }
 .icon-btn { min-width: 48px; min-height: 48px; border: 0; background: none; font-size: 20px; border-radius: 12px; }
 .grow { flex: 1; }
 .stack { display: flex; flex-direction: column; gap: 12px; }
@@ -63,7 +66,8 @@ h2 { font-size: 20px; font-weight: 600; margin: 4px 0 8px; }
 .signal .n-price::before { content: '🏷'; font-size: 0.8em; margin-right: 1px; }
 .signal .n-percent::before { content: '%'; font-size: 0.7em; margin-right: 1px; opacity: 0.8; }
 .term { border: 0; background: none; padding: 0; text-decoration: underline dotted; text-underline-offset: 3px; font: inherit; color: inherit; }
-.problem-text { font-size: 18px; line-height: 1.6; }
+/* teks soal selalu di kartu putih agar angka berwarna kontras di atas latar pink */
+.problem-text { font-size: 18px; line-height: 1.6; background: #fff; border-radius: var(--radius); padding: 12px 16px; margin: 0; border-left: 6px solid var(--c-header); }
 
 /* mode tandai */
 .markable { border: 1.5px dashed var(--c-muted); border-radius: 8px; padding: 1px 6px; background: none; font: inherit; font-weight: 700; }
@@ -95,11 +99,11 @@ h2 { font-size: 20px; font-weight: 600; margin: 4px 0 8px; }
 .answer.r-discount { border-color: var(--c-discount); }
 .answer.r-result { border-color: var(--c-result); }
 .answer .ph { color: var(--c-muted); font-weight: 400; font-size: 20px; }
-.feedback { border-radius: 12px; padding: 10px 14px; font-size: 15px; }
-.feedback.bad { background: color-mix(in srgb, var(--c-discount) 12%, transparent); }
-.feedback.good { background: color-mix(in srgb, var(--c-result) 14%, transparent); }
+.feedback { border-radius: 12px; padding: 10px 14px; font-size: 15px; background: #fff; border-left: 6px solid; }
+.feedback.bad { border-color: var(--c-discount); }
+.feedback.good { border-color: var(--c-result); }
 
-.formula { border-left: 4px solid var(--c-focus); }
+.formula { border-left: 6px solid var(--c-pink); }
 .formula summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 
 .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -107,12 +111,12 @@ h2 { font-size: 20px; font-weight: 600; margin: 4px 0 8px; }
 
 .options { display: flex; flex-direction: column; gap: 10px; }
 .option { min-height: 56px; border-radius: 14px; border: 2px solid var(--c-line); background: var(--c-surface); font-size: 20px; font-weight: 700; text-align: left; padding: 0 16px; }
-.option.on { border-color: var(--c-focus); }
+.option.on { border-color: var(--c-header); box-shadow: 0 0 0 2px var(--c-header) inset; }
 
 /* ---- sheet petunjuk ---- */
 .sheet-backdrop { position: fixed; inset: 0; background: rgb(0 0 0 / 0.35); z-index: 10; display: flex; align-items: flex-end; }
-.sheet { background: var(--c-bg); border-top: 4px solid var(--c-surface-3d); width: 100%; max-width: 520px; margin: 0 auto; border-radius: 20px 20px 0 0; padding: 18px 16px 20px; max-height: 80vh; overflow: auto; }
-.hint { border-left: 4px solid var(--c-percent); }
+.sheet { background: #fff; border-top: 6px solid var(--c-yellow); width: 100%; max-width: 520px; margin: 0 auto; border-radius: 20px 20px 0 0; padding: 18px 16px 20px; max-height: 80vh; overflow: auto; }
+.hint { border-left: 6px solid var(--c-pink); background: #fff7fb; }
 
 /* ---- 3D ---- */
 .scene { margin: 0; }

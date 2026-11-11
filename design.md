@@ -21,22 +21,24 @@ Dokumen ini menerjemahkan temuan wawancara dan Cognitive Load Theory menjadi kep
 
 Warna semantik **hanya** dipakai untuk peran besaran. Warna lain bersifat netral.
 
-**Tema: cerah, pink + hijau pastel** (permintaan pemilik produk, 11 Nov 2026). Mode gelap dinonaktifkan agar tampilan selalu cerah.
+**Tema "Vibe"**, mengikuti gambar palet referensi dari pemilik produk (11 Nov 2026): putih `#FFFFFF`, kuning `#FFD600`, pink muda `#FFA8B0`, pink terang `#F863A8`, hijau `#2E8B57`, biru `#1A8FE3`. Mode gelap dinonaktifkan.
 
-| Token | Nilai | Peran | Penanda tambahan (buta warna) |
+| Token | Nilai | Peran | Catatan |
 |---|---|---|---|
-| `--c-price` | `#1A56C4` | Harga awal | ikon 🏷 + garis bawah tebal |
+| `--c-bg` | `#FFA8B0` pink muda | Latar halaman | teks gelap 8,8:1 |
+| `--c-header` | `#1677D2` biru | Pita header (teks putih) + garis kiri kartu soal | biru palet digelapkan sedikit → putih 4,56:1 |
+| `--c-yellow` | `#FFD600` kuning | Garis bawah header, tepi atas lembar petunjuk | aksen |
+| `--c-surface-2` | `#FFD600` kuning | Tombol angka | teks gelap 11,4:1 |
+| `--c-pink` | `#F863A8` pink terang | Garis kiri kartu rumus & petunjuk | aksen (bukan teks) |
+| `--c-surface` | `#FFFFFF` putih | Kartu, kartu soal, kotak jawaban, ilustrasi | semua angka berwarna diletakkan di sini |
+| `--c-focus` | `#237A4B` hijau | Tombol utama (teks putih) | hijau palet digelapkan sedikit → putih 5,31:1 |
+| `--c-price` | `#1A56C4` | Harga awal | ikon 🏷 + garis bawah tebal; 6,6:1 di atas putih |
 | `--c-percent` | `#9A4600` | Persen diskon | ikon % + garis bawah putus-putus |
 | `--c-discount` | `#B3261E` | Besar diskon (Rp) | garis bawah titik-titik |
 | `--c-result` | `#146C33` | Harga akhir / hasil | kotak |
-| `--c-bg` → `--c-bg-2` | `#FFF0F5` → `#E6F7EA` | Latar: gradasi pink → hijau pastel | — |
-| `--c-surface` | `#E3F6E8` | Kartu (hijau pastel) | — |
-| `--c-surface-2` | `#FFE1EC` | Tombol angka (pink pastel) | — |
-| `--c-text` | `#2A1D24` | Teks | — |
-| `--c-muted` | `#6B5A63` | Teks sekunder | — |
-| `--c-focus` | `#C42E66` | Tombol utama (pink tegas, teks putih) | — |
+| `--c-text` / `--c-muted` | `#2A1D24` / `#5A3D48` | Teks / teks sekunder | ≥ 5,2:1 di atas pink muda |
 
-Kontras diperiksa: semua warna teks dan angka ≥ 5,3:1 di atas setiap latar pastel, dan teks putih pada tombol utama 5,34:1. Semuanya lolos WCAG AA.
+**Aturan:** angka berwarna (peran besaran) **hanya** boleh tampil di atas putih, karena di atas pink muda kontrasnya cuma ~3,6:1. Pola garis berkelok dari gambar referensi **tidak** dipakai karena tergolong hiasan yang mengganggu fokus (EL03, DS03).
 
 ## 3. Tipografi & Ukuran
 
