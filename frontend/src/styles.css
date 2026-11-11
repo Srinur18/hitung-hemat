@@ -1,0 +1,146 @@
+/* Token desain (design.md §2). Warna semantik HANYA untuk peran besaran. */
+:root {
+  --c-price: #1d5fd1;
+  --c-percent: #c25a00;
+  --c-discount: #b3261e;
+  --c-result: #1b7f3b;
+  --c-bg: #ffffff;
+  --c-surface: #f4f6f8;
+  --c-surface-3d: #c9d1da;
+  --c-text: #1a1c1e;
+  --c-muted: #5f6670;
+  --c-focus: #6b4eff;
+  --c-line: #dde2e7;
+  --radius: 14px;
+  --font: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-price: #7fb0ff;
+    --c-percent: #ffb066;
+    --c-discount: #ff8a80;
+    --c-result: #7fd99a;
+    --c-bg: #121417;
+    --c-surface: #1e2227;
+    --c-surface-3d: #3a424c;
+    --c-text: #e6e8eb;
+    --c-muted: #9aa3ad;
+    --c-focus: #b3a4ff;
+    --c-line: #2e343b;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-tap-highlight-color: transparent;
+}
+button { font: inherit; color: inherit; }
+
+.screen { max-width: 520px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; padding: 0 16px 16px; }
+.header { position: sticky; top: 0; z-index: 2; background: var(--c-bg); display: flex; align-items: center; gap: 8px; min-height: 52px; border-bottom: 1px solid var(--c-line); margin: 0 -16px 12px; padding: 0 12px; }
+.header h1 { font-size: 17px; font-weight: 600; margin: 0; flex: 1; }
+.header .sub { font-size: 13px; color: var(--c-muted); }
+.icon-btn { min-width: 48px; min-height: 48px; border: 0; background: none; font-size: 20px; border-radius: 12px; }
+.grow { flex: 1; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.row { display: flex; gap: 8px; align-items: center; }
+.muted { color: var(--c-muted); }
+.small { font-size: 14px; }
+h2 { font-size: 20px; font-weight: 600; margin: 4px 0 8px; }
+
+.card { background: var(--c-surface); border-radius: var(--radius); padding: 14px 16px; }
+.btn { min-height: 52px; border-radius: 14px; border: 1.5px solid var(--c-line); background: var(--c-surface); padding: 0 18px; font-weight: 600; }
+.btn-primary { background: var(--c-focus); border-color: var(--c-focus); color: #fff; }
+.btn:disabled { opacity: 0.45; }
+.btn-block { width: 100%; }
+.actions { display: flex; gap: 10px; margin-top: auto; padding-top: 12px; }
+.actions .btn { flex: 1; }
+.input { width: 100%; min-height: 52px; border-radius: 12px; border: 1.5px solid var(--c-line); background: var(--c-bg); padding: 0 14px; font-size: 20px; }
+
+/* ---- penanda angka (signaling) ---- */
+.n { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.signal .n-price { color: var(--c-price); border-bottom: 3px solid currentColor; }
+.signal .n-percent { color: var(--c-percent); border-bottom: 3px dashed currentColor; }
+.signal .n-discount { color: var(--c-discount); border-bottom: 3px dotted currentColor; }
+.signal .n-result { color: var(--c-result); outline: 2px solid currentColor; outline-offset: 1px; border-radius: 4px; }
+.signal .n-price::before { content: '🏷'; font-size: 0.8em; margin-right: 1px; }
+.signal .n-percent::before { content: '%'; font-size: 0.7em; margin-right: 1px; opacity: 0.8; }
+.term { border: 0; background: none; padding: 0; text-decoration: underline dotted; text-underline-offset: 3px; font: inherit; color: inherit; }
+.problem-text { font-size: 18px; line-height: 1.6; }
+
+/* mode tandai */
+.markable { border: 1.5px dashed var(--c-muted); border-radius: 8px; padding: 1px 6px; background: none; font: inherit; font-weight: 700; }
+.markable.m-price { border-style: solid; border-color: var(--c-price); color: var(--c-price); }
+.markable.m-percent { border-style: solid; border-color: var(--c-percent); color: var(--c-percent); }
+.markable.m-result { border-style: solid; border-color: var(--c-result); color: var(--c-result); }
+.chip { min-height: 44px; border-radius: 22px; padding: 0 14px; border: 1.5px solid var(--c-line); background: var(--c-surface); font-weight: 600; }
+.chip.on { border-color: var(--c-focus); box-shadow: 0 0 0 2px var(--c-focus) inset; }
+
+/* ---- diagram kotak (FR-21) ---- */
+.boxes { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 4px; text-align: center; }
+.box { border-radius: 10px; border: 2px solid; padding: 6px 4px; min-height: 58px; display: flex; flex-direction: column; justify-content: center; }
+.box small { font-size: 11px; color: var(--c-muted); }
+.box b { font-size: 15px; font-variant-numeric: tabular-nums; }
+.box-price { border-color: var(--c-price); color: var(--c-price); }
+.box-discount { border-color: var(--c-discount); color: var(--c-discount); }
+.box-result { border-color: var(--c-result); color: var(--c-result); }
+.box.unknown b { color: var(--c-muted); }
+.op { font-size: 20px; color: var(--c-muted); }
+
+/* ---- langkah ---- */
+.step-label { font-size: 13px; color: var(--c-muted); }
+.step-title { font-size: 20px; font-weight: 600; }
+.done-steps { display: flex; flex-direction: column; gap: 4px; font-size: 15px; }
+.done-steps .ok::before { content: '✓ '; color: var(--c-result); font-weight: 700; }
+.answer { font-size: 32px; font-weight: 700; font-variant-numeric: tabular-nums; min-height: 56px; border-radius: 12px; border: 2px solid var(--c-line); display: flex; align-items: center; justify-content: flex-end; padding: 0 14px; }
+.answer.r-price { border-color: var(--c-price); }
+.answer.r-percent { border-color: var(--c-percent); }
+.answer.r-discount { border-color: var(--c-discount); }
+.answer.r-result { border-color: var(--c-result); }
+.answer .ph { color: var(--c-muted); font-weight: 400; font-size: 20px; }
+.feedback { border-radius: 12px; padding: 10px 14px; font-size: 15px; }
+.feedback.bad { background: color-mix(in srgb, var(--c-discount) 12%, transparent); }
+.feedback.good { background: color-mix(in srgb, var(--c-result) 14%, transparent); }
+
+.formula { border-left: 4px solid var(--c-focus); }
+.formula summary { cursor: pointer; font-weight: 600; min-height: 32px; }
+
+.numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.numpad button { min-height: 52px; border-radius: 12px; border: 0; background: var(--c-surface); font-size: 22px; font-weight: 600; }
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option { min-height: 56px; border-radius: 14px; border: 2px solid var(--c-line); background: var(--c-surface); font-size: 20px; font-weight: 700; text-align: left; padding: 0 16px; }
+.option.on { border-color: var(--c-focus); }
+
+/* ---- sheet petunjuk ---- */
+.sheet-backdrop { position: fixed; inset: 0; background: rgb(0 0 0 / 0.35); z-index: 10; display: flex; align-items: flex-end; }
+.sheet { background: var(--c-bg); width: 100%; max-width: 520px; margin: 0 auto; border-radius: 20px 20px 0 0; padding: 18px 16px 20px; max-height: 80vh; overflow: auto; }
+.hint { border-left: 4px solid var(--c-percent); }
+
+/* ---- 3D ---- */
+.scene { margin: 0; }
+.scene-canvas, .scene-svg { width: 100%; border-radius: var(--radius); background: var(--c-surface); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.scene-svg svg { width: 100%; height: 100%; }
+.scene figcaption { font-size: 13px; color: var(--c-muted); text-align: center; margin-top: 4px; }
+
+/* ---- peta & lain-lain ---- */
+.module { display: flex; align-items: center; gap: 12px; text-align: left; width: 100%; min-height: 64px; }
+.module .id { font-weight: 700; color: var(--c-focus); min-width: 32px; }
+.stars { letter-spacing: 2px; }
+.effort { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; }
+.effort button { min-height: 48px; border-radius: 10px; border: 1.5px solid var(--c-line); background: var(--c-surface); font-weight: 700; }
+.player-ctrl { display: flex; justify-content: center; gap: 8px; }
+.receipt { font-family: ui-monospace, 'Courier New', monospace; font-size: 16px; }
+.receipt .line { display: flex; justify-content: space-between; }
+.receipt hr { border: 0; border-top: 1px dashed var(--c-muted); }
+input[type='range'] { width: 100%; height: 44px; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

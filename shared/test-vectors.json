@@ -1,0 +1,595 @@
+{
+ "rng": {
+  "seed": 42,
+  "first5": [
+   0.6011037519201636,
+   0.44829055899754167,
+   0.8524657934904099,
+   0.6697340414393693,
+   0.17481389874592423
+  ]
+ },
+ "functions": [
+  {
+   "fn": "discountAmount",
+   "args": [
+    120000,
+    2500
+   ],
+   "out": 30000
+  },
+  {
+   "fn": "discountAmount",
+   "args": [
+    80000,
+    1250
+   ],
+   "out": 10000
+  },
+  {
+   "fn": "discountAmount",
+   "args": [
+    10001,
+    1000
+   ],
+   "out": null
+  },
+  {
+   "fn": "finalPrice",
+   "args": [
+    120000,
+    2500
+   ],
+   "out": 90000
+  },
+  {
+   "fn": "effectiveBp",
+   "args": [
+    5000,
+    2000
+   ],
+   "out": 6000
+  },
+  {
+   "fn": "originalFromFinal",
+   "args": [
+    90000,
+    2500
+   ],
+   "out": 120000
+  },
+  {
+   "fn": "percentFromPrices",
+   "args": [
+    100000,
+    80000
+   ],
+   "out": 2000
+  },
+  {
+   "fn": "complementBp",
+   "args": [
+    2500
+   ],
+   "out": 7500
+  },
+  {
+   "fn": "subtract",
+   "args": [
+    5,
+    9
+   ],
+   "out": null
+  },
+  {
+   "fn": "div",
+   "args": [
+    1250,
+    10
+   ],
+   "out": 125
+  }
+ ],
+ "formats": [
+  {
+   "value": 120000,
+   "fmt": "price",
+   "out": "Rp120.000"
+  },
+  {
+   "value": 1250,
+   "fmt": "percent",
+   "out": "12,5%"
+  },
+  {
+   "value": 2000,
+   "fmt": "percent",
+   "out": "20%"
+  },
+  {
+   "value": 1250,
+   "fmt": "frac",
+   "out": "12,5/100"
+  },
+  {
+   "value": 1250,
+   "fmt": "dec",
+   "out": "0,125"
+  },
+  {
+   "value": 12500,
+   "fmt": "dec",
+   "out": "1,25"
+  },
+  {
+   "value": 125,
+   "fmt": "dec",
+   "out": "0,0125"
+  },
+  {
+   "value": 1250,
+   "fmt": "plainpct",
+   "out": "12,5"
+  },
+  {
+   "value": 1250,
+   "fmt": "milli",
+   "out": "125"
+  }
+ ],
+ "problems": [
+  {
+   "template": "m1-t1",
+   "seed": 1,
+   "vars": {
+    "item": "Buku tulis",
+    "price": 10000,
+    "pct": 2000,
+    "disc": 2000,
+    "final": 8000
+   },
+   "answers": {
+    "s1": 2000,
+    "s2": 8000
+   }
+  },
+  {
+   "template": "m1-t1",
+   "seed": 7,
+   "vars": {
+    "item": "Kaos",
+    "price": 10000,
+    "pct": 5000,
+    "disc": 5000,
+    "final": 5000
+   },
+   "answers": {
+    "s1": 5000,
+    "s2": 5000
+   }
+  },
+  {
+   "template": "m1-t1",
+   "seed": 2026,
+   "vars": {
+    "item": "Topi",
+    "price": 40000,
+    "pct": 2000,
+    "disc": 8000,
+    "final": 32000
+   },
+   "answers": {
+    "s1": 8000,
+    "s2": 32000
+   }
+  },
+  {
+   "template": "m2-t1",
+   "seed": 1,
+   "vars": {
+    "item": "Helm",
+    "price": 50000,
+    "pct": 3000,
+    "disc": 15000
+   },
+   "answers": {
+    "s1": 15000
+   }
+  },
+  {
+   "template": "m2-t1",
+   "seed": 7,
+   "vars": {
+    "item": "Sepatu",
+    "price": 60000,
+    "pct": 5000,
+    "disc": 30000
+   },
+   "answers": {
+    "s1": 30000
+   }
+  },
+  {
+   "template": "m2-t1",
+   "seed": 2026,
+   "vars": {
+    "item": "Jaket",
+    "price": 130000,
+    "pct": 3000,
+    "disc": 39000
+   },
+   "answers": {
+    "s1": 39000
+   }
+  },
+  {
+   "template": "m3-t1",
+   "seed": 1,
+   "vars": {
+    "item": "Tas",
+    "price": 50000,
+    "pct": 2500,
+    "disc": 12500,
+    "final": 37500
+   },
+   "answers": {
+    "s1": 12500,
+    "s2": 37500
+   }
+  },
+  {
+   "template": "m3-t1",
+   "seed": 7,
+   "vars": {
+    "item": "Baju",
+    "price": 70000,
+    "pct": 4000,
+    "disc": 28000,
+    "final": 42000
+   },
+   "answers": {
+    "s1": 28000,
+    "s2": 42000
+   }
+  },
+  {
+   "template": "m3-t1",
+   "seed": 2026,
+   "vars": {
+    "item": "Sepatu",
+    "price": 160000,
+    "pct": 2500,
+    "disc": 40000,
+    "final": 120000
+   },
+   "answers": {
+    "s1": 40000,
+    "s2": 120000
+   }
+  },
+  {
+   "template": "m4-t1",
+   "seed": 1,
+   "vars": {
+    "item": "Rice cooker",
+    "price": 80000,
+    "pct": 1750,
+    "pctX10": 17500,
+    "pctD10": 175,
+    "disc": 14000,
+    "final": 66000
+   },
+   "answers": {
+    "s1": 14000,
+    "s2": 66000
+   }
+  },
+  {
+   "template": "m4-t1",
+   "seed": 7,
+   "vars": {
+    "item": "Kipas angin",
+    "price": 104000,
+    "pct": 2250,
+    "pctX10": 22500,
+    "pctD10": 225,
+    "disc": 23400,
+    "final": 80600
+   },
+   "answers": {
+    "s1": 23400,
+    "s2": 80600
+   }
+  },
+  {
+   "template": "m4-t1",
+   "seed": 2026,
+   "vars": {
+    "item": "Sepeda",
+    "price": 200000,
+    "pct": 1750,
+    "pctX10": 17500,
+    "pctD10": 175,
+    "disc": 35000,
+    "final": 165000
+   },
+   "answers": {
+    "s1": 35000,
+    "s2": 165000
+   }
+  },
+  {
+   "template": "m5-t1",
+   "seed": 1,
+   "vars": {
+    "item": "Tas",
+    "price": 100000,
+    "p1": 3000,
+    "p2": 5000,
+    "sum": 8000,
+    "eff": 6500,
+    "after1": 70000,
+    "disc2": 35000,
+    "final": 35000
+   },
+   "answers": {
+    "s1": 70000,
+    "s2": 35000,
+    "s3": 35000
+   }
+  },
+  {
+   "template": "m5-t1",
+   "seed": 7,
+   "vars": {
+    "item": "Jaket",
+    "price": 120000,
+    "p1": 2000,
+    "p2": 5000,
+    "sum": 7000,
+    "eff": 6000,
+    "after1": 96000,
+    "disc2": 48000,
+    "final": 48000
+   },
+   "answers": {
+    "s1": 96000,
+    "s2": 48000,
+    "s3": 48000
+   }
+  },
+  {
+   "template": "m5-t1",
+   "seed": 2026,
+   "vars": {
+    "item": "Sepatu",
+    "price": 220000,
+    "p1": 3000,
+    "p2": 1000,
+    "sum": 4000,
+    "eff": 3700,
+    "after1": 154000,
+    "disc2": 15400,
+    "final": 138600
+   },
+   "answers": {
+    "s1": 154000,
+    "s2": 15400,
+    "s3": 138600
+   }
+  },
+  {
+   "template": "m6-t1",
+   "seed": 1,
+   "vars": {
+    "item": "Jam tangan",
+    "price": 50000,
+    "pct": 2500,
+    "final": 37500,
+    "rest": 7500,
+    "orig": 50000
+   },
+   "answers": {
+    "s1": 7500,
+    "s2": 50000
+   }
+  },
+  {
+   "template": "m6-t1",
+   "seed": 7,
+   "vars": {
+    "item": "Sepatu",
+    "price": 70000,
+    "pct": 5000,
+    "final": 35000,
+    "rest": 5000,
+    "orig": 70000
+   },
+   "answers": {
+    "s1": 5000,
+    "s2": 70000
+   }
+  },
+  {
+   "template": "m6-t1",
+   "seed": 2026,
+   "vars": {
+    "item": "Tas",
+    "price": 190000,
+    "pct": 4000,
+    "final": 114000,
+    "rest": 6000,
+    "orig": 190000
+   },
+   "answers": {
+    "s1": 6000,
+    "s2": 190000
+   }
+  },
+  {
+   "template": "m6-t2",
+   "seed": 1,
+   "vars": {
+    "item": "Kaos",
+    "price": 50000,
+    "pct": 3000,
+    "final": 35000,
+    "disc": 15000,
+    "ans": 3000
+   },
+   "answers": {
+    "s1": 15000,
+    "s2": 3000
+   }
+  },
+  {
+   "template": "m6-t2",
+   "seed": 7,
+   "vars": {
+    "item": "Celana",
+    "price": 70000,
+    "pct": 5000,
+    "final": 35000,
+    "disc": 35000,
+    "ans": 5000
+   },
+   "answers": {
+    "s1": 35000,
+    "s2": 5000
+   }
+  },
+  {
+   "template": "m6-t2",
+   "seed": 2026,
+   "vars": {
+    "item": "Sepatu",
+    "price": 160000,
+    "pct": 3000,
+    "final": 112000,
+    "disc": 48000,
+    "ans": 3000
+   },
+   "answers": {
+    "s1": 48000,
+    "s2": 3000
+   }
+  },
+  {
+   "template": "m7-t1",
+   "seed": 1,
+   "vars": {
+    "item": "Tas",
+    "price": 100000,
+    "pA": 2500,
+    "ship": 25000,
+    "pB": 2000,
+    "finalA": 75000,
+    "totalA": 100000,
+    "finalB": 80000
+   },
+   "answers": {
+    "s1": 75000,
+    "s2": 100000,
+    "s3": 80000
+   }
+  },
+  {
+   "template": "m7-t1",
+   "seed": 7,
+   "vars": {
+    "item": "Sepatu",
+    "price": 100000,
+    "pA": 3000,
+    "ship": 20000,
+    "pB": 1500,
+    "finalA": 70000,
+    "totalA": 90000,
+    "finalB": 85000
+   },
+   "answers": {
+    "s1": 70000,
+    "s2": 90000,
+    "s3": 85000
+   }
+  },
+  {
+   "template": "m7-t1",
+   "seed": 2026,
+   "vars": {
+    "item": "Headset",
+    "price": 180000,
+    "pA": 2500,
+    "ship": 20000,
+    "pB": 1000,
+    "finalA": 135000,
+    "totalA": 155000,
+    "finalB": 162000
+   },
+   "answers": {
+    "s1": 135000,
+    "s2": 155000,
+    "s3": 162000
+   }
+  },
+  {
+   "template": "m7-t2",
+   "seed": 1,
+   "vars": {
+    "item": "Martabak",
+    "price": 40000,
+    "pct": 2500,
+    "tax": 1100,
+    "disc": 10000,
+    "final": 30000,
+    "taxRp": 3300,
+    "total": 33300
+   },
+   "answers": {
+    "s1": 10000,
+    "s2": 30000,
+    "s3": 3300,
+    "s4": 33300
+   }
+  },
+  {
+   "template": "m7-t2",
+   "seed": 7,
+   "vars": {
+    "item": "Paket ayam geprek",
+    "price": 50000,
+    "pct": 5000,
+    "tax": 1100,
+    "disc": 25000,
+    "final": 25000,
+    "taxRp": 2750,
+    "total": 27750
+   },
+   "answers": {
+    "s1": 25000,
+    "s2": 25000,
+    "s3": 2750,
+    "s4": 27750
+   }
+  },
+  {
+   "template": "m7-t2",
+   "seed": 2026,
+   "vars": {
+    "item": "Pizza",
+    "price": 90000,
+    "pct": 2500,
+    "tax": 1100,
+    "disc": 22500,
+    "final": 67500,
+    "taxRp": 7425,
+    "total": 74925
+   },
+   "answers": {
+    "s1": 22500,
+    "s2": 67500,
+    "s3": 7425,
+    "s4": 74925
+   }
+  }
+ ]
+}

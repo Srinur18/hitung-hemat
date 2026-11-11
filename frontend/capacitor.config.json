@@ -1,0 +1,11 @@
+{
+  "appId": "id.ac.hitunghemat.app",
+  "appName": "HitungHemat",
+  "webDir": "dist",
+  "android": {
+    "minWebViewVersion": 60
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

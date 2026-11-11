@@ -1,0 +1,16 @@
+{
+  "passScore": 4,
+  "items": [
+    { "id": "d1", "skill": "persen-pecahan", "prompt": "25% sama dengan …", "choices": ["1/4", "1/25", "25/10"], "answer": 0 },
+    { "id": "d2", "skill": "persen-dari", "prompt": "50% dari Rp80.000 = …", "choices": ["Rp40.000", "Rp30.000", "Rp4.000"], "answer": 0 },
+    { "id": "d3", "skill": "kali-desimal", "prompt": "0,2 × 150.000 = …", "choices": ["30.000", "3.000", "300.000"], "answer": 0 },
+    { "id": "d4", "skill": "persen-desimal", "prompt": "12,5% dalam bentuk desimal = …", "choices": ["0,125", "1,25", "0,0125"], "answer": 0 },
+    { "id": "d5", "skill": "angka-besar", "prompt": "250.000 − 37.500 = …", "choices": ["212.500", "222.500", "213.500"], "answer": 0 },
+    { "id": "d6", "skill": "persen-dari", "prompt": "10% dari Rp45.000 = …", "choices": ["Rp4.500", "Rp450", "Rp45.000"], "answer": 0 }
+  ],
+  "remedial": [
+    { "title": "Persen = per seratus", "body": "20% artinya 20 dari 100. Jadi 20% = 20/100 = 0,2." },
+    { "title": "Mencari persen dari harga", "body": "10% dari Rp50.000: bagi 100 dulu (Rp500), lalu × 10 = Rp5.000." },
+    { "title": "Persen ke desimal", "body": "Bagi 100 = geser koma 2 langkah ke kiri. 12,5% → 0,125." }
+  ]
+}

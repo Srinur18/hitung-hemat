@@ -1,0 +1,559 @@
+{
+  "version": "0.1.0",
+  "distractors": [
+    {
+      "text": "Pada tanggal {tgl|none}, Dina pergi ke pusat belanja bersama {teman|none} temannya. ",
+      "vars": { "tgl": { "range": [2, 28, 1] }, "teman": { "range": [2, 5, 1] } }
+    },
+    {
+      "text": "Toko buka pukul {jam|none}.00 dan sudah ada {antre|none} orang mengantre. ",
+      "vars": { "jam": { "range": [7, 10, 1] }, "antre": { "range": [5, 30, 1] } }
+    }
+  ],
+  "modules": [
+    {
+      "id": "M1",
+      "title": "Apa itu Diskon?",
+      "goal": "Melihat diskon pada struk belanja.",
+      "scene": "priceTag",
+      "stages": [
+        { "kind": "explore" },
+        { "kind": "worked", "template": "m1-t1" },
+        { "kind": "independent", "templates": ["m1-t1"], "count": 3 },
+        { "kind": "explain", "cards": "M3" }
+      ]
+    },
+    {
+      "id": "M2",
+      "title": "Menghitung Besar Diskon",
+      "goal": "Menghitung rupiah diskon dari persen.",
+      "scene": "hundredCubes",
+      "stages": [
+        { "kind": "worked", "template": "m2-t1" },
+        { "kind": "completion", "template": "m2-t1" },
+        { "kind": "independent", "templates": ["m2-t1"], "count": 4 },
+        { "kind": "transfer", "template": "m2-t1" }
+      ]
+    },
+    {
+      "id": "M3",
+      "title": "Harga Akhir",
+      "goal": "Menghitung harga yang dibayar setelah diskon.",
+      "scene": "priceTag",
+      "stages": [
+        { "kind": "worked", "template": "m3-t1" },
+        { "kind": "completion", "template": "m3-t1" },
+        { "kind": "independent", "templates": ["m3-t1"], "count": 4 },
+        { "kind": "transfer", "template": "m3-t1" },
+        { "kind": "explain", "cards": "M3" }
+      ]
+    },
+    {
+      "id": "M4",
+      "title": "Persen Berkoma",
+      "goal": "Menghitung diskon 12,5%, 7,5%, dan sejenisnya.",
+      "scene": "hundredCubes",
+      "stages": [
+        { "kind": "worked", "template": "m4-t1" },
+        { "kind": "completion", "template": "m4-t1" },
+        { "kind": "independent", "templates": ["m4-t1"], "count": 4 },
+        { "kind": "transfer", "template": "m4-t1" }
+      ]
+    },
+    {
+      "id": "M5",
+      "title": "Diskon Bertingkat",
+      "goal": "Memahami mengapa 50% + 20% bukan 70%.",
+      "scene": "stacked",
+      "stages": [
+        { "kind": "worked", "template": "m5-t1" },
+        { "kind": "completion", "template": "m5-t1" },
+        { "kind": "independent", "templates": ["m5-t1"], "count": 4 },
+        { "kind": "transfer", "template": "m5-t1" },
+        { "kind": "explain", "cards": "M5" }
+      ]
+    },
+    {
+      "id": "M6",
+      "title": "Soal Terbalik",
+      "goal": "Mencari harga awal atau persen diskon.",
+      "scene": "barModel",
+      "stages": [
+        { "kind": "worked", "template": "m6-t1" },
+        { "kind": "worked", "template": "m6-t2" },
+        { "kind": "completion", "template": "m6-t1" },
+        { "kind": "independent", "templates": ["m6-t1", "m6-t2"], "count": 4 },
+        { "kind": "transfer", "template": "m6-t2" }
+      ]
+    },
+    {
+      "id": "M7",
+      "title": "Bandingkan & Putuskan",
+      "goal": "Memilih promo yang paling hemat.",
+      "scene": "compare",
+      "stages": [
+        { "kind": "worked", "template": "m7-t1" },
+        { "kind": "independent", "templates": ["m7-t1", "m7-t2"], "count": 4 },
+        { "kind": "transfer", "template": "m7-t1" },
+        { "kind": "explain", "cards": "M7" }
+      ]
+    }
+  ],
+  "templates": {
+    "m1-t1": {
+      "process": "employ",
+      "items": ["Kaos", "Topi", "Buku tulis", "Pensil warna"],
+      "vars": {
+        "price": { "range": [10000, 100000, 10000] },
+        "pct": { "choices": [1000, 2000, 5000] }
+      },
+      "text": "Struk belanja: {item} {price|price}, diskon {pct|percent}. Berapa yang harus dibayar?",
+      "boxes": { "awal": "price", "diskon": "disc", "akhir": "final" },
+      "steps": [
+        {
+          "id": "s1", "label": "Cari besar diskon", "role": "discount", "input": "rupiah",
+          "compute": { "fn": "discountAmount", "args": ["price", "pct"] }, "saveAs": "disc",
+          "formula": "Besar diskon = persen diskon × harga awal",
+          "worked": "{pct|percent} × {price|price} = {pct|frac} × {price|price} = {disc|discount}",
+          "hints": [
+            "Yang dicari dulu: besar diskonnya dalam rupiah.",
+            "Hitung {pct|percent} dari {price|price}.",
+            "{pct|frac} × {price|price} = ___"
+          ],
+          "mc": ["MC3"]
+        },
+        {
+          "id": "s2", "label": "Hitung harga akhir", "role": "result", "input": "rupiah",
+          "compute": { "fn": "subtract", "args": ["price", "disc"] }, "saveAs": "final",
+          "formula": "Harga akhir = harga awal − besar diskon",
+          "worked": "{price|price} − {disc|discount} = {final|result}",
+          "hints": [
+            "Diskon membuat harga jadi lebih murah. Apa yang harus dilakukan pada harga awal?",
+            "Kurangi harga awal dengan besar diskon.",
+            "{price|price} − {disc|discount} = ___"
+          ],
+          "mc": ["MC1", "MC5"]
+        }
+      ],
+      "sanity": { "left": "final", "op": "<", "right": "price" }
+    },
+    "m2-t1": {
+      "process": "employ",
+      "items": ["Sepatu", "Tas sekolah", "Jaket", "Helm", "Botol minum"],
+      "vars": {
+        "price": { "range": [50000, 300000, 10000] },
+        "pct": { "choices": [1000, 2000, 2500, 3000, 4000, 5000] }
+      },
+      "text": "{item} seharga {price|price} mendapat [[rabat]] {pct|percent}. Berapa besar diskonnya?",
+      "boxes": { "awal": "price", "diskon": "disc", "akhir": null },
+      "steps": [
+        {
+          "id": "s1", "label": "Cari besar diskon", "role": "discount", "input": "rupiah",
+          "compute": { "fn": "discountAmount", "args": ["price", "pct"] }, "saveAs": "disc",
+          "formula": "Besar diskon = persen diskon × harga awal",
+          "worked": "{pct|percent} × {price|price} = {pct|frac} × {price|price} = {disc|discount}",
+          "hints": [
+            "Persen artinya 'per seratus'. {pct|percent} = {pct|frac}.",
+            "Kalikan {pct|frac} dengan harga awal {price|price}.",
+            "{price|price} ÷ 100 × {pct|plainpct} = ___"
+          ],
+          "mc": ["MC3"]
+        }
+      ]
+    },
+    "m3-t1": {
+      "process": "employ",
+      "items": ["Baju", "Celana", "Sepatu", "Tas", "Jaket", "HP bekas"],
+      "vars": {
+        "price": { "range": [50000, 400000, 10000] },
+        "pct": { "choices": [1000, 1500, 2000, 2500, 3000, 4000] }
+      },
+      "text": "{item} seharga {price|price} diberi [[potongan-harga]] {pct|percent}. Berapa harga yang harus dibayar?",
+      "boxes": { "awal": "price", "diskon": "disc", "akhir": "final" },
+      "steps": [
+        {
+          "id": "s1", "label": "Cari besar diskon", "role": "discount", "input": "rupiah",
+          "compute": { "fn": "discountAmount", "args": ["price", "pct"] }, "saveAs": "disc",
+          "formula": "Besar diskon = persen diskon × harga awal",
+          "worked": "{pct|frac} × {price|price} = {disc|discount}",
+          "hints": [
+            "Apa yang dicari lebih dulu: besar diskon atau harga akhir?",
+            "Langkah 1: hitung {pct|percent} dari {price|price}.",
+            "{pct|frac} × {price|price} = ___"
+          ],
+          "mc": ["MC3"]
+        },
+        {
+          "id": "s2", "label": "Hitung harga akhir", "role": "result", "input": "rupiah",
+          "compute": { "fn": "subtract", "args": ["price", "disc"] }, "saveAs": "final",
+          "formula": "Harga akhir = harga awal − besar diskon",
+          "worked": "{price|price} − {disc|discount} = {final|result}",
+          "hints": [
+            "Yang ditanya: harga yang dibayar, bukan besar diskonnya.",
+            "Langkah 2: kurangi harga awal dengan besar diskon.",
+            "{price|price} − {disc|discount} = ___"
+          ],
+          "mc": ["MC1", "MC5"]
+        }
+      ],
+      "sanity": { "left": "final", "op": "<", "right": "price" }
+    },
+    "m4-t1": {
+      "process": "employ",
+      "items": ["Kipas angin", "Sepeda", "Rice cooker", "Lemari kecil"],
+      "vars": {
+        "price": { "range": [80000, 480000, 8000] },
+        "pct": { "choices": [1250, 750, 1750, 2250] }
+      },
+      "derived": {
+        "pctX10": { "fn": "mul", "args": ["pct", 10] },
+        "pctD10": { "fn": "div", "args": ["pct", 10] }
+      },
+      "text": "{item} seharga {price|price} diskon {pct|percent}. Berapa harga yang dibayar?",
+      "boxes": { "awal": "price", "diskon": "disc", "akhir": "final" },
+      "steps": [
+        {
+          "id": "s0", "label": "Ubah persen ke desimal", "role": "percent", "input": "choice",
+          "formula": "Persen ÷ 100 = desimal",
+          "worked": "{pct|percent} = {pct|plainpct} ÷ 100 = {pct|dec}",
+          "options": [
+            { "text": "{pct|dec}", "correct": true },
+            { "text": "{pctX10|dec}", "mc": "MC3" },
+            { "text": "{pctD10|dec}", "mc": "MC3" }
+          ],
+          "hints": [
+            "Persen artinya dibagi 100.",
+            "Bagi {pct|plainpct} dengan 100: koma bergeser 2 angka ke kiri.",
+            "{pct|plainpct} ÷ 100 = 0,___"
+          ]
+        },
+        {
+          "id": "s1", "label": "Cari besar diskon", "role": "discount", "input": "rupiah",
+          "compute": { "fn": "discountAmount", "args": ["price", "pct"] }, "saveAs": "disc",
+          "formula": "Besar diskon = desimal × harga awal",
+          "worked": "{pct|dec} × {price|price} = {disc|discount}",
+          "hints": [
+            "Pakai bentuk desimal yang tadi kamu pilih.",
+            "Kalikan {pct|dec} dengan {price|price}.",
+            "Trik: {price|price} ÷ 1.000 × {pct|milli} = ___"
+          ],
+          "mc": ["MC3"]
+        },
+        {
+          "id": "s2", "label": "Hitung harga akhir", "role": "result", "input": "rupiah",
+          "compute": { "fn": "subtract", "args": ["price", "disc"] }, "saveAs": "final",
+          "formula": "Harga akhir = harga awal − besar diskon",
+          "worked": "{price|price} − {disc|discount} = {final|result}",
+          "hints": [
+            "Yang ditanya: harga yang dibayar.",
+            "Kurangi harga awal dengan besar diskon.",
+            "{price|price} − {disc|discount} = ___"
+          ],
+          "mc": ["MC1", "MC5"]
+        }
+      ],
+      "sanity": { "left": "final", "op": "<", "right": "price" }
+    },
+    "m5-t1": {
+      "process": "reason",
+      "items": ["Jaket", "Sepatu", "Tas", "Kemeja"],
+      "vars": {
+        "price": { "range": [100000, 500000, 20000] },
+        "p1": { "choices": [5000, 3000, 2000] },
+        "p2": { "choices": [2000, 1000, 5000] }
+      },
+      "derived": {
+        "sum": { "fn": "add", "args": ["p1", "p2"] },
+        "eff": { "fn": "effectiveBp", "args": ["p1", "p2"] }
+      },
+      "text": "{item} seharga {price|price} diskon {p1|percent} + {p2|percent}. Berapa harga yang dibayar?",
+      "boxes": { "awal": "price", "diskon": null, "akhir": "final" },
+      "steps": [
+        {
+          "id": "s1", "label": "Harga setelah diskon pertama", "role": "result", "input": "rupiah",
+          "compute": { "fn": "finalPrice", "args": ["price", "p1"] }, "saveAs": "after1",
+          "formula": "Diskon pertama dihitung dari harga awal",
+          "worked": "{price|price} − {p1|percent} × {price|price} = {after1|result}",
+          "hints": [
+            "Kerjakan diskon pertama saja dulu.",
+            "Hitung {p1|percent} dari {price|price}, lalu kurangi.",
+            "{price|price} − ({p1|frac} × {price|price}) = ___"
+          ],
+          "mc": ["MC1", "MC5"]
+        },
+        {
+          "id": "s2", "label": "Diskon kedua dari sisa harga", "role": "discount", "input": "rupiah",
+          "compute": { "fn": "discountAmount", "args": ["after1", "p2"] }, "saveAs": "disc2",
+          "formula": "Diskon kedua dihitung dari harga SETELAH diskon pertama",
+          "worked": "{p2|frac} × {after1|result} = {disc2|discount}",
+          "hints": [
+            "Diskon kedua bukan dari harga awal.",
+            "Hitung {p2|percent} dari {after1|result}.",
+            "{p2|frac} × {after1|result} = ___"
+          ]
+        },
+        {
+          "id": "s3", "label": "Hitung harga akhir", "role": "result", "input": "rupiah",
+          "compute": { "fn": "subtract", "args": ["after1", "disc2"] }, "saveAs": "final",
+          "formula": "Harga akhir = sisa harga − diskon kedua",
+          "worked": "{after1|result} − {disc2|discount} = {final|result}",
+          "hints": [
+            "Kurangi sisa harga dengan diskon kedua.",
+            "{after1|result} dikurangi {disc2|discount}.",
+            "{after1|result} − {disc2|discount} = ___"
+          ],
+          "mc": ["MC2", "MC5"]
+        },
+        {
+          "id": "s4", "label": "Berapa diskon totalnya?", "role": "percent", "input": "choice",
+          "formula": "Diskon total = (harga awal − harga akhir) ÷ harga awal",
+          "worked": "Diskon total {eff|percent}, bukan {sum|percent}, karena diskon kedua dihitung dari sisa.",
+          "options": [
+            { "text": "{eff|percent}", "correct": true },
+            { "text": "{sum|percent}", "mc": "MC2" }
+          ],
+          "hints": [
+            "Bandingkan harga akhir dengan harga awal.",
+            "Diskon kedua lebih kecil karena dihitung dari sisa harga.",
+            "Selisih harga awal dan akhir dibagi harga awal, lalu × 100%."
+          ]
+        }
+      ],
+      "sanity": { "left": "final", "op": "<", "right": "price" }
+    },
+    "m6-t1": {
+      "process": "formulate",
+      "items": ["Sepatu", "Tas", "Jam tangan", "Kemeja"],
+      "vars": {
+        "price": { "range": [50000, 500000, 10000] },
+        "pct": { "choices": [1000, 2000, 2500, 4000, 5000] }
+      },
+      "derived": {
+        "final": { "fn": "finalPrice", "args": ["price", "pct"] }
+      },
+      "text": "Setelah diskon {pct|percent}, {item} dibayar {final|result}. Berapa harga awalnya?",
+      "boxes": { "awal": "orig", "diskon": null, "akhir": "final" },
+      "steps": [
+        {
+          "id": "s1", "label": "Harga akhir = berapa persen harga awal?", "role": "percent", "input": "percent",
+          "compute": { "fn": "complementBp", "args": ["pct"] }, "saveAs": "rest",
+          "formula": "Harga awal = 100%. Sisa = 100% − persen diskon",
+          "worked": "100% − {pct|percent} = {rest|percent}",
+          "hints": [
+            "Harga awal selalu dianggap 100%.",
+            "Diskon {pct|percent} hilang. Sisanya berapa persen?",
+            "100% − {pct|percent} = ___%"
+          ]
+        },
+        {
+          "id": "s2", "label": "Cari harga awal (100%)", "role": "price", "input": "rupiah",
+          "compute": { "fn": "originalFromFinal", "args": ["final", "pct"] }, "saveAs": "orig",
+          "formula": "Harga awal = harga akhir ÷ sisa persen",
+          "worked": "{final|result} ÷ {rest|dec} = {orig|price}",
+          "hints": [
+            "{final|result} itu baru {rest|percent}. Kita cari 100%-nya.",
+            "Cari dulu 1%: {final|result} ÷ {rest|plainpct}. Lalu × 100.",
+            "{final|result} ÷ {rest|plainpct} × 100 = ___"
+          ],
+          "mc": ["MC4"]
+        }
+      ],
+      "sanity": { "left": "orig", "op": ">", "right": "final" }
+    },
+    "m6-t2": {
+      "process": "formulate",
+      "items": ["Celana", "Sepatu", "Kaos", "Tas"],
+      "vars": {
+        "price": { "range": [50000, 400000, 10000] },
+        "pct": { "choices": [1000, 2000, 2500, 3000, 4000, 5000] }
+      },
+      "derived": {
+        "final": { "fn": "finalPrice", "args": ["price", "pct"] }
+      },
+      "text": "{item} harga awalnya {price|price}, sekarang dijual {final|result}. Berapa persen diskonnya?",
+      "boxes": { "awal": "price", "diskon": "disc", "akhir": "final" },
+      "steps": [
+        {
+          "id": "s1", "label": "Cari besar diskon (Rp)", "role": "discount", "input": "rupiah",
+          "compute": { "fn": "subtract", "args": ["price", "final"] }, "saveAs": "disc",
+          "formula": "Besar diskon = harga awal − harga akhir",
+          "worked": "{price|price} − {final|result} = {disc|discount}",
+          "hints": [
+            "Berapa rupiah harga turun?",
+            "Kurangi harga awal dengan harga akhir.",
+            "{price|price} − {final|result} = ___"
+          ]
+        },
+        {
+          "id": "s2", "label": "Ubah ke persen", "role": "percent", "input": "percent",
+          "compute": { "fn": "percentFromPrices", "args": ["price", "final"] }, "saveAs": "ans",
+          "formula": "Persen diskon = besar diskon ÷ HARGA AWAL × 100%",
+          "worked": "{disc|discount} ÷ {price|price} × 100% = {ans|percent}",
+          "hints": [
+            "Persen diskon selalu dibandingkan dengan harga awal.",
+            "Bagi {disc|discount} dengan {price|price}, bukan dengan harga akhir.",
+            "{disc|discount} ÷ {price|price} × 100 = ___%"
+          ],
+          "mc": ["MC6"]
+        }
+      ]
+    },
+    "m7-t1": {
+      "process": "interpret",
+      "items": ["Sepatu", "Headset", "Tas", "Jaket"],
+      "vars": {
+        "price": { "range": [100000, 400000, 20000] },
+        "pA": { "choices": [2000, 2500, 3000] },
+        "ship": { "choices": [10000, 15000, 20000, 25000] },
+        "pB": { "choices": [1000, 1500, 2000] }
+      },
+      "text": "{item} {price|price}. Toko A: diskon {pA|percent} + ongkir {ship|price}. Toko B: diskon {pB|percent}, gratis ongkir. Mana yang lebih murah?",
+      "boxes": null,
+      "constraints": [["totalA", "!=", "finalB"]],
+      "steps": [
+        {
+          "id": "s1", "label": "Harga di Toko A (tanpa ongkir)", "role": "result", "input": "rupiah",
+          "compute": { "fn": "finalPrice", "args": ["price", "pA"] }, "saveAs": "finalA",
+          "formula": "Harga akhir = harga awal − diskon",
+          "worked": "{price|price} − {pA|percent} × {price|price} = {finalA|result}",
+          "hints": [
+            "Hitung Toko A dulu. Ongkir belakangan.",
+            "Cari {pA|percent} dari {price|price}, lalu kurangi.",
+            "{price|price} − ({pA|frac} × {price|price}) = ___"
+          ],
+          "mc": ["MC1", "MC5"]
+        },
+        {
+          "id": "s2", "label": "Total Toko A (+ ongkir)", "role": "result", "input": "rupiah",
+          "compute": { "fn": "add", "args": ["finalA", "ship"] }, "saveAs": "totalA",
+          "formula": "Total = harga akhir + ongkir",
+          "worked": "{finalA|result} + {ship|price} = {totalA|result}",
+          "hints": [
+            "Jangan lupa biaya tambahan.",
+            "Tambahkan ongkir ke harga Toko A.",
+            "{finalA|result} + {ship|price} = ___"
+          ]
+        },
+        {
+          "id": "s3", "label": "Harga di Toko B", "role": "result", "input": "rupiah",
+          "compute": { "fn": "finalPrice", "args": ["price", "pB"] }, "saveAs": "finalB",
+          "formula": "Harga akhir = harga awal − diskon",
+          "worked": "{price|price} − {pB|percent} × {price|price} = {finalB|result}",
+          "hints": [
+            "Sekarang Toko B. Tidak ada ongkir.",
+            "Cari {pB|percent} dari {price|price}, lalu kurangi.",
+            "{price|price} − ({pB|frac} × {price|price}) = ___"
+          ],
+          "mc": ["MC1", "MC5"]
+        },
+        {
+          "id": "s4", "label": "Pilih yang lebih hemat", "role": "result", "input": "choice",
+          "formula": "Bandingkan total yang benar-benar dibayar",
+          "worked": "Toko A {totalA|result}, Toko B {finalB|result}.",
+          "options": [
+            { "text": "Toko A", "correctIf": ["totalA", "<", "finalB"] },
+            { "text": "Toko B", "correctIf": ["finalB", "<", "totalA"] }
+          ],
+          "hints": [
+            "Bandingkan total bayar, bukan persen diskonnya.",
+            "Toko A {totalA|result}, Toko B {finalB|result}.",
+            "Mana angka yang lebih kecil?"
+          ]
+        }
+      ]
+    },
+    "m7-t2": {
+      "process": "interpret",
+      "scene": "priceTag",
+      "items": ["Paket ayam geprek", "Pizza", "Martabak", "Paket nasi"],
+      "vars": {
+        "price": { "range": [40000, 200000, 10000] },
+        "pct": { "choices": [1000, 2000, 2500, 5000] },
+        "tax": { "choices": [1000, 1100] }
+      },
+      "text": "{item} {price|price} diskon {pct|percent}. Lalu ada pajak {tax|percent} dari harga setelah diskon. Berapa total bayar?",
+      "boxes": { "awal": "price", "diskon": "disc", "akhir": "final" },
+      "steps": [
+        {
+          "id": "s1", "label": "Cari besar diskon", "role": "discount", "input": "rupiah",
+          "compute": { "fn": "discountAmount", "args": ["price", "pct"] }, "saveAs": "disc",
+          "formula": "Besar diskon = persen diskon × harga awal",
+          "worked": "{pct|frac} × {price|price} = {disc|discount}",
+          "hints": [
+            "Diskon dulu, pajak belakangan.",
+            "Hitung {pct|percent} dari {price|price}.",
+            "{pct|frac} × {price|price} = ___"
+          ],
+          "mc": ["MC3"]
+        },
+        {
+          "id": "s2", "label": "Harga setelah diskon", "role": "result", "input": "rupiah",
+          "compute": { "fn": "subtract", "args": ["price", "disc"] }, "saveAs": "final",
+          "formula": "Harga setelah diskon = harga awal − besar diskon",
+          "worked": "{price|price} − {disc|discount} = {final|result}",
+          "hints": [
+            "Kurangi harga awal dengan diskon.",
+            "{price|price} dikurangi {disc|discount}.",
+            "{price|price} − {disc|discount} = ___"
+          ],
+          "mc": ["MC1", "MC5"]
+        },
+        {
+          "id": "s3", "label": "Hitung pajak", "role": "discount", "input": "rupiah",
+          "compute": { "fn": "discountAmount", "args": ["final", "tax"] }, "saveAs": "taxRp",
+          "formula": "Pajak = persen pajak × harga setelah diskon",
+          "worked": "{tax|frac} × {final|result} = {taxRp|discount}",
+          "hints": [
+            "Pajak dihitung dari harga SETELAH diskon.",
+            "Hitung {tax|percent} dari {final|result}.",
+            "{tax|frac} × {final|result} = ___"
+          ]
+        },
+        {
+          "id": "s4", "label": "Total bayar", "role": "result", "input": "rupiah",
+          "compute": { "fn": "add", "args": ["final", "taxRp"] }, "saveAs": "total",
+          "formula": "Total = harga setelah diskon + pajak",
+          "worked": "{final|result} + {taxRp|discount} = {total|result}",
+          "hints": [
+            "Pajak menambah yang harus dibayar.",
+            "Tambahkan pajak ke harga setelah diskon.",
+            "{final|result} + {taxRp|discount} = ___"
+          ]
+        }
+      ],
+      "sanity": { "left": "total", "op": "<", "right": "price" }
+    }
+  },
+  "explain": {
+    "M3": {
+      "prompt": "Bantu temanmu! Ketuk langkah sesuai urutan.",
+      "cards": [
+        "Tandai harga awal dan persen diskon",
+        "Hitung besar diskon = persen × harga awal",
+        "Kurangi harga awal dengan besar diskon",
+        "Cek: harga akhir lebih murah?"
+      ],
+      "distractors": ["Tambahkan diskon ke harga awal"]
+    },
+    "M5": {
+      "prompt": "Urutkan cara menghitung diskon bertingkat.",
+      "cards": [
+        "Hitung diskon pertama dari harga awal",
+        "Cari sisa harga setelah diskon pertama",
+        "Hitung diskon kedua dari sisa harga",
+        "Kurangi sisa harga dengan diskon kedua"
+      ],
+      "distractors": ["Jumlahkan kedua persen diskon"]
+    },
+    "M7": {
+      "prompt": "Urutkan cara memilih promo paling hemat.",
+      "cards": [
+        "Hitung harga akhir di setiap toko",
+        "Tambahkan biaya lain (ongkir/pajak)",
+        "Bandingkan total yang dibayar",
+        "Pilih total yang paling kecil"
+      ],
+      "distractors": ["Pilih persen diskon yang paling besar"]
+    }
+  }
+}

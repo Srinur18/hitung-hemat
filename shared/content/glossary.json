@@ -1,0 +1,8 @@
+{
+  "rabat": { "term": "Rabat", "meaning": "Sama dengan diskon: potongan harga dari penjual." },
+  "potongan-harga": { "term": "Potongan harga", "meaning": "Sama dengan diskon. Harga dikurangi sejumlah rupiah." },
+  "potongan-kotor": { "term": "Potongan kotor", "meaning": "Diskon yang dihitung dari harga awal, sebelum biaya lain." },
+  "harga-bandrol": { "term": "Harga bandrol", "meaning": "Harga awal yang tertulis di label, sebelum diskon." },
+  "harga-bersih": { "term": "Harga bersih", "meaning": "Harga akhir yang dibayar setelah diskon." },
+  "persen": { "term": "Persen (%)", "meaning": "Per seratus. 20% artinya 20 dari setiap 100." }
+}
