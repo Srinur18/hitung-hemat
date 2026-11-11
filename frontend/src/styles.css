@@ -1,41 +1,30 @@
 /* Token desain (design.md §2). Warna semantik HANYA untuk peran besaran. */
+/* Tema cerah: pink + hijau pastel. Warna peran besaran (price/percent/discount/result)
+   tetap dipertahankan & digelapkan sedikit agar kontras ≥ 4.5:1 di atas latar pastel. */
 :root {
-  --c-price: #1d5fd1;
-  --c-percent: #c25a00;
+  --c-price: #1a56c4;
+  --c-percent: #9a4600;
   --c-discount: #b3261e;
-  --c-result: #1b7f3b;
-  --c-bg: #ffffff;
-  --c-surface: #f4f6f8;
-  --c-surface-3d: #c9d1da;
-  --c-text: #1a1c1e;
-  --c-muted: #5f6670;
-  --c-focus: #6b4eff;
-  --c-line: #dde2e7;
-  --radius: 14px;
+  --c-result: #146c33;
+  --c-bg: #fff0f5; /* pink pastel */
+  --c-bg-2: #e6f7ea; /* hijau pastel */
+  --c-surface: #e3f6e8; /* kartu: hijau pastel */
+  --c-surface-2: #ffe1ec; /* aksen: pink pastel */
+  --c-surface-3d: #b9e4c6;
+  --c-text: #2a1d24;
+  --c-muted: #6b5a63;
+  --c-focus: #c42e66; /* pink tegas untuk tombol utama */
+  --c-line: #f2c4d5;
+  --radius: 16px;
   --font: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --c-price: #7fb0ff;
-    --c-percent: #ffb066;
-    --c-discount: #ff8a80;
-    --c-result: #7fd99a;
-    --c-bg: #121417;
-    --c-surface: #1e2227;
-    --c-surface-3d: #3a424c;
-    --c-text: #e6e8eb;
-    --c-muted: #9aa3ad;
-    --c-focus: #b3a4ff;
-    --c-line: #2e343b;
-    color-scheme: dark;
-  }
 }
 
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
 body {
-  background: var(--c-bg);
+  background: linear-gradient(165deg, #ffe3ee 0%, var(--c-bg) 40%, var(--c-bg-2) 100%) fixed;
+  background-color: var(--c-bg);
   color: var(--c-text);
   font-family: var(--font);
   font-size: 16px;
@@ -45,7 +34,7 @@ body {
 button { font: inherit; color: inherit; }
 
 .screen { max-width: 520px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; padding: 0 16px 16px; }
-.header { position: sticky; top: 0; z-index: 2; background: var(--c-bg); display: flex; align-items: center; gap: 8px; min-height: 52px; border-bottom: 1px solid var(--c-line); margin: 0 -16px 12px; padding: 0 12px; }
+.header { position: sticky; top: 0; z-index: 2; background: rgb(255 227 238 / 0.92); backdrop-filter: blur(6px); display: flex; align-items: center; gap: 8px; min-height: 52px; border-bottom: 1px solid var(--c-line); margin: 0 -16px 12px; padding: 0 12px; }
 .header h1 { font-size: 17px; font-weight: 600; margin: 0; flex: 1; }
 .header .sub { font-size: 13px; color: var(--c-muted); }
 .icon-btn { min-width: 48px; min-height: 48px; border: 0; background: none; font-size: 20px; border-radius: 12px; }
@@ -63,7 +52,7 @@ h2 { font-size: 20px; font-weight: 600; margin: 4px 0 8px; }
 .btn-block { width: 100%; }
 .actions { display: flex; gap: 10px; margin-top: auto; padding-top: 12px; }
 .actions .btn { flex: 1; }
-.input { width: 100%; min-height: 52px; border-radius: 12px; border: 1.5px solid var(--c-line); background: var(--c-bg); padding: 0 14px; font-size: 20px; }
+.input { width: 100%; min-height: 52px; border-radius: 12px; border: 1.5px solid var(--c-line); background: #fff; padding: 0 14px; font-size: 20px; }
 
 /* ---- penanda angka (signaling) ---- */
 .n { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -86,7 +75,7 @@ h2 { font-size: 20px; font-weight: 600; margin: 4px 0 8px; }
 
 /* ---- diagram kotak (FR-21) ---- */
 .boxes { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 4px; text-align: center; }
-.box { border-radius: 10px; border: 2px solid; padding: 6px 4px; min-height: 58px; display: flex; flex-direction: column; justify-content: center; }
+.box { background: #fff; border-radius: 10px; border: 2px solid; padding: 6px 4px; min-height: 58px; display: flex; flex-direction: column; justify-content: center; }
 .box small { font-size: 11px; color: var(--c-muted); }
 .box b { font-size: 15px; font-variant-numeric: tabular-nums; }
 .box-price { border-color: var(--c-price); color: var(--c-price); }
@@ -100,7 +89,7 @@ h2 { font-size: 20px; font-weight: 600; margin: 4px 0 8px; }
 .step-title { font-size: 20px; font-weight: 600; }
 .done-steps { display: flex; flex-direction: column; gap: 4px; font-size: 15px; }
 .done-steps .ok::before { content: '✓ '; color: var(--c-result); font-weight: 700; }
-.answer { font-size: 32px; font-weight: 700; font-variant-numeric: tabular-nums; min-height: 56px; border-radius: 12px; border: 2px solid var(--c-line); display: flex; align-items: center; justify-content: flex-end; padding: 0 14px; }
+.answer { background: #fff; font-size: 32px; font-weight: 700; font-variant-numeric: tabular-nums; min-height: 56px; border-radius: 12px; border: 2px solid var(--c-line); display: flex; align-items: center; justify-content: flex-end; padding: 0 14px; }
 .answer.r-price { border-color: var(--c-price); }
 .answer.r-percent { border-color: var(--c-percent); }
 .answer.r-discount { border-color: var(--c-discount); }
@@ -114,7 +103,7 @@ h2 { font-size: 20px; font-weight: 600; margin: 4px 0 8px; }
 .formula summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 
 .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.numpad button { min-height: 52px; border-radius: 12px; border: 0; background: var(--c-surface); font-size: 22px; font-weight: 600; }
+.numpad button { min-height: 52px; border-radius: 12px; border: 0; background: var(--c-surface-2); font-size: 22px; font-weight: 600; }
 
 .options { display: flex; flex-direction: column; gap: 10px; }
 .option { min-height: 56px; border-radius: 14px; border: 2px solid var(--c-line); background: var(--c-surface); font-size: 20px; font-weight: 700; text-align: left; padding: 0 16px; }
@@ -122,7 +111,7 @@ h2 { font-size: 20px; font-weight: 600; margin: 4px 0 8px; }
 
 /* ---- sheet petunjuk ---- */
 .sheet-backdrop { position: fixed; inset: 0; background: rgb(0 0 0 / 0.35); z-index: 10; display: flex; align-items: flex-end; }
-.sheet { background: var(--c-bg); width: 100%; max-width: 520px; margin: 0 auto; border-radius: 20px 20px 0 0; padding: 18px 16px 20px; max-height: 80vh; overflow: auto; }
+.sheet { background: var(--c-bg); border-top: 4px solid var(--c-surface-3d); width: 100%; max-width: 520px; margin: 0 auto; border-radius: 20px 20px 0 0; padding: 18px 16px 20px; max-height: 80vh; overflow: auto; }
 .hint { border-left: 4px solid var(--c-percent); }
 
 /* ---- 3D ---- */

@@ -21,19 +21,22 @@ Dokumen ini menerjemahkan temuan wawancara dan Cognitive Load Theory menjadi kep
 
 Warna semantik **hanya** dipakai untuk peran besaran. Warna lain bersifat netral.
 
-| Token | Terang | Gelap | Peran | Penanda tambahan (buta warna) |
-|---|---|---|---|---|
-| `--c-price` | `#1D5FD1` | `#7FB0FF` | Harga awal | ikon 🏷 + garis bawah tebal |
-| `--c-percent` | `#C25A00` | `#FFB066` | Persen diskon | ikon % + garis bawah putus-putus |
-| `--c-discount` | `#B3261E` | `#FF8A80` | Besar diskon (Rp) | ikon ✂ |
-| `--c-result` | `#1B7F3B` | `#7FD99A` | Harga akhir / hasil | ikon ✓ + kotak |
-| `--c-bg` | `#FFFFFF` | `#121417` | Latar | — |
-| `--c-surface` | `#F4F6F8` | `#1E2227` | Kartu | — |
-| `--c-text` | `#1A1C1E` | `#E6E8EB` | Teks | — |
-| `--c-muted` | `#5F6670` | `#9AA3AD` | Teks sekunder | — |
-| `--c-focus` | `#6B4EFF` | `#B3A4FF` | Fokus/aksi utama | — |
+**Tema: cerah, pink + hijau pastel** (permintaan pemilik produk, 11 Nov 2026). Mode gelap dinonaktifkan agar tampilan selalu cerah.
 
-Semua pasangan teks/latar memenuhi kontras WCAG AA (≥ 4.5:1).
+| Token | Nilai | Peran | Penanda tambahan (buta warna) |
+|---|---|---|---|
+| `--c-price` | `#1A56C4` | Harga awal | ikon 🏷 + garis bawah tebal |
+| `--c-percent` | `#9A4600` | Persen diskon | ikon % + garis bawah putus-putus |
+| `--c-discount` | `#B3261E` | Besar diskon (Rp) | garis bawah titik-titik |
+| `--c-result` | `#146C33` | Harga akhir / hasil | kotak |
+| `--c-bg` → `--c-bg-2` | `#FFF0F5` → `#E6F7EA` | Latar: gradasi pink → hijau pastel | — |
+| `--c-surface` | `#E3F6E8` | Kartu (hijau pastel) | — |
+| `--c-surface-2` | `#FFE1EC` | Tombol angka (pink pastel) | — |
+| `--c-text` | `#2A1D24` | Teks | — |
+| `--c-muted` | `#6B5A63` | Teks sekunder | — |
+| `--c-focus` | `#C42E66` | Tombol utama (pink tegas, teks putih) | — |
+
+Kontras diperiksa: semua warna teks dan angka ≥ 5,3:1 di atas setiap latar pastel, dan teks putih pada tombol utama 5,34:1. Semuanya lolos WCAG AA.
 
 ## 3. Tipografi & Ukuran
 

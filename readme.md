@@ -78,6 +78,16 @@ Untuk mengaktifkan sinkronisasi, salin `.env.example` menjadi `.env` lalu isi `V
 
 ### 3. APK Android
 
+**Cara yang disarankan** (proyek ini ada di OneDrive): jalankan dari folder `APK` di Git Bash:
+
+```bash
+source ~/hh-tools/env.sh && bash scripts/build-apk.sh
+```
+
+Skrip ini menjalankan tes, membuat build, dan mengerjakan Gradle di `C:\Users\WINDOWS11\hh-build`. Hasilnya ditaruh di `release/`. Build sengaja dikerjakan di luar OneDrive, karena OneDrive mengunci folder yang sedang disinkronkan sehingga Capacitor dan Gradle gagal (`EPERM`).
+
+Cara manual (bila proyek **tidak** berada di OneDrive):
+
 ```bash
 cd frontend
 npm run android:init     # sekali saja: membuat folder android/
