@@ -34,7 +34,7 @@ Legenda: `[x]` selesai · `[ ]` belum · **TBD** = menunggu keputusan lewat inte
 
 ### Sprint 0 — Fondasi
 - [x] DV1 Proyek Vite + React (JavaScript) + Vitest — `frontend/`
-- [ ] DV2 `npm run android:init`, uji APK di HP nyata
+- [x] DV2 Proyek Android dibuat; APK debug v0.1.0 (4 MB) berhasil di-build — uji di HP nyata menyusul
 - [x] DV3 Token desain (CSS variables) + komponen dasar (`ui/components.jsx`)
 - [x] DV4 Dexie schema + `logEvent()` + sinkron + ekspor CSV
 - [x] DV4b Backend FastAPI + SQLite + endpoint sinkron/peneliti (21 tes pytest lulus)

@@ -17,13 +17,25 @@ Proyek ini dikembangkan dengan model ADDIE. Dasar perancangannya adalah wawancar
 - **Simulasi struk belanja**, **Jelaskan ke Teman**, dan **Cek kewajaran**.
 - **Pre/post-test literasi**, **skala usaha mental**, dan **ekspor CSV**. Data siswa hanya berupa kode, tanpa nama.
 
+## Unduh & Pasang APK
+
+APK siap pakai: [`release/HitungHemat-v0.1.0-debug.apk`](release/HitungHemat-v0.1.0-debug.apk) (4 MB, Android 5.1+).
+
+1. Kirim berkas APK ke HP (WhatsApp, Google Drive, atau kabel USB).
+2. Ketuk berkasnya. Bila muncul peringatan, izinkan **"Instal dari sumber tidak dikenal"** untuk aplikasi pembuka berkas tersebut.
+3. Buka **HitungHemat** dan masukkan kode siswa (mis. `S01`).
+
+> Ini build *debug* untuk uji coba (one-to-one & kelompok kecil). Untuk Google Play, perlu build *release* yang ditandatangani (lihat task.md DV25).
+
 ## Prasyarat
 
 | Alat | Versi | Catatan |
 |---|---|---|
 | Python | 3.11+ | Di Windows, jalankan dengan perintah `py` |
 | Node.js | 20 LTS | Pasang dengan `winget install OpenJS.NodeJS.LTS` |
-| Android Studio | terbaru | Untuk membuat APK (SDK 34, JDK 17) |
+| JDK + Android SDK | JDK 17, SDK 34 | Lewat Android Studio, atau versi portable (lihat di bawah) |
+
+Di laptop pengembang, alat-alat ini sudah dipasang versi *portable* di `C:\Users\WINDOWS11\hh-tools` (Node 22, JDK 17, Android SDK 34). Untuk memakainya di Git Bash, jalankan `source ~/hh-tools/env.sh`.
 
 ## Menjalankan
 
