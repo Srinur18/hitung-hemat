@@ -146,7 +146,7 @@ const TABS = ['material', 'practice', 'test'];
  * Tab Latihan berisi modul M1–M7 (fitur lama) + Latihan Literasi per indikator.
  */
 export function LearningMap({
-  progress, profile, tab = 'practice', onTab = () => {}, onOpen, onPosttest, onResearch,
+  progress, profile, tab = 'practice', onTab = () => {}, onOpen, onPosttest, onResearch, title = t.mapTitle,
   onMaterial = () => {}, onLiteracyPractice = () => {}, onLiteracyTest = () => {}, onLiteracyResult = () => {},
 }) {
   const allDone = modules.every((m) => progress[m.id]?.completed);
@@ -160,7 +160,7 @@ export function LearningMap({
   return (
     <div className="screen">
       <Header
-        title={t.mapTitle}
+        title={title}
         sub={`Kode: ${profile.studentCode}`}
         right={<button className="icon-btn" onClick={onResearch} aria-label={t.research}>⚙</button>}
       />

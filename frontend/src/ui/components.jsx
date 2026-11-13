@@ -1,12 +1,17 @@
 // Komponen dasar. Aturan: satu langkah per layar, ≤ 3 aksi utama, tanpa dekorasi.
-import { useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { glossary } from '../content/index.js';
 import { formatValue } from '../domain/money.js';
 import { parseText } from '../domain/text.js';
 import { t } from '../i18n/id.js';
+import Icon from './Icon.jsx';
 import Mascot from './Mascot.jsx';
 
+/** Disediakan App: fungsi kembali ke Beranda. Header menampilkan tombol 🏠 di setiap halaman. */
+export const HomeContext = createContext(null);
+
 export function Header({ title, sub, onBack, right }) {
+  const goHome = useContext(HomeContext);
   return (
     <header className="header">
       {onBack ? (
@@ -18,6 +23,11 @@ export function Header({ title, sub, onBack, right }) {
         {title}
         {sub && <div className="sub">{sub}</div>}
       </h1>
+      {goHome && (
+        <button className="icon-btn" onClick={goHome} aria-label={t.home}>
+          <Icon name="home" />
+        </button>
+      )}
       {right}
     </header>
   );

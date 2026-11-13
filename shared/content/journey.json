@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "note": "Perjalanan belajar 'Jalan Ruko Hemat' (menu Mulai Belajar). Satu tahap per layar; teks ≤ 40 kata, kalimat ≤ 15 kata. Angka turunan dihitung fungsi domain.",
+  "stages": [
+    {
+      "id": "J1",
+      "title": "Memasuki Jalan Ruko Hemat",
+      "body": "Selamat datang di Jalan Ruko Hemat! Banyak toko di sini memberi diskon. Tugasmu: menjadi pembeli cerdas yang tahu harga sebenarnya.",
+      "vars": {},
+      "lines": []
+    },
+    {
+      "id": "J2",
+      "title": "Toko Baju",
+      "body": "Kaos ini berharga awal {h|price}. Labelnya bertuliskan diskon {p|percent}. Diskon atau [[rabat]] adalah potongan harga dari penjual.",
+      "vars": { "h": 80000, "p": 2500 },
+      "derived": {},
+      "lines": ["Diskon 25% artinya setiap Rp100 dipotong Rp25.", "Jadi harga yang dibayar pasti lebih murah."]
+    },
+    {
+      "id": "J3",
+      "title": "Toko Alat Sekolah",
+      "body": "Tas sekolah berharga awal {h|price} dengan diskon {p|percent}. Berapa rupiah potongannya?",
+      "formula": "Besar diskon = persen diskon × harga awal",
+      "vars": { "h": 150000, "p": 2000 },
+      "derived": { "d": { "fn": "discountAmount", "args": ["h", "p"] } },
+      "lines": ["20/100 × {h|price} = {d|discount}", "Potongan harga tas = {d|discount}."]
+    },
+    {
+      "id": "J4",
+      "title": "Di Meja Kasir",
+      "body": "Bu Kucing si kasir menghitung harga yang harus kamu bayar. Itulah harga akhir.",
+      "formula": "Harga akhir = harga awal − besar diskon",
+      "vars": { "h": 150000, "p": 2000 },
+      "derived": { "d": { "fn": "discountAmount", "args": ["h", "p"] }, "f": { "fn": "finalPrice", "args": ["h", "p"] } },
+      "lines": ["{h|price} − {d|discount} = {f|result}", "Cek: {f|result} lebih kecil dari harga awal. Masuk akal!"]
+    },
+    {
+      "id": "J5",
+      "title": "Membandingkan Dua Toko",
+      "body": "Sepatu yang sama dijual di dua toko. Toko A: {hA|price}, diskon {pA|percent}. Toko B: {hB|price}, diskon {pB|percent}. Mana yang lebih hemat?",
+      "vars": { "hA": 200000, "pA": 3000, "hB": 180000, "pB": 2000 },
+      "derived": {
+        "fA": { "fn": "finalPrice", "args": ["hA", "pA"] },
+        "fB": { "fn": "finalPrice", "args": ["hB", "pB"] },
+        "sel": { "fn": "subtract", "args": ["fB", "fA"] }
+      },
+      "lines": ["Harga akhir Toko A = {fA|result}.", "Harga akhir Toko B = {fB|result}.", "Toko A lebih hemat {sel|rupiah}. Selalu hitung harga akhirnya!"]
+    },
+    {
+      "id": "J6",
+      "title": "Perjalanan Selesai!",
+      "body": "Hebat, {name}! Kamu sudah menjelajahi Jalan Ruko Hemat. Sekarang ayo berlatih di Peta Belajar, lalu ikuti Kuis dan Tes.",
+      "vars": {},
+      "lines": []
+    }
+  ]
+}

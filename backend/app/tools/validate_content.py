@@ -10,7 +10,7 @@ sesuai rubrik) dan ringkasan materi (angka contoh selalu bulat).
 import sys
 
 from .. import content
-from ..domain.literacy import validate_literacy, validate_material
+from ..domain.literacy import validate_journey, validate_literacy, validate_material, validate_shop
 from ..domain.problems import validate_template
 
 
@@ -33,6 +33,10 @@ def main() -> int:
     errs += validate_literacy(lit)
     mat = content.load("material")
     errs += validate_material(mat)
+    jr = content.load("journey")
+    errs += validate_journey(jr)
+    shop = content.load("shop")
+    errs += validate_shop(shop)
     if errs:
         print("\n".join(errs))
         print(f"\nGAGAL: {len(errs)} masalah")
@@ -40,7 +44,8 @@ def main() -> int:
     print(
         f"OK: {len(templates)} template, {len(cur['modules'])} modul, "
         f"{len(lit['test'])} soal tes literasi (maks. {lit['maxScore']} poin), "
-        f"{len(lit['practice'])} soal latihan, {len(mat['topics'])} topik materi lolos pemeriksaan"
+        f"{len(lit['practice'])} soal latihan, {len(mat['topics'])} topik materi, "
+        f"{len(jr['stages'])} tahap perjalanan, {len(shop['products'])} barang simulasi lolos pemeriksaan"
     )
     return 0
 

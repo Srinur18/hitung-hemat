@@ -57,6 +57,24 @@ Pemilik produk meminta tampilan yang lebih ramai dan lucu, dengan referensi UI p
 - **Teks soal menempel di atas layar** saat menggulir, sehingga angka soal selalu terlihat ketika siswa mengetik jawaban (EL02, split-attention).
 - Font bulat dibundel offline: **Fredoka** (judul, tombol, angka) dan **Nunito** (isi).
 
+### 2.2 Dunia Toko "Jalan Ruko Hemat" (permintaan pemilik produk, 14 Nov 2026, v0.3)
+
+Pemilik produk meminta tema belajar lewat pengalaman berbelanja di ruko, dengan karakter kartun dan animasi ringan.
+
+| Layar | Isi | Batas CLT yang tetap dijaga |
+|---|---|---|
+| **Beranda** | Judul HITUNGHEMAT, slogan, ilustrasi 3 ruko (pintu membuka, pelanggan melambai, koin & bintang), 5 menu: Mulai Belajar, Materi, Simulasi Belanja, Kuis/Tes, Profil | Tidak ada tugas hitung. Label ruko memuat persen diskon (P3). |
+| **Mulai Belajar** | Identitas → sapaan "Halo, [nama]!" → perjalanan 6 tahap (gerbang, toko baju, alat sekolah, kasir, bandingkan 2 toko, garis finis) | Satu tahap per layar, maju/mundur manual (P7). Kamera bergeser hanya saat siswa menekan Lanjutkan. Rumus di layar yang sama (P5). |
+| **Simulasi Belanja** | Rak barang + kasir yang bertanya harga akhir (3 pilihan: benar, MC1, "persen dibaca rupiah") + struk keranjang | Umpan balik spesifik miskonsepsi (P13). Angka dari `domain/shop.js`. |
+| **Profil** | Avatar, nama, kelas, kode, nilai tes & kemajuan | — |
+| Mengerjakan soal | Tetap **tenang** (§2.1) | Tidak berubah |
+
+- **Karakter orisinal** (SVG, `ui/ShopArt.jsx`): kelinci pelanggan, kucing kasir bertopi, beruang pemilik toko berapron, penguin pelanggan. Kiko si Rubah tetap menjadi agen pedagogis.
+- **Ikon**: satu set garis bulat 24px (`ui/Icon.jsx`). Setiap halaman punya tombol **Beranda** (🏠) di header.
+- **Animasi** hanya CSS, berhenti bila *kurangi gerakan* aktif. Tidak ada animasi yang memindah tahap otomatis.
+- **Privasi**: *nama* dan *kelas* hanya disimpan di perangkat (profil lokal) untuk sapaan dan Profil. Keduanya **tidak** masuk event penelitian, CSV, atau server. Penelitian tetap memakai `studentCode`. Bila kode dikosongkan, aplikasi membuat kode anonim `HHxxxx`.
+- Laptop (≥ 960px): beranda dua kolom (ilustrasi kiri, menu kanan).
+
 ## 3. Tipografi & Ukuran
 
 | Elemen | Ukuran | Bobot |

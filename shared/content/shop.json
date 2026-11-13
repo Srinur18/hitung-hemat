@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "note": "Barang di Simulasi Belanja. Harga = Rupiah bulat, diskon = basis point. Validator memastikan besar diskon & harga akhir selalu bulat.",
+  "products": [
+    { "id": "kaos", "name": "Kaos", "shop": "Toko Baju", "kind": "baju", "price": 80000, "pct": 2500 },
+    { "id": "tas", "name": "Tas Sekolah", "shop": "Alat Sekolah", "kind": "tas", "price": 150000, "pct": 2000 },
+    { "id": "sepatu", "name": "Sepatu", "shop": "Toko Sepatu", "kind": "sepatu", "price": 240000, "pct": 1500 },
+    { "id": "eskrim", "name": "Es Krim Keluarga", "shop": "Toko Es Krim", "kind": "eskrim", "price": 48000, "pct": 1000 },
+    { "id": "roti", "name": "Paket Roti", "shop": "Toko Roti", "kind": "roti", "price": 36000, "pct": 2500 },
+    { "id": "buku", "name": "Paket Buku Tulis", "shop": "Alat Sekolah", "kind": "sekolah", "price": 45000, "pct": 2000 }
+  ]
+}

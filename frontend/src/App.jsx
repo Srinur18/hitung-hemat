@@ -1,25 +1,33 @@
-// Alur aplikasi: Masuk → Tes Awal → Cek Kesiapan (→ Bekal) → Peta Belajar ⇄ Modul → Tes Akhir.
-// Peta Belajar punya tiga tab: Materi (ringkasan + contoh bertahap), Latihan (modul M1–M7 +
-// Latihan Literasi per indikator), dan Tes (Tes Literasi Matematis 4 soal, maks. 24 poin).
+// Alur aplikasi (v0.3):
+//   Beranda ─┬─ Mulai Belajar → Identitas → Sapaan → Perjalanan "Jalan Ruko Hemat"
+//            │      → Tes Awal → Cek Kesiapan (→ Bekal) → Peta Belajar ⇄ Modul → Tes Akhir
+//            ├─ Materi → topik T1–T7
+//            ├─ Simulasi Belanja (kasir bertanya harga akhir)
+//            ├─ Kuis / Tes → Tes Literasi Matematis (4 soal, maks. 24 poin) & Tes Akhir
+//            └─ Profil (identitas & nilai)
+// Peta Belajar tetap punya tab Materi | Latihan | Tes. Setiap halaman punya tombol Beranda (HomeContext).
 import { useCallback, useEffect, useState } from 'react';
 import { assessment, diagnostic } from './content/index.js';
 import { getProfile, getProgress, resetProfile, saveProfile } from './data/db.js';
 import { logEvent, setStudent } from './data/events.js';
 import { syncEvents } from './data/sync.js';
+import { scoreTest } from './domain/literacy.js';
+import { Greeting, Home, Identity, Journey, MaterialHub, Profile, ShopSim } from './features/Home.jsx';
 import { LiteracyResult, LiteracyRunner, testItems } from './features/Literacy.jsx';
 import { MaterialTopic } from './features/Material.jsx';
 import ModuleRunner from './features/ModuleRunner.jsx';
-import { scoreTest } from './domain/literacy.js';
-import { LearningMap, Onboarding, Quiz, Remedial, ResearchPanel } from './features/Screens.jsx';
+import { LearningMap, Quiz, Remedial, ResearchPanel } from './features/Screens.jsx';
 import { t } from './i18n/id.js';
+import { HomeContext } from './ui/components.jsx';
 import Decor from './ui/Decor.jsx';
 
 const quietSync = () => syncEvents().catch(() => {});
+const NEEDS_PROFILE = new Set(['start', 'test', 'profile']);
 
 export default function App() {
   const [profile, setProfile] = useState(undefined); // undefined = memuat
   const [progress, setProgress] = useState({});
-  const [screen, setScreen] = useState({ name: 'map' });
+  const [screen, setScreen] = useState({ name: 'home' });
   const [tab, setTab] = useState(null); // null = pilih otomatis
   const [solving, setSolving] = useState(false); // sedang mengerjakan soal → hiasan diredupkan
 
@@ -40,11 +48,29 @@ export default function App() {
     })();
   }, [refresh]);
 
-  const update = async (patch) => setProfile(await saveProfile(patch));
-  const toMap = () => setScreen({ name: 'map' });
+  const update = async (patch) => {
+    const next = await saveProfile(patch);
+    setProfile(next);
+    return next;
+  };
+  const go = (name, extra = {}) => {
+    window.scrollTo?.(0, 0);
+    setScreen({ name, ...extra });
+  };
+  const goHome = () => {
+    setSolving(false);
+    go('home');
+  };
+
+  /** Menu beranda. Mulai Belajar, Kuis/Tes, dan Profil butuh identitas siswa dulu. */
+  const openMenu = (key) => {
+    if (NEEDS_PROFILE.has(key) && !profile?.studentCode) return go('identity', { next: key });
+    const target = { start: 'greeting', material: 'material-hub', sim: 'sim', test: 'testhub', profile: 'profile' }[key];
+    return go(target);
+  };
 
   /** Tes/latihan literasi selesai: hitung skor lewat domain, simpan, catat event penelitian. */
-  const finishLiteracy = async (mode, items, { answers, texts }) => {
+  const finishLiteracy = async (mode, items, { answers, texts }, from) => {
     const r = scoreTest(items, answers);
     logEvent('literacy_result', {
       problemId: items.length === 1 ? items[0].id : 'test',
@@ -58,26 +84,137 @@ export default function App() {
       await update({ literacyPractice: { ...(profile.literacyPractice ?? {}), [items[0].id]: { total: r.total, max: r.max } } });
     }
     setSolving(false);
-    setScreen({ name: 'literacy-result', mode, items, answers, texts });
+    go('literacy-result', { mode, items, answers, texts, from });
     quietSync();
   };
 
+  const mapProps = (forcedTab) => ({
+    progress,
+    profile,
+    tab: forcedTab ?? tab ?? (Object.keys(progress).length || profile.literacy ? 'practice' : 'material'),
+    onTab: (k) => {
+      setTab(k);
+      if (forcedTab) go('map');
+    },
+    onMaterial: (index) => go('material', { index, from: 'map' }),
+    onLiteracyPractice: (item) => {
+      setSolving(true);
+      go('literacy', { mode: 'practice', items: [item], run: Date.now(), from: 'map' });
+    },
+    onLiteracyTest: () => {
+      setSolving(true);
+      go('literacy', { mode: 'test', items: testItems, run: Date.now(), from: forcedTab ? 'testhub' : 'map' });
+    },
+    onLiteracyResult: () =>
+      go('literacy-result', {
+        mode: 'test',
+        items: testItems,
+        answers: profile.literacy.last.answers,
+        texts: profile.literacy.last.texts,
+        from: forcedTab ? 'testhub' : 'map',
+      }),
+    onOpen: (module) => go('module', { module }),
+    onPosttest: () => go('posttest'),
+    onResearch: () => go('research'),
+  });
+
   const view = (() => {
     if (profile === undefined) return <div className="screen" aria-busy="true" />;
+    const s = screen.name;
 
-    if (!profile?.studentCode) {
+    if (s === 'home') return <Home profile={profile} onMenu={openMenu} />;
+    if (s === 'material-hub') return <MaterialHub onOpen={(index) => go('material', { index, from: 'material-hub' })} />;
+    if (s === 'material') {
       return (
-        <Onboarding
-          onDone={async (code) => {
-            setStudent(code);
-            await update({ studentCode: code, consentAt: new Date().toISOString() });
-            logEvent('session_start', { payload: { firstRun: true } });
-            await refresh({ studentCode: code });
+        <MaterialTopic
+          index={screen.index}
+          onIndex={(index) => go('material', { index, from: screen.from })}
+          onBack={() => go(screen.from ?? 'map')}
+        />
+      );
+    }
+    if (s === 'sim') return <ShopSim />;
+
+    if (s === 'identity' || !profile?.studentCode) {
+      return (
+        <Identity
+          profile={profile}
+          onBack={goHome}
+          onSave={async (patch) => {
+            const isNew = !profile?.studentCode;
+            const p = await update(patch);
+            setStudent(p.studentCode);
+            if (isNew) logEvent('session_start', { payload: { firstRun: true } });
+            await refresh(p);
+            const next = screen.next ?? 'start';
+            go({ start: 'greeting', test: 'testhub', profile: 'profile' }[next] ?? 'greeting');
           }}
         />
       );
     }
 
+    if (s === 'greeting') return <Greeting profile={profile} onContinue={() => go('journey')} onMap={() => go('map')} />;
+    if (s === 'journey') {
+      return (
+        <Journey
+          profile={profile}
+          onDone={async () => {
+            await update({ journeyDone: true });
+            go('map');
+          }}
+        />
+      );
+    }
+    if (s === 'profile') return <Profile profile={profile} progress={progress} onEdit={() => go('identity', { next: 'profile' })} />;
+    if (s === 'testhub') return <LearningMap {...mapProps('test')} title={t.menu.test.label} />;
+
+    if (s === 'literacy') {
+      return (
+        <LiteracyRunner
+          key={`${screen.mode}-${screen.items.map((i) => i.id).join()}-${screen.run}`}
+          mode={screen.mode}
+          items={screen.items}
+          onFinish={(res) => finishLiteracy(screen.mode, screen.items, res, screen.from)}
+          onExit={() => {
+            setSolving(false);
+            go(screen.from ?? 'map');
+          }}
+        />
+      );
+    }
+
+    if (s === 'literacy-result') {
+      const startAgain = () => {
+        setSolving(true);
+        go('literacy', { mode: screen.mode, items: screen.items, run: Date.now(), from: screen.from });
+      };
+      return (
+        <LiteracyResult
+          mode={screen.mode}
+          items={screen.items}
+          answers={screen.answers}
+          texts={screen.texts}
+          onRetry={startAgain}
+          onBack={() => go(screen.from ?? 'map')}
+        />
+      );
+    }
+
+    if (s === 'research') {
+      return (
+        <ResearchPanel
+          onBack={() => go('map')}
+          onSwitchStudent={async () => {
+            await resetProfile();
+            setProgress({});
+            setProfile(null);
+            go('home');
+          }}
+        />
+      );
+    }
+
+    // ---- Peta Belajar & alur penelitian (tidak berubah) ----
     if (!profile.pretestDone) {
       return (
         <Quiz
@@ -107,7 +244,7 @@ export default function App() {
       );
     }
 
-    if (screen.name === 'module') {
+    if (s === 'module') {
       return (
         <ModuleRunner
           module={screen.module}
@@ -117,14 +254,14 @@ export default function App() {
           onExit={async () => {
             setSolving(false);
             await refresh(profile);
-            setScreen({ name: 'map' });
+            go('map');
             quietSync();
           }}
         />
       );
     }
 
-    if (screen.name === 'posttest') {
+    if (s === 'posttest') {
       return (
         <Quiz
           key="post"
@@ -134,80 +271,21 @@ export default function App() {
           intro={t.testIntro}
           onDone={async (score) => {
             await update({ posttestDone: true, postScore: score });
-            setScreen({ name: 'map' });
+            go('map');
             quietSync();
           }}
         />
       );
     }
 
-    if (screen.name === 'material') {
-      return <MaterialTopic index={screen.index} onIndex={(index) => setScreen({ name: 'material', index })} onBack={toMap} />;
-    }
-
-    if (screen.name === 'literacy') {
-      return (
-        <LiteracyRunner
-          key={`${screen.mode}-${screen.items.map((i) => i.id).join()}-${screen.run}`}
-          mode={screen.mode}
-          items={screen.items}
-          onFinish={(res) => finishLiteracy(screen.mode, screen.items, res)}
-          onExit={() => { setSolving(false); toMap(); }}
-        />
-      );
-    }
-
-    if (screen.name === 'literacy-result') {
-      const startAgain = () => { setSolving(true); setScreen({ name: 'literacy', mode: screen.mode, items: screen.items, run: Date.now() }); };
-      return (
-        <LiteracyResult
-          mode={screen.mode}
-          items={screen.items}
-          answers={screen.answers}
-          texts={screen.texts}
-          onRetry={startAgain}
-          onBack={toMap}
-        />
-      );
-    }
-
-    if (screen.name === 'research') {
-      return (
-        <ResearchPanel
-          onBack={() => setScreen({ name: 'map' })}
-          onSwitchStudent={async () => {
-            await resetProfile();
-            setProgress({});
-            setScreen({ name: 'map' });
-            setProfile(null);
-          }}
-        />
-      );
-    }
-
-    return (
-      <LearningMap
-        progress={progress}
-        profile={profile}
-        tab={tab ?? (Object.keys(progress).length || profile.literacy ? 'practice' : 'material')}
-        onTab={setTab}
-        onMaterial={(index) => setScreen({ name: 'material', index })}
-        onLiteracyPractice={(item) => { setSolving(true); setScreen({ name: 'literacy', mode: 'practice', items: [item], run: Date.now() }); }}
-        onLiteracyTest={() => { setSolving(true); setScreen({ name: 'literacy', mode: 'test', items: testItems, run: Date.now() }); }}
-        onLiteracyResult={() =>
-          setScreen({ name: 'literacy-result', mode: 'test', items: testItems, answers: profile.literacy.last.answers, texts: profile.literacy.last.texts })
-        }
-        onOpen={(module) => setScreen({ name: 'module', module })}
-        onPosttest={() => setScreen({ name: 'posttest' })}
-        onResearch={() => setScreen({ name: 'research' })}
-      />
-    );
+    return <LearningMap {...mapProps()} />;
   })();
 
+  const scenic = screen.name === 'home' || screen.name === 'journey';
   return (
-    <>
-      <Decor calm={solving && (screen.name === 'module' || screen.name === 'literacy')} />
+    <HomeContext.Provider value={screen.name === 'home' ? null : goHome}>
+      {!scenic && <Decor calm={solving && (screen.name === 'module' || screen.name === 'literacy')} />}
       {view}
-    </>
+    </HomeContext.Provider>
   );
 }

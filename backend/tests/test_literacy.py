@@ -5,7 +5,9 @@ import pytest
 
 from app import content
 from app.domain.analytics import summarize
-from app.domain.literacy import answer_key, rubric_of, score_item, score_test, validate_literacy, validate_material
+from app.domain.literacy import (
+    answer_key, rubric_of, score_item, score_test, validate_journey, validate_literacy, validate_material, validate_shop,
+)
 
 LIT = content.load("literacy")
 TEST = LIT["test"]
@@ -79,6 +81,8 @@ def test_perbandingan_mengikuti_hasil_siswa():
 def test_konten_lolos_validasi():
     assert validate_literacy(LIT) == []
     assert validate_material(content.load("material")) == []
+    assert validate_journey(content.load("journey")) == []
+    assert validate_shop(content.load("shop")) == []
 
 
 def test_validator_menangkap_poin_salah():

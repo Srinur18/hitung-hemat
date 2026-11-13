@@ -12,6 +12,7 @@ import { buildProblem } from '../src/domain/problems.js';
 beforeAll(() => {
   // jsdom tidak punya WebGL → aplikasi harus otomatis memakai ilustrasi 2D.
   HTMLCanvasElement.prototype.getContext = () => null;
+  window.scrollTo = () => {};
 });
 afterEach(cleanup);
 
@@ -26,12 +27,34 @@ function typeNumber(container, n) {
 }
 
 describe('alur aplikasi', () => {
-  it('masuk → tes awal → cek kesiapan → peta belajar', async () => {
+  it('beranda → identitas → sapaan → perjalanan → tes awal → cek kesiapan → peta belajar', async () => {
     const { container } = render(<App />);
-    const code = await screen.findByPlaceholderText('contoh: S01');
-    fireEvent.change(code, { target: { value: 's01' } });
-    click(btn('Lanjut'));
-    click(await screen.findByRole('button', { name: 'Saya mengerti, mulai' }));
+    // Beranda: judul, slogan, lima menu
+    expect(await screen.findByText('Belajar Diskon, Belanja Jadi Pintar!')).toBeTruthy();
+    for (const m of [/Mulai Belajar/, /^Materi/, /Simulasi Belanja/, /Kuis \/ Tes/, /^Profil/]) {
+      expect(screen.getByRole('button', { name: m })).toBeTruthy();
+    }
+    click(screen.getByRole('button', { name: /Mulai Belajar/ }));
+
+    // Identitas: nama & kelas wajib, kode opsional
+    fireEvent.change(await screen.findByPlaceholderText('contoh: Sri Rahmawati'), { target: { value: 'Sri Rahmawati' } });
+    expect(btn('Mulai').disabled).toBe(true);
+    fireEvent.change(screen.getByPlaceholderText('contoh: 7F'), { target: { value: '7f' } });
+    fireEvent.change(screen.getByPlaceholderText('contoh: S01'), { target: { value: 's01' } });
+    click(btn('Mulai'));
+
+    // Sapaan + perjalanan belajar 6 tahap (maju, mundur, maju)
+    expect(await screen.findByText('Halo, Sri Rahmawati!')).toBeTruthy();
+    click(btn('Lanjutkan'));
+    expect(await screen.findByText('Memasuki Jalan Ruko Hemat')).toBeTruthy();
+    click(btn('Lanjutkan'));
+    expect(screen.getByText('Toko Baju')).toBeTruthy();
+    click(btn('Kembali'));
+    expect(screen.getByText('Memasuki Jalan Ruko Hemat')).toBeTruthy();
+    for (let i = 0; i < 5; i++) click(btn('Lanjutkan'));
+    expect(screen.getByText('Perjalanan Selesai!')).toBeTruthy();
+    expect(document.querySelector('.journey-body').textContent).toMatch(/^Hebat, Sri!/);
+    click(btn('Ke Peta Belajar'));
 
     // Tes awal: 8 butir, tanpa umpan balik
     click(await screen.findByRole('button', { name: 'Mulai' }));

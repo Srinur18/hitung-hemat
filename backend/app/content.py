@@ -4,7 +4,7 @@ from functools import lru_cache
 
 from .config import CONTENT_DIR
 
-FILES = ("curriculum", "glossary", "diagnostic", "assessment", "literacy", "material")
+FILES = ("curriculum", "glossary", "diagnostic", "assessment", "literacy", "material", "journey", "shop")
 
 
 @lru_cache

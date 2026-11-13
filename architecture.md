@@ -58,6 +58,8 @@ APK/
 │  ├─ content/assessment.json   pre/post-test literasi (tag proses PISA)
 │  ├─ content/literacy.json     Tes Literasi Matematis 4 soal bertahap (maks. 24) + 4 soal latihan
 │  ├─ content/material.json     ringkasan materi T1–T7 + contoh bertahap
+│  ├─ content/journey.json      perjalanan belajar "Jalan Ruko Hemat" J1–J6
+│  ├─ content/shop.json         barang Simulasi Belanja
 │  └─ test-vectors.json         dibuat otomatis oleh Python
 ├─ backend/                     Python
 │  ├─ app/domain/               money · discount · rng · problems · analytics

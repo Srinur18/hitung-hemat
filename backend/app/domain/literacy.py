@@ -182,6 +182,35 @@ def validate_literacy(lit: dict) -> list[str]:
     return errs
 
 
+def validate_journey(jr: dict) -> list[str]:
+    """Perjalanan belajar: struktur sama dengan materi; {name} diisi nama siswa saat tampil."""
+    errs = []
+    for st in jr["stages"]:
+        sid = st["id"]
+        v = {"name": "X", **st.get("vars", {})}
+        for name, spec in st.get("derived", {}).items():
+            v[name] = evaluate(spec, v)
+            if v[name] is None:
+                errs.append(f"{sid}: nilai turunan {name} tidak bulat / tidak sah")
+        for i, text in enumerate([st["title"], st["body"], *st.get("lines", [])]):
+            errs += text_problems(f"{sid}.teks{i}", text)
+            for m in re.finditer(r"\{(\w+)", text):
+                if m.group(1) not in v:
+                    errs.append(f"{sid}: placeholder {{{m.group(1)}}} tidak punya nilai")
+    return errs
+
+
+def validate_shop(shop: dict) -> list[str]:
+    errs = []
+    for p in shop["products"]:
+        d = LFN["discountAmount"](p["price"], p["pct"])
+        if d is None or LFN["finalPrice"](p["price"], p["pct"]) is None:
+            errs.append(f"shop.{p['id']}: diskon tidak menghasilkan Rupiah bulat")
+        if p["pct"] % 100:
+            errs.append(f"shop.{p['id']}: persen simulasi harus bulat (tanpa koma)")
+    return errs
+
+
 def validate_material(mat: dict) -> list[str]:
     errs = []
     for tp in mat["topics"]:

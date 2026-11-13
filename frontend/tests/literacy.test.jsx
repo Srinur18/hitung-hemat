@@ -183,8 +183,8 @@ describe('alur aplikasi: tab Tes → Tes Literasi → hasil tersimpan', () => {
     const { default: App } = await import('../src/App.jsx');
     await saveProfile({ studentCode: 'S09', consentAt: 'x', pretestDone: true, diagnosticDone: true });
     const { container } = render(<App />);
-    click(await screen.findByRole('tab', { name: 'Tes' }));
-    click(btn('Mulai tes'));
+    click(await screen.findByRole('button', { name: /Kuis \/ Tes/ }));
+    click(await screen.findByRole('button', { name: 'Mulai tes' }));
     click(btn('Mulai tes')); // layar aturan tes
     for (const it of literacy.test) {
       for (const st of it.steps) {
