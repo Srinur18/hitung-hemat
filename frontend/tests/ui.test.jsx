@@ -53,6 +53,10 @@ describe('alur aplikasi', () => {
 
     expect(await screen.findByText('Peta Belajar')).toBeTruthy();
     expect(screen.getByText('Kode: S01')).toBeTruthy();
+    // siswa baru mulai di tab Materi; modul ada di tab Latihan
+    expect(screen.getByRole('tab', { name: 'Materi' }).getAttribute('aria-selected')).toBe('true');
+    expect(screen.getByRole('button', { name: /Apa itu Diskon \(Rabat\)\?/ })).toBeTruthy();
+    click(screen.getByRole('tab', { name: 'Latihan' }));
     // M1 terbuka, M2 terkunci
     expect(btn('Apa itu Diskon?').disabled).toBe(false);
     expect(screen.getByRole('button', { name: /Menghitung Besar Diskon: Selesaikan/ }).disabled).toBe(true);

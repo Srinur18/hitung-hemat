@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "note": "Ringkasan materi Persentase Diskon (Rabat) dan Potongan Harga. Teks ≤ 40 kata per kartu, kalimat ≤ 15 kata. Angka turunan ('derived') dihitung oleh fungsi domain agar selalu benar.",
+  "topics": [
+    {
+      "id": "T1",
+      "title": "Apa itu Diskon (Rabat)?",
+      "body": "Diskon adalah potongan harga dari penjual. Nama lainnya [[rabat]] atau [[potongan-harga]]. Karena ada diskon, harga yang dibayar lebih murah dari harga awal.",
+      "vars": { "h": 80000, "p": 2000 },
+      "derived": { "d": { "fn": "discountAmount", "args": ["h", "p"] }, "f": { "fn": "finalPrice", "args": ["h", "p"] } },
+      "example": {
+        "text": "Label kaos: harga awal {h|price}, diskon {p|percent}.",
+        "steps": [
+          "Harga awal {h|price} adalah harga sebelum dipotong.",
+          "Diskon {p|percent} memotong harga sebesar {d|discount}.",
+          "Pembeli cukup membayar {f|result}. Lebih murah dari harga awal."
+        ]
+      }
+    },
+    {
+      "id": "T2",
+      "title": "Persentase Diskon",
+      "body": "Persen artinya per seratus. Persen diskon menunjukkan bagian harga awal yang dipotong. Diskon 20% artinya setiap Rp100 dipotong Rp20.",
+      "vars": { "p": 2000, "h": 1000 },
+      "derived": { "d": { "fn": "discountAmount", "args": ["h", "p"] } },
+      "example": {
+        "text": "Apa arti diskon {p|percent}?",
+        "steps": [
+          "Tulis persen sebagai pecahan: 20% = 20/100.",
+          "Jadi dari setiap Rp100, dipotong Rp20.",
+          "Untuk harga {h|price}, potongannya {d|discount}."
+        ]
+      }
+    },
+    {
+      "id": "T3",
+      "title": "Menghitung Besar Diskon",
+      "body": "Besar diskon adalah banyak rupiah yang dipotong. Kalikan persen diskon dengan harga awal. Trik mudah: cari 1% dulu dengan membagi 100.",
+      "formula": "Besar diskon = persen diskon × harga awal",
+      "vars": { "h": 120000, "p": 2500, "satu": 1200 },
+      "derived": { "d": { "fn": "discountAmount", "args": ["h", "p"] } },
+      "example": {
+        "text": "Baju berharga awal {h|price} diberi diskon {p|percent}. Berapa besar diskonnya?",
+        "steps": [
+          "Ubah persen menjadi pecahan: 25% = 25/100.",
+          "Tulis modelnya: besar diskon = 25/100 × {h|price}.",
+          "Cari 1% dulu: {h|price} : 100 = {satu|rupiah}.",
+          "Kalikan 25: {satu|rupiah} × 25 = {d|discount}."
+        ]
+      }
+    },
+    {
+      "id": "T4",
+      "title": "Harga Setelah Diskon",
+      "body": "Harga setelah diskon disebut harga akhir. Itulah uang yang dibayar pembeli. Kurangkan besar diskon dari harga awal. Harga akhir selalu lebih kecil dari harga awal.",
+      "formula": "Harga akhir = harga awal − besar diskon",
+      "vars": { "h": 120000, "p": 2500 },
+      "derived": { "d": { "fn": "discountAmount", "args": ["h", "p"] }, "f": { "fn": "finalPrice", "args": ["h", "p"] } },
+      "example": {
+        "text": "Lanjutan: baju {h|price}, diskon {p|percent}, besar diskon {d|discount}. Berapa harga akhirnya?",
+        "steps": [
+          "Tulis modelnya: harga akhir = harga awal − besar diskon.",
+          "Masukkan angkanya: {h|price} − {d|discount}.",
+          "Hasilnya: harga akhir = {f|result}.",
+          "Cek kewajaran: {f|result} lebih kecil dari {h|price}. Masuk akal!"
+        ]
+      }
+    },
+    {
+      "id": "T5",
+      "title": "Cara Cepat: Sisa Persen",
+      "body": "Diskon 25% berarti pembeli membayar sisanya, yaitu 75%. Harga akhir bisa langsung dihitung dari sisa persen. Hasilnya sama dengan cara sebelumnya.",
+      "formula": "Harga akhir = (100% − persen diskon) × harga awal",
+      "vars": { "h": 120000, "p": 2500 },
+      "derived": { "sisa": { "fn": "complementBp", "args": ["p"] }, "f": { "fn": "finalPrice", "args": ["h", "p"] } },
+      "example": {
+        "text": "Baju {h|price} diskon {p|percent}. Hitung harga akhir dengan sisa persen.",
+        "steps": [
+          "Sisa persen = 100% − 25% = {sisa|percent}.",
+          "Harga akhir = 75/100 × {h|price}.",
+          "Hasilnya {f|result}. Sama dengan cara pertama."
+        ]
+      }
+    },
+    {
+      "id": "T6",
+      "title": "Membandingkan Harga Antartoko",
+      "body": "Toko berbeda bisa memberi harga awal dan diskon berbeda. Jangan hanya melihat persen diskon. Hitung harga akhir di setiap toko, lalu bandingkan.",
+      "vars": { "hA": 300000, "pA": 3000, "hB": 240000, "pB": 2000 },
+      "derived": {
+        "dA": { "fn": "discountAmount", "args": ["hA", "pA"] }, "fA": { "fn": "finalPrice", "args": ["hA", "pA"] },
+        "dB": { "fn": "discountAmount", "args": ["hB", "pB"] }, "fB": { "fn": "finalPrice", "args": ["hB", "pB"] }
+      },
+      "example": {
+        "text": "Toko A: {hA|price}, diskon {pA|percent}. Toko B: {hB|price}, diskon {pB|percent}. Mana yang lebih murah?",
+        "steps": [
+          "Toko A: besar diskon {dA|discount}. Harga akhir {fA|result}.",
+          "Toko B: besar diskon {dB|discount}. Harga akhir {fB|result}.",
+          "Bandingkan: {fB|result} lebih kecil dari {fA|result}.",
+          "Toko B lebih murah, walau persen diskonnya lebih kecil."
+        ]
+      }
+    },
+    {
+      "id": "T7",
+      "title": "Memilih yang Paling Menguntungkan",
+      "body": "Pilihan paling menguntungkan adalah harga akhir terkecil untuk barang yang sama. Pastikan tidak ada biaya lain. Sertakan alasan dengan angka, misalnya selisih harganya.",
+      "vars": { "fA": 210000, "fB": 192000 },
+      "derived": { "sel": { "fn": "subtract", "args": ["fA", "fB"] } },
+      "example": {
+        "text": "Lanjutan: harga akhir Toko A {fA|result}, Toko B {fB|result}. Tulis keputusan dan alasannya.",
+        "steps": [
+          "Urutkan: {fB|result} < {fA|result}.",
+          "Keputusan: beli di Toko B.",
+          "Alasan: Toko B lebih hemat {sel|rupiah}.",
+          "Persen besar belum tentu paling hemat. Yang menentukan harga akhir."
+        ]
+      }
+    }
+  ]
+}

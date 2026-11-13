@@ -170,7 +170,7 @@ interface ResearchEvent {
 | `type` | `payload` |
 |---|---|
 | `session_start` / `session_end` | `{ appVersion, device }` |
-| `assessment_answer` | `{ kind: 'pre'\|'post', itemId, process, correct }` |
+| `assessment_answer` | `{ kind: 'pre'\|'post'\|'literacy', itemId, process, correct }`; untuk `literacy` juga `stepId, answer, via ('key'\|'ecf'\|null), points` |
 | `problem_start` | `{ stage, process, seed }` |
 | `answer_submit` | `{ answer, correct, mc, attempt, ms }` |
 | `hint_open` | `{ level, auto: boolean }` |
@@ -180,6 +180,8 @@ interface ResearchEvent {
 | `scene_interact` | `{ scene, action, mode: '3d'\|'2d' }` |
 | `effort_rating` | `{ value: 1..9, afterStage }` |
 | `mastery_change` | `{ from, to }` |
+| `literacy_result` | `{ kind: 'test'\|'practice', total, max (24 untuk tes), byProcess: { reason\|formulate\|employ\|interpret: { earned, max } }, texts }` |
+| `material_view` | `{ topic: 'T1'..'T7' }` |
 
 Ekspor CSV: `research/export.ts → exportCsv(table: 'events'|'attempts'|'assessments'): Promise<Blob>`, lalu dibagikan lewat plugin Capacitor Share.
 

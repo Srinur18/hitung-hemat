@@ -591,5 +591,1118 @@
     "s4": 74925
    }
   }
+ ],
+ "literacy": [
+  {
+   "set": "test",
+   "scenario": "benar",
+   "answers": {
+    "L1": {
+     "s1": 0,
+     "s2a": 200000,
+     "s2b": 195500,
+     "s3": 1,
+     "s4": 1,
+     "s5": 1
+    },
+    "L2": {
+     "s1": 1,
+     "s2": 200000,
+     "s3": 1,
+     "s4": 30000,
+     "s5": 170000,
+     "s6": 1
+    },
+    "L3": {
+     "s1": 2,
+     "s2a": 1,
+     "s2b": 80000,
+     "s3a": 2,
+     "s3b": 240000,
+     "s4": 1
+    },
+    "L4": {
+     "s1": 1,
+     "s2": 0,
+     "s3": 2,
+     "s4": 120000,
+     "s5": 280000,
+     "s6": 1
+    }
+   },
+   "result": {
+    "total": 24,
+    "max": 24,
+    "byProcess": {
+     "reason": {
+      "earned": 6,
+      "max": 6
+     },
+     "formulate": {
+      "earned": 6,
+      "max": 6
+     },
+     "employ": {
+      "earned": 6,
+      "max": 6
+     },
+     "interpret": {
+      "earned": 6,
+      "max": 6
+     }
+    },
+    "items": [
+     {
+      "id": "L1",
+      "process": "reason",
+      "earned": 6,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "key"
+       },
+       {
+        "id": "s2a",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 200000,
+        "via": "key"
+       },
+       {
+        "id": "s2b",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 195500,
+        "via": "key"
+       },
+       {
+        "id": "s3",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       },
+       {
+        "id": "s5",
+        "tahap": 5,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       }
+      ]
+     },
+     {
+      "id": "L2",
+      "process": "formulate",
+      "earned": 6,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       },
+       {
+        "id": "s2",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 200000,
+        "via": "key"
+       },
+       {
+        "id": "s3",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 1,
+        "answer": 30000,
+        "via": "key"
+       },
+       {
+        "id": "s5",
+        "tahap": 5,
+        "points": 1,
+        "earned": 1,
+        "answer": 170000,
+        "via": "key"
+       },
+       {
+        "id": "s6",
+        "tahap": 6,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       }
+      ]
+     },
+     {
+      "id": "L3",
+      "process": "employ",
+      "earned": 6,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 1,
+        "answer": 2,
+        "via": "key"
+       },
+       {
+        "id": "s2a",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       },
+       {
+        "id": "s2b",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 80000,
+        "via": "key"
+       },
+       {
+        "id": "s3a",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 2,
+        "via": "key"
+       },
+       {
+        "id": "s3b",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 240000,
+        "via": "key"
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       }
+      ]
+     },
+     {
+      "id": "L4",
+      "process": "interpret",
+      "earned": 6,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       },
+       {
+        "id": "s2",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "key"
+       },
+       {
+        "id": "s3",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 2,
+        "via": "key"
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 1,
+        "answer": 120000,
+        "via": "key"
+       },
+       {
+        "id": "s5",
+        "tahap": 5,
+        "points": 1,
+        "earned": 1,
+        "answer": 280000,
+        "via": "key"
+       },
+       {
+        "id": "s6",
+        "tahap": 6,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "set": "test",
+   "scenario": "kosong",
+   "answers": {},
+   "result": {
+    "total": 0,
+    "max": 24,
+    "byProcess": {
+     "reason": {
+      "earned": 0,
+      "max": 6
+     },
+     "formulate": {
+      "earned": 0,
+      "max": 6
+     },
+     "employ": {
+      "earned": 0,
+      "max": 6
+     },
+     "interpret": {
+      "earned": 0,
+      "max": 6
+     }
+    },
+    "items": [
+     {
+      "id": "L1",
+      "process": "reason",
+      "earned": 0,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s2a",
+        "tahap": 2,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s2b",
+        "tahap": 2,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s3",
+        "tahap": 3,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s5",
+        "tahap": 5,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       }
+      ]
+     },
+     {
+      "id": "L2",
+      "process": "formulate",
+      "earned": 0,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s2",
+        "tahap": 2,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s3",
+        "tahap": 3,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s5",
+        "tahap": 5,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s6",
+        "tahap": 6,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       }
+      ]
+     },
+     {
+      "id": "L3",
+      "process": "employ",
+      "earned": 0,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s2a",
+        "tahap": 2,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s2b",
+        "tahap": 2,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s3a",
+        "tahap": 3,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s3b",
+        "tahap": 3,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       }
+      ]
+     },
+     {
+      "id": "L4",
+      "process": "interpret",
+      "earned": 0,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s2",
+        "tahap": 2,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s3",
+        "tahap": 3,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s5",
+        "tahap": 5,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       },
+       {
+        "id": "s6",
+        "tahap": 6,
+        "points": 1,
+        "earned": 0,
+        "answer": null,
+        "via": null
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "set": "test",
+   "scenario": "ecf",
+   "answers": {
+    "L1": {
+     "s1": 0,
+     "s2a": 50000,
+     "s2b": 195500,
+     "s3": 0,
+     "s4": 0,
+     "s5": 0
+    },
+    "L2": {
+     "s1": 0,
+     "s2": 40000,
+     "s3": 0,
+     "s4": 6000,
+     "s5": 34000,
+     "s6": 1
+    },
+    "L3": {
+     "s1": 2,
+     "s2a": 1,
+     "s2b": 8000,
+     "s3a": 2,
+     "s3b": 312000,
+     "s4": 1
+    },
+    "L4": {
+     "s1": 2,
+     "s2": 2,
+     "s3": 1,
+     "s4": 30,
+     "s5": 399970,
+     "s6": 0
+    }
+   },
+   "result": {
+    "total": 12,
+    "max": 24,
+    "byProcess": {
+     "reason": {
+      "earned": 4,
+      "max": 6
+     },
+     "formulate": {
+      "earned": 3,
+      "max": 6
+     },
+     "employ": {
+      "earned": 5,
+      "max": 6
+     },
+     "interpret": {
+      "earned": 0,
+      "max": 6
+     }
+    },
+    "items": [
+     {
+      "id": "L1",
+      "process": "reason",
+      "earned": 4,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "key"
+       },
+       {
+        "id": "s2a",
+        "tahap": 2,
+        "points": 1,
+        "earned": 0,
+        "answer": 50000,
+        "via": null
+       },
+       {
+        "id": "s2b",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 195500,
+        "via": "key"
+       },
+       {
+        "id": "s3",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "ecf"
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "ecf"
+       },
+       {
+        "id": "s5",
+        "tahap": 5,
+        "points": 1,
+        "earned": 0,
+        "answer": 0,
+        "via": null
+       }
+      ]
+     },
+     {
+      "id": "L2",
+      "process": "formulate",
+      "earned": 3,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 0,
+        "answer": 0,
+        "via": null
+       },
+       {
+        "id": "s2",
+        "tahap": 2,
+        "points": 1,
+        "earned": 0,
+        "answer": 40000,
+        "via": null
+       },
+       {
+        "id": "s3",
+        "tahap": 3,
+        "points": 1,
+        "earned": 0,
+        "answer": 0,
+        "via": null
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 1,
+        "answer": 6000,
+        "via": "ecf"
+       },
+       {
+        "id": "s5",
+        "tahap": 5,
+        "points": 1,
+        "earned": 1,
+        "answer": 34000,
+        "via": "ecf"
+       },
+       {
+        "id": "s6",
+        "tahap": 6,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       }
+      ]
+     },
+     {
+      "id": "L3",
+      "process": "employ",
+      "earned": 5,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 1,
+        "answer": 2,
+        "via": "key"
+       },
+       {
+        "id": "s2a",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       },
+       {
+        "id": "s2b",
+        "tahap": 2,
+        "points": 1,
+        "earned": 0,
+        "answer": 8000,
+        "via": null
+       },
+       {
+        "id": "s3a",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 2,
+        "via": "key"
+       },
+       {
+        "id": "s3b",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 312000,
+        "via": "ecf"
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       }
+      ]
+     },
+     {
+      "id": "L4",
+      "process": "interpret",
+      "earned": 0,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 0,
+        "answer": 2,
+        "via": null
+       },
+       {
+        "id": "s2",
+        "tahap": 2,
+        "points": 1,
+        "earned": 0,
+        "answer": 2,
+        "via": null
+       },
+       {
+        "id": "s3",
+        "tahap": 3,
+        "points": 1,
+        "earned": 0,
+        "answer": 1,
+        "via": null
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 0,
+        "answer": 30,
+        "via": null
+       },
+       {
+        "id": "s5",
+        "tahap": 5,
+        "points": 1,
+        "earned": 0,
+        "answer": 399970,
+        "via": null
+       },
+       {
+        "id": "s6",
+        "tahap": 6,
+        "points": 1,
+        "earned": 0,
+        "answer": 0,
+        "via": null
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "set": "practice",
+   "scenario": "benar",
+   "answers": {
+    "P1": {
+     "s1": 1,
+     "s2a": 135000,
+     "s2b": 144000,
+     "s3": 0,
+     "s4": 0,
+     "s5": 1
+    },
+    "P2": {
+     "s1": 0,
+     "s2": 180000,
+     "s3": 0,
+     "s4": 36000,
+     "s5": 144000,
+     "s6": 2
+    },
+    "P3": {
+     "s1": 0,
+     "s2a": 1,
+     "s2b": 42000,
+     "s3a": 0,
+     "s3b": 78000,
+     "s4": 0
+    },
+    "P4": {
+     "s1": 0,
+     "s2": 1,
+     "s3": 0,
+     "s4": 9000,
+     "s5": 51000,
+     "s6": 1
+    }
+   },
+   "result": {
+    "total": 24,
+    "max": 24,
+    "byProcess": {
+     "reason": {
+      "earned": 6,
+      "max": 6
+     },
+     "formulate": {
+      "earned": 6,
+      "max": 6
+     },
+     "employ": {
+      "earned": 6,
+      "max": 6
+     },
+     "interpret": {
+      "earned": 6,
+      "max": 6
+     }
+    },
+    "items": [
+     {
+      "id": "P1",
+      "process": "reason",
+      "earned": 6,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       },
+       {
+        "id": "s2a",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 135000,
+        "via": "key"
+       },
+       {
+        "id": "s2b",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 144000,
+        "via": "key"
+       },
+       {
+        "id": "s3",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "key"
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "key"
+       },
+       {
+        "id": "s5",
+        "tahap": 5,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       }
+      ]
+     },
+     {
+      "id": "P2",
+      "process": "formulate",
+      "earned": 6,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "key"
+       },
+       {
+        "id": "s2",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 180000,
+        "via": "key"
+       },
+       {
+        "id": "s3",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "key"
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 1,
+        "answer": 36000,
+        "via": "key"
+       },
+       {
+        "id": "s5",
+        "tahap": 5,
+        "points": 1,
+        "earned": 1,
+        "answer": 144000,
+        "via": "key"
+       },
+       {
+        "id": "s6",
+        "tahap": 6,
+        "points": 1,
+        "earned": 1,
+        "answer": 2,
+        "via": "key"
+       }
+      ]
+     },
+     {
+      "id": "P3",
+      "process": "employ",
+      "earned": 6,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "key"
+       },
+       {
+        "id": "s2a",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       },
+       {
+        "id": "s2b",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 42000,
+        "via": "key"
+       },
+       {
+        "id": "s3a",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "key"
+       },
+       {
+        "id": "s3b",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 78000,
+        "via": "key"
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "key"
+       }
+      ]
+     },
+     {
+      "id": "P4",
+      "process": "interpret",
+      "earned": 6,
+      "max": 6,
+      "steps": [
+       {
+        "id": "s1",
+        "tahap": 1,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "key"
+       },
+       {
+        "id": "s2",
+        "tahap": 2,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       },
+       {
+        "id": "s3",
+        "tahap": 3,
+        "points": 1,
+        "earned": 1,
+        "answer": 0,
+        "via": "key"
+       },
+       {
+        "id": "s4",
+        "tahap": 4,
+        "points": 1,
+        "earned": 1,
+        "answer": 9000,
+        "via": "key"
+       },
+       {
+        "id": "s5",
+        "tahap": 5,
+        "points": 1,
+        "earned": 1,
+        "answer": 51000,
+        "via": "key"
+       },
+       {
+        "id": "s6",
+        "tahap": 6,
+        "points": 1,
+        "earned": 1,
+        "answer": 1,
+        "via": "key"
+       }
+      ]
+     }
+    ]
+   }
+  }
  ]
 }

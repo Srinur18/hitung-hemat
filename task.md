@@ -66,6 +66,8 @@ Legenda: `[x]` selesai · `[ ]` belum · **TBD** = menunggu keputusan lewat inte
 ### Sprint 4 — Penelitian & Rilis
 - [x] DV22 Pre/post-test (8 butir, tag PISA), skala usaha mental
 - [x] DV23 Panel peneliti (PIN) + ekspor CSV; analitik N-gain di backend ✅
+- [x] DV23b Tes Literasi Matematis 4 indikator (soal Tabel 2, skor bertahap maks. 24, skor parsial + ECF), Latihan Literasi per indikator, tab Materi | Latihan | Tes, kisi-kisi di Panel Peneliti (14 Nov 2026)
+- [ ] DV23c Validasi ahli untuk soal latihan literasi P1–P4 & ringkasan materi T1–T7
 - [ ] DV24 Uji kinerja di perangkat acuan (fps, ukuran APK, waktu buka)
 - [ ] DV25 Build APK rilis + panduan instalasi untuk sekolah
 - [ ] DV26 (Fase 2, **TBD**) sinkronisasi Supabase, dashboard guru, M8 Untung–Rugi (opsional)

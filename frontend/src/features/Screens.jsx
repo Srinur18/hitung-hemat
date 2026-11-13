@@ -9,6 +9,8 @@ import { parsePercent, parseRupiah } from '../domain/money.js';
 import { t } from '../i18n/id.js';
 import { Header, NumberPad, Stars } from '../ui/components.jsx';
 import { KikoSays } from '../ui/Mascot.jsx';
+import { indicators, LiteracyKey, practiceItems, testItems } from './Literacy.jsx';
+import { MaterialList } from './Material.jsx';
 
 const CODE_RE = /^[A-Za-z0-9_-]{2,16}$/;
 
@@ -137,9 +139,24 @@ export function Remedial({ onDone }) {
   );
 }
 
-export function LearningMap({ progress, profile, onOpen, onPosttest, onResearch }) {
+const TABS = ['material', 'practice', 'test'];
+
+/**
+ * Peta belajar dengan navigasi utama Materi | Latihan | Tes.
+ * Tab Latihan berisi modul M1–M7 (fitur lama) + Latihan Literasi per indikator.
+ */
+export function LearningMap({
+  progress, profile, tab = 'practice', onTab = () => {}, onOpen, onPosttest, onResearch,
+  onMaterial = () => {}, onLiteracyPractice = () => {}, onLiteracyTest = () => {}, onLiteracyResult = () => {},
+}) {
   const allDone = modules.every((m) => progress[m.id]?.completed);
   const nextModule = modules.find((m) => !progress[m.id]?.completed);
+  const lit = profile.literacy;
+  const kiko = {
+    material: 'Mulai dari Materi, lalu coba Latihan.',
+    practice: allDone ? 'Hebat! Semua modul selesai.' : nextModule ? `Yuk, mulai ${nextModule.id}: ${nextModule.title}` : 'Yuk, lanjut belajar!',
+    test: lit ? `Skor terakhirmu ${lit.last.total}/${lit.last.max}. Bisa dicoba lagi!` : 'Siap menguji kemampuan literasimu?',
+  }[tab];
   return (
     <div className="screen">
       <Header
@@ -148,10 +165,58 @@ export function LearningMap({ progress, profile, onOpen, onPosttest, onResearch 
         right={<button className="icon-btn" onClick={onResearch} aria-label={t.research}>⚙</button>}
       />
       <div className="stack">
-        <KikoSays mood={allDone ? 'cheer' : 'wave'} size={92}>
-          {allDone ? 'Hebat! Semua modul selesai.' : nextModule ? `Yuk, mulai ${nextModule.id}: ${nextModule.title}` : 'Yuk, lanjut belajar!'}
-        </KikoSays>
-        {modules.map((m, k) => {
+        <div className="tabs" role="tablist">
+          {TABS.map((k) => (
+            <button key={k} role="tab" aria-selected={tab === k} onClick={() => onTab(k)}>{t.tabs[k]}</button>
+          ))}
+        </div>
+        <KikoSays mood={allDone && tab === 'practice' ? 'cheer' : 'wave'} size={80}>{kiko}</KikoSays>
+
+        {tab === 'material' && <MaterialList onOpen={onMaterial} />}
+
+        {tab === 'test' && (
+          <>
+            <div className="card stack">
+              <div className="section-title">{t.literacyTestTitle}</div>
+              <div className="small">{t.literacyTestHelp}</div>
+              <ol className="small" style={{ margin: 0, paddingLeft: 20 }}>
+                {testItems.map((it) => <li key={it.id}>{indicators[it.process].name}</li>)}
+              </ol>
+              {lit && <div className="small"><b>{t.literacyLast(lit.last.total, lit.last.max)}</b></div>}
+              <div className="actions" style={{ paddingTop: 4 }}>
+                {lit && <button className="btn" onClick={onLiteracyResult}>{t.literacySeeResult}</button>}
+                <button className="btn btn-primary" onClick={onLiteracyTest}>{lit ? t.literacyRetry : t.literacyStart}</button>
+              </div>
+            </div>
+            {allDone && !profile.posttestDone && (
+              <div className="card stack">
+                <div>{t.posttestReady}</div>
+                <button className="btn btn-primary" onClick={onPosttest}>{t.posttestTitle}</button>
+              </div>
+            )}
+            {profile.posttestDone && <div className="card">Tes Akhir sudah selesai. Terima kasih!</div>}
+          </>
+        )}
+
+        {tab === 'practice' && (
+          <>
+            <div className="section-title">{t.literacyPracticeTitle}</div>
+            <div className="muted small">{t.literacyPracticeHelp}</div>
+            {practiceItems.map((it) => (
+              <button key={it.id} className="card module btn" onClick={() => onLiteracyPractice(it)}>
+                <span className="id">{indicators[it.process].order}</span>
+                <span className="grow">
+                  <div>{indicators[it.process].name}</div>
+                  <div className="muted small" style={{ fontWeight: 400 }}>{it.title}</div>
+                </span>
+                {profile.literacyPractice?.[it.id] && <span aria-label="sudah dikerjakan">✓</span>}
+              </button>
+            ))}
+            <div className="section-title">{t.modulesTitle}</div>
+          </>
+        )}
+
+        {tab === 'practice' && modules.map((m, k) => {
           const p = progress[m.id];
           const unlocked = k === 0 || progress[modules[k - 1].id]?.completed;
           return (
@@ -171,13 +236,13 @@ export function LearningMap({ progress, profile, onOpen, onPosttest, onResearch 
             </button>
           );
         })}
-        {allDone && !profile.posttestDone && (
+        {tab === 'practice' && allDone && !profile.posttestDone && (
           <div className="card stack">
             <div>{t.posttestReady}</div>
             <button className="btn btn-primary" onClick={onPosttest}>{t.posttestTitle}</button>
           </div>
         )}
-        {profile.posttestDone && <div className="card">Terima kasih! Kamu sudah menyelesaikan semua tes.</div>}
+        {tab === 'practice' && profile.posttestDone && <div className="card">Terima kasih! Kamu sudah menyelesaikan semua tes.</div>}
       </div>
     </div>
   );
@@ -189,6 +254,7 @@ export function ResearchPanel({ onBack, onSwitchStudent }) {
   const [pin, setPin] = useState('');
   const [stats, setStats] = useState(null);
   const [msg, setMsg] = useState('');
+  const [showKey, setShowKey] = useState(false);
   const open = pin === RESEARCH_PIN;
 
   useEffect(() => {
@@ -224,6 +290,10 @@ export function ResearchPanel({ onBack, onSwitchStudent }) {
             <div className="muted small">Server: {API_URL || 'belum diatur (mode offline)'}</div>
           </div>
           {msg && <div className="card small">{msg}</div>}
+          <button className="btn" aria-expanded={showKey} onClick={() => setShowKey(!showKey)}>
+            {showKey ? `Tutup ${t.literacyKeyTitle}` : t.literacyKeyTitle}
+          </button>
+          {showKey && <LiteracyKey />}
           <div className="actions" style={{ flexDirection: 'column' }}>
             <button className="btn btn-primary" onClick={() => run(async () => `Diekspor: ${await exportCsv()}`)}>{t.exportCsv}</button>
             {API_URL && (

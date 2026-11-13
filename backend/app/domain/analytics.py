@@ -1,4 +1,4 @@
-"""Analitik penelitian: N-gain literasi, petunjuk, miskonsepsi, usaha mental."""
+"""Analitik penelitian: N-gain literasi, skor Tes Literasi (24 poin), petunjuk, miskonsepsi, usaha mental."""
 from collections import Counter, defaultdict
 from statistics import mean
 
@@ -27,6 +27,7 @@ def summarize(events: list[dict], max_score: int) -> dict:
         "answers": 0, "correct": 0, "hints": 0, "problems": 0,
         "mc": Counter(), "effort": [],
         "process": defaultdict(lambda: {"pre": 0, "post": 0}),
+        "literacy": [],
     })
     for e in events:
         s = per[e["student_code"]]
@@ -50,6 +51,8 @@ def summarize(events: list[dict], max_score: int) -> dict:
             s["problems"] += 1
         elif t == "effort_rating" and isinstance(p.get("value"), (int, float)):
             s["effort"].append(p["value"])
+        elif t == "literacy_result" and p.get("kind") == "test" and isinstance(p.get("total"), int):
+            s["literacy"].append({"total": p["total"], "max": p.get("max", 24), "byProcess": p.get("byProcess", {})})
 
     students = []
     for code, s in sorted(per.items()):
@@ -65,14 +68,21 @@ def summarize(events: list[dict], max_score: int) -> dict:
             "misconceptions": dict(s["mc"]),
             "mean_effort": round(mean(s["effort"]), 2) if s["effort"] else None,
             "process": {k: dict(v) for k, v in s["process"].items()},
+            # Tes Literasi Matematis (4 soal uraian bertahap, maks. 24): percobaan pertama & terakhir
+            "literacy_attempts": len(s["literacy"]),
+            "literacy_first": s["literacy"][0]["total"] if s["literacy"] else None,
+            "literacy_last": s["literacy"][-1]["total"] if s["literacy"] else None,
+            "literacy_by_process": s["literacy"][-1]["byProcess"] if s["literacy"] else None,
         })
     gains = [x["n_gain"] for x in students if x["n_gain"] is not None]
     total_mc = Counter()
     for x in students:
         total_mc.update(x["misconceptions"])
+    lit = [x["literacy_last"] for x in students if x["literacy_last"] is not None]
     return {
         "students": students,
         "class": {
+            "mean_literacy_last": round(mean(lit), 2) if lit else None,
             "n": len(students),
             "mean_n_gain": round(mean(gains), 3) if gains else None,
             "n_gain_category": n_gain_category(mean(gains)) if gains else "-",

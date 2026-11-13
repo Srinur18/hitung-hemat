@@ -56,6 +56,8 @@ APK/
 │  ├─ content/glossary.json     kartu istilah (rabat, potongan kotor, …)
 │  ├─ content/diagnostic.json   cek kesiapan + kartu bekal
 │  ├─ content/assessment.json   pre/post-test literasi (tag proses PISA)
+│  ├─ content/literacy.json     Tes Literasi Matematis 4 soal bertahap (maks. 24) + 4 soal latihan
+│  ├─ content/material.json     ringkasan materi T1–T7 + contoh bertahap
 │  └─ test-vectors.json         dibuat otomatis oleh Python
 ├─ backend/                     Python
 │  ├─ app/domain/               money · discount · rng · problems · analytics

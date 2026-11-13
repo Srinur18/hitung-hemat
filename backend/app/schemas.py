@@ -6,6 +6,7 @@ EventType = Literal[
     "session_start", "session_end", "diagnostic_answer", "assessment_answer",
     "problem_start", "answer_submit", "hint_open", "mark_numbers", "sanity_check",
     "explain_submit", "scene_interact", "effort_rating", "mastery_change",
+    "literacy_result", "material_view",
 ]
 
 

@@ -1,0 +1,696 @@
+{
+  "version": 1,
+  "note": "Tes & latihan Literasi Matematis (4 indikator, maks. 24 poin). Soal tes diambil dari Tabel 2 (kisi-kisi peneliti). Kunci angka dihitung lewat registri fungsi domain, bukan ditulis manual. 'ecf' = error carried forward: langkah dinilai benar bila konsisten dengan jawaban siswa sebelumnya (skor parsial). Perlu validasi ahli.",
+  "maxScore": 24,
+  "indicators": {
+    "reason": {
+      "order": 1,
+      "name": "Penalaran Matematis",
+      "en": "Mathematical Reasoning",
+      "desc": "Membandingkan pilihan, memberi alasan, dan mengambil keputusan."
+    },
+    "formulate": {
+      "order": 2,
+      "name": "Merumuskan Situasi Secara Matematis",
+      "en": "Formulating Situations Mathematically",
+      "desc": "Memilih informasi penting dan mengubah cerita menjadi model matematika."
+    },
+    "employ": {
+      "order": 3,
+      "name": "Menggunakan Konsep, Fakta, dan Prosedur",
+      "en": "Employing Mathematical Concepts, Facts, and Procedures",
+      "desc": "Memakai rumus diskon dan menghitung dengan tepat."
+    },
+    "interpret": {
+      "order": 4,
+      "name": "Menafsirkan dan Mengevaluasi Hasil",
+      "en": "Interpreting, Applying, and Evaluating Mathematical Outcomes",
+      "desc": "Memeriksa hasil, menemukan kesalahan, dan menilai kewajaran."
+    }
+  },
+  "test": [
+    {
+      "id": "L1",
+      "process": "reason",
+      "title": "Perbandingan Harga Sepatu",
+      "context": "pakaian",
+      "rubric": [1, 2, 1, 1, 1],
+      "vars": { "hA": 250000, "pA": 2000, "hB": 230000, "pB": 1500 },
+      "text": "Dita ingin membeli sepatu yang sama modelnya. Toko A: harga awal {hA|price}, diskon {pA|percent}. Toko B: harga awal {hB|price}, diskon {pB|percent}. Tidak ada biaya tambahan. Toko mana yang sebaiknya Dita pilih agar paling murah?",
+      "steps": [
+        {
+          "id": "s1", "tahap": 1, "points": 1, "input": "choice",
+          "ask": "Apa yang perlu kamu hitung lebih dulu?",
+          "options": ["Harga akhir sepatu di setiap toko", "Toko dengan persen diskon paling besar", "Toko dengan harga awal paling murah"],
+          "key": 0,
+          "optionFeedback": {
+            "1": "Persen besar belum tentu paling murah. Harga awal kedua toko berbeda.",
+            "2": "Harga awal belum dipotong diskon. Bandingkan harga yang benar-benar dibayar."
+          },
+          "good": "Tepat. Yang dibandingkan adalah harga yang dibayar.",
+          "rubricText": "Menyadari harga setelah diskon kedua toko harus dihitung lebih dulu."
+        },
+        {
+          "id": "s2a", "tahap": 2, "label": "2a", "points": 1, "input": "rupiah",
+          "ask": "Berapa harga akhir sepatu di Toko A?",
+          "key": { "fn": "finalPrice", "args": ["hA", "pA"] },
+          "traps": [
+            { "value": { "fn": "discountAmount", "args": ["hA", "pA"] }, "fb": "Itu besar diskonnya. Harga akhir = harga awal − besar diskon." }
+          ],
+          "fb": "Hitung besar diskon dulu: persen diskon × harga awal. Lalu kurangkan dari harga awal.",
+          "rubricText": "Toko A: 20% × Rp250.000 = Rp50.000; Rp250.000 − Rp50.000 = Rp200.000."
+        },
+        {
+          "id": "s2b", "tahap": 2, "label": "2b", "points": 1, "input": "rupiah",
+          "ask": "Berapa harga akhir sepatu di Toko B?",
+          "key": { "fn": "finalPrice", "args": ["hB", "pB"] },
+          "traps": [
+            { "value": { "fn": "discountAmount", "args": ["hB", "pB"] }, "fb": "Itu besar diskonnya. Harga akhir = harga awal − besar diskon." }
+          ],
+          "fb": "Cari 1% dari harga awal dulu, lalu kalikan 15. Kurangkan hasilnya dari harga awal.",
+          "rubricText": "Toko B: 15% × Rp230.000 = Rp34.500; Rp230.000 − Rp34.500 = Rp195.500."
+        },
+        {
+          "id": "s3", "tahap": 3, "points": 1, "input": "choice",
+          "ask": "Hasilmu: Toko A {s2a|result}, Toko B {s2b|result}. Bagaimana perbandingan kedua harga akhir itu?",
+          "options": ["Harga akhir A lebih kecil dari B", "Harga akhir A lebih besar dari B", "Harga akhir A sama dengan B"],
+          "key": { "fn": "compareIndex", "args": ["s2a", "s2b"] },
+          "ecf": true,
+          "fb": "Bandingkan angka dari kiri. Angka yang lebih kecil berarti lebih murah.",
+          "rubricText": "Rp195.500 < Rp200.000 (dinilai sesuai hasil hitung siswa sendiri)."
+        },
+        {
+          "id": "s4", "tahap": 4, "points": 1, "input": "choice",
+          "ask": "Di toko mana Dita sebaiknya membeli sepatu?",
+          "options": ["Toko A", "Toko B"],
+          "key": { "fn": "compareIndex", "args": ["s2a", "s2b"] },
+          "ecf": true,
+          "fb": "Pilih toko dengan harga akhir paling kecil, bukan persen diskon paling besar.",
+          "rubricText": "Dita sebaiknya membeli di Toko B."
+        },
+        {
+          "id": "s5", "tahap": 5, "points": 1, "input": "choice", "write": true,
+          "ask": "Pilih alasan yang paling tepat.",
+          "options": [
+            "Persen diskon Toko A lebih besar, jadi Toko A lebih hemat.",
+            "Harga akhir Toko B lebih murah Rp4.500, walau persen diskonnya lebih kecil.",
+            "Harga awal Toko B lebih murah, jadi pasti lebih hemat."
+          ],
+          "key": 1,
+          "optionFeedback": {
+            "0": "Persen besar belum tentu hemat. Yang menentukan adalah harga akhir.",
+            "2": "Harga awal murah belum tentu hemat. Diskon bisa mengubah urutannya."
+          },
+          "fb": "Alasan yang kuat memakai harga akhir dan selisihnya.",
+          "rubricText": "Toko B lebih murah Rp200.000 − Rp195.500 = Rp4.500 meskipun persen diskonnya lebih kecil."
+        }
+      ]
+    },
+    {
+      "id": "L2",
+      "process": "formulate",
+      "title": "Belanja Perlengkapan Kelas",
+      "context": "perlengkapan sekolah",
+      "rubric": [1, 1, 1, 1, 1, 1],
+      "vars": { "n": 5, "h": 40000, "p": 1500, "uang": 180000 },
+      "text": "Kelas F akan membeli {n} kotak spidol. Harga satu kotak {h|price}. Toko memberi diskon {p|percent} untuk pembelian ini. Bendahara kelas punya uang {uang|rupiah}. Apakah uang kelas cukup? Jika cukup, berapa sisanya?",
+      "steps": [
+        {
+          "id": "s1", "tahap": 1, "points": 1, "input": "choice",
+          "ask": "Mana informasi yang diketahui dengan benar?",
+          "options": [
+            "Harga awal Rp180.000 dan persen diskon 15%",
+            "Harga per kotak Rp40.000, diskon 15%, uang kelas Rp180.000",
+            "Harga per kotak Rp40.000 dan besar diskon Rp15"
+          ],
+          "key": 1,
+          "optionFeedback": {
+            "0": "Rp180.000 adalah uang kelas, bukan harga barang.",
+            "2": "15% adalah persen diskon, bukan Rp15."
+          },
+          "fb": "Baca lagi peran setiap angka: harga, persen diskon, atau uang.",
+          "rubricText": "Diketahui 5 kotak, Rp40.000/kotak, diskon 15%, uang Rp180.000. Ditanya total setelah diskon dan kecukupan uang."
+        },
+        {
+          "id": "s2", "tahap": 2, "points": 1, "input": "rupiah",
+          "ask": "Berapa harga seluruh spidol sebelum diskon?",
+          "key": { "fn": "mul", "args": ["h", "n"] },
+          "traps": [
+            { "value": { "fn": "mul", "args": ["h", 1] }, "fb": "Itu harga satu kotak. Kelas membeli 5 kotak." }
+          ],
+          "fb": "Harga seluruhnya = banyak kotak × harga satu kotak.",
+          "rubricText": "5 × Rp40.000 = Rp200.000."
+        },
+        {
+          "id": "s3", "tahap": 3, "points": 1, "input": "choice",
+          "ask": "Model matematika yang tepat untuk besar diskon adalah …",
+          "options": ["15/100 × Rp40.000", "15/100 × (5 × Rp40.000)", "15/100 × Rp180.000"],
+          "key": 1,
+          "optionFeedback": {
+            "0": "Itu diskon untuk satu kotak saja. Kelas membeli 5 kotak.",
+            "2": "Diskon dihitung dari harga barang, bukan dari uang kelas."
+          },
+          "fb": "Besar diskon = persen diskon × harga seluruh barang.",
+          "rubricText": "Besar diskon = 15/100 × (5 × Rp40.000)."
+        },
+        {
+          "id": "s4", "tahap": 4, "points": 1, "input": "rupiah",
+          "ask": "Berapa besar diskonnya?",
+          "key": { "fn": "discountAmount", "args": ["s2", "p"] },
+          "ecf": true,
+          "traps": [
+            { "value": { "fn": "discountAmount", "args": ["h", "p"] }, "fb": "Itu diskon satu kotak. Hitung dari harga seluruh spidol." }
+          ],
+          "fb": "Besar diskon = 15/100 × harga seluruh spidol.",
+          "rubricText": "15/100 × Rp200.000 = Rp30.000."
+        },
+        {
+          "id": "s5", "tahap": 5, "points": 1, "input": "rupiah",
+          "ask": "Berapa total harga setelah diskon?",
+          "key": { "fn": "subtract", "args": ["s2", "s4"] },
+          "ecf": true,
+          "traps": [
+            { "value": { "fn": "mul", "args": ["s4", 1] }, "fb": "Itu besar diskonnya. Yang ditanya harga setelah diskon." }
+          ],
+          "fb": "Harga setelah diskon = harga seluruh spidol − besar diskon.",
+          "rubricText": "(5 × Rp40.000) − (15/100 × 5 × Rp40.000) = Rp170.000."
+        },
+        {
+          "id": "s6", "tahap": 6, "points": 1, "input": "choice",
+          "ask": "Apa kesimpulanmu tentang uang kelas?",
+          "options": ["Tidak cukup, kurang Rp20.000", "Cukup, sisa Rp10.000", "Cukup, sisa Rp150.000"],
+          "key": 1,
+          "optionFeedback": {
+            "0": "Sepertinya diskon terlupa. Bandingkan uang dengan harga SETELAH diskon.",
+            "2": "Itu uang dikurangi besar diskon. Kurangkan dengan harga setelah diskon."
+          },
+          "fb": "Bandingkan uang kelas dengan harga setelah diskon, lalu cari selisihnya.",
+          "rubricText": "Rp170.000 < Rp180.000, uang cukup. Sisa Rp180.000 − Rp170.000 = Rp10.000."
+        }
+      ]
+    },
+    {
+      "id": "L3",
+      "process": "employ",
+      "title": "Menghitung Potongan Harga Jaket",
+      "context": "pakaian",
+      "rubric": [1, 2, 2, 1],
+      "vars": { "h": 320000, "p": 2500 },
+      "text": "Sebuah toko pakaian menjual jaket dengan harga awal {h|price}. Toko memberi diskon {p|percent}. Rani membeli satu jaket. Berapa besar potongan harga yang Rani dapat? Berapa harga yang harus Rani bayar?",
+      "steps": [
+        {
+          "id": "s1", "tahap": 1, "points": 1, "input": "choice",
+          "ask": "Apa yang diketahui dari soal?",
+          "options": [
+            "Harga akhir Rp320.000 dan besar diskon Rp25",
+            "Harga awal Rp320.000 dan besar diskon Rp25.000",
+            "Harga awal Rp320.000 dan persen diskon 25%"
+          ],
+          "key": 2,
+          "optionFeedback": {
+            "0": "Rp320.000 adalah harga sebelum diskon. 25% adalah persen, bukan rupiah.",
+            "1": "25% adalah persen diskon. Besar diskonnya belum diketahui."
+          },
+          "fb": "Cari harga sebelum diskon dan persen diskonnya.",
+          "rubricText": "Harga awal Rp320.000, diskon 25%. Ditanya besar potongan dan harga setelah diskon."
+        },
+        {
+          "id": "s2a", "tahap": 2, "label": "2a", "points": 1, "input": "choice",
+          "ask": "Rumus besar diskon yang tepat adalah …",
+          "options": ["Rp320.000 − 25", "25/100 × Rp320.000", "Rp320.000 : 25"],
+          "key": 1,
+          "optionFeedback": {
+            "0": "25% artinya 25 per 100, bukan Rp25.",
+            "2": "Persen berarti per seratus. Ubah 25% menjadi 25/100 dulu."
+          },
+          "fb": "Besar diskon = persen diskon × harga awal.",
+          "rubricText": "Besar potongan = persentase diskon × harga awal = 25/100 × Rp320.000."
+        },
+        {
+          "id": "s2b", "tahap": 2, "label": "2b", "points": 1, "input": "rupiah",
+          "ask": "Berapa besar potongan harga yang Rani dapat?",
+          "key": { "fn": "discountAmount", "args": ["h", "p"] },
+          "traps": [
+            { "value": { "fn": "finalPrice", "args": ["h", "p"] }, "fb": "Itu harga akhir. Yang ditanya besar potongannya dulu." },
+            { "value": { "fn": "subtract", "args": ["h", 25] }, "fb": "25% bukan Rp25. Hitung 25/100 × harga awal." }
+          ],
+          "fb": "Bagi harga awal dengan 100, lalu kalikan 25.",
+          "rubricText": "25/100 × Rp320.000 = Rp80.000."
+        },
+        {
+          "id": "s3a", "tahap": 3, "label": "3a", "points": 1, "input": "choice",
+          "ask": "Rumus harga setelah diskon yang tepat adalah …",
+          "options": ["Harga awal + besar diskon", "Besar diskon − harga awal", "Harga awal − besar diskon"],
+          "key": 2,
+          "optionFeedback": {
+            "0": "Diskon mengurangi harga, bukan menambah.",
+            "1": "Urutannya terbalik. Harga awal dikurangi besar diskon."
+          },
+          "fb": "Harga akhir selalu lebih kecil dari harga awal.",
+          "rubricText": "Harga setelah diskon = harga awal − potongan harga."
+        },
+        {
+          "id": "s3b", "tahap": 3, "label": "3b", "points": 1, "input": "rupiah",
+          "ask": "Berapa harga yang harus Rani bayar?",
+          "key": { "fn": "subtract", "args": ["h", "s2b"] },
+          "ecf": true,
+          "traps": [
+            { "value": { "fn": "add", "args": ["h", "s2b"] }, "fb": "Diskon mengurangi harga, bukan menambah." },
+            { "value": { "fn": "mul", "args": ["s2b", 1] }, "fb": "Itu besar potongannya. Yang ditanya harga yang dibayar." }
+          ],
+          "fb": "Kurangkan besar potongan dari harga awal.",
+          "rubricText": "Rp320.000 − Rp80.000 = Rp240.000."
+        },
+        {
+          "id": "s4", "tahap": 4, "points": 1, "input": "choice",
+          "ask": "Kesimpulan yang tepat adalah …",
+          "options": [
+            "Rani mendapat potongan {s3b|rupiah} dan membayar {s2b|rupiah}.",
+            "Rani mendapat potongan {s2b|rupiah} dan membayar {s3b|rupiah}.",
+            "Rani mendapat potongan {s2b|rupiah} dan membayar {h|rupiah}."
+          ],
+          "key": 1,
+          "optionFeedback": {
+            "0": "Potongan dan harga bayar tertukar. Potongan adalah bagian yang dikurangkan.",
+            "2": "Rani tetap mendapat diskon, jadi ia tidak membayar harga awal."
+          },
+          "fb": "Kesimpulan menyebut besar potongan dan harga yang dibayar.",
+          "rubricText": "Rani mendapat potongan Rp80.000 dan membayar Rp240.000 (dinilai sesuai hasil siswa)."
+        }
+      ]
+    },
+    {
+      "id": "L4",
+      "process": "interpret",
+      "title": "Memeriksa Perhitungan Diskon Sepatu",
+      "context": "pakaian",
+      "rubric": [1, 1, 1, 1, 1, 1],
+      "vars": { "h": 400000, "p": 3000 },
+      "text": "Sepatu berharga awal {h|price} dan diberi diskon {p|percent}. Kasir menghitung: Rp400.000 − Rp30 = Rp399.970. Kasir berkata itulah harga yang harus dibayar. Apakah perhitungan kasir benar?",
+      "steps": [
+        {
+          "id": "s1", "tahap": 1, "points": 1, "input": "choice",
+          "ask": "Apakah kamu setuju dengan kasir?",
+          "options": ["Setuju, karena harganya sudah turun", "Tidak setuju, karena 30% tidak sama dengan Rp30", "Setuju, karena 30% sama dengan Rp30"],
+          "key": 1,
+          "optionFeedback": {
+            "0": "Harga memang turun, tetapi turunnya terlalu sedikit. Periksa arti 30%.",
+            "2": "30% artinya 30 per 100 dari harga awal, bukan Rp30."
+          },
+          "fb": "Ingat: persen berarti per seratus dari harga awal.",
+          "rubricText": "Tidak setuju: 30% berarti 30 per 100 dari harga awal, bukan potongan Rp30."
+        },
+        {
+          "id": "s2", "tahap": 2, "points": 1, "input": "choice",
+          "ask": "Informasi apa yang seharusnya dipakai?",
+          "options": ["Harga awal Rp400.000 dan persen diskon 30%", "Harga awal Rp399.970 dan besar diskon Rp30", "Harga awal Rp400.000 dan besar diskon Rp30"],
+          "key": 0,
+          "optionFeedback": {
+            "1": "Rp399.970 adalah hasil kasir yang keliru, bukan harga awal.",
+            "2": "30% adalah persen diskon. Besar diskonnya harus dihitung."
+          },
+          "fb": "Gunakan data asli dari soal, bukan hasil kasir.",
+          "rubricText": "Harga awal Rp400.000 dan diskon 30%."
+        },
+        {
+          "id": "s3", "tahap": 3, "points": 1, "input": "choice",
+          "ask": "Model besar diskon yang benar adalah …",
+          "options": ["30 × Rp400.000", "Rp400.000 − 30", "30/100 × Rp400.000"],
+          "key": 2,
+          "optionFeedback": {
+            "0": "Jangan lupa membagi 100. 30% = 30/100.",
+            "1": "Itu cara kasir yang keliru. 30% bukan Rp30."
+          },
+          "fb": "Besar diskon = persen diskon × harga awal.",
+          "rubricText": "Besar potongan = 30/100 × Rp400.000."
+        },
+        {
+          "id": "s4", "tahap": 4, "points": 1, "input": "rupiah",
+          "ask": "Berapa besar diskon yang benar?",
+          "key": { "fn": "discountAmount", "args": ["h", "p"] },
+          "traps": [
+            { "value": 30, "fb": "Itu cara kasir. 30% artinya 30 per 100 dari harga awal." },
+            { "value": { "fn": "mul", "args": ["h", 30] }, "fb": "Jangan lupa membagi 100. 30% = 30/100." },
+            { "value": { "fn": "discountAmount", "args": ["h", 300] }, "fb": "Cek posisi koma. 30% = 0,3, bukan 0,03." }
+          ],
+          "fb": "Hitung 30/100 × harga awal. Bagi 100 dulu, lalu kalikan 30.",
+          "rubricText": "0,3 × Rp400.000 = Rp120.000."
+        },
+        {
+          "id": "s5", "tahap": 5, "points": 1, "input": "rupiah",
+          "ask": "Berapa harga akhir yang benar?",
+          "key": { "fn": "subtract", "args": ["h", "s4"] },
+          "traps": [
+            { "value": { "fn": "mul", "args": ["s4", 1] }, "fb": "Itu besar diskonnya. Yang ditanya harga akhir." },
+            { "value": 399970, "fb": "Itu hasil kasir yang keliru. Pakai besar diskon yang benar." }
+          ],
+          "fb": "Harga akhir = harga awal − besar diskon.",
+          "rubricText": "Rp400.000 − Rp120.000 = Rp280.000. Hasil kasir Rp399.970 tidak tepat."
+        },
+        {
+          "id": "s6", "tahap": 6, "points": 1, "input": "choice", "write": true,
+          "ask": "Apakah hasilmu masuk akal? Pilih alasannya.",
+          "options": [
+            "Hasil kasir lebih masuk akal karena potongannya kecil.",
+            "Masuk akal. Diskon 30% cukup besar, jadi harga akhir jauh di bawah harga awal.",
+            "Tidak masuk akal, karena harga akhir harus sama dengan harga awal."
+          ],
+          "key": 1,
+          "optionFeedback": {
+            "0": "Potongan Rp30 terlalu kecil untuk diskon 30%. Hasil kasir tidak wajar.",
+            "2": "Diskon selalu membuat harga akhir lebih kecil dari harga awal."
+          },
+          "fb": "Hasil wajar bila potongannya sebanding dengan persen diskon.",
+          "rubricText": "Harga seharusnya Rp280.000. Masuk akal karena potongan 30% = Rp120.000 sehingga harga akhir lebih rendah."
+        }
+      ]
+    }
+  ],
+  "practice": [
+    {
+      "id": "P1",
+      "process": "reason",
+      "title": "Memilih Tas Sekolah",
+      "context": "perlengkapan sekolah",
+      "rubric": [1, 2, 1, 1, 1],
+      "formula": "Harga akhir = harga awal − (persen diskon × harga awal)",
+      "vars": { "hA": 180000, "pA": 2500, "hB": 160000, "pB": 1000 },
+      "text": "Rina ingin membeli tas sekolah yang sama. Toko Ceria: harga awal {hA|price}, diskon {pA|percent}. Toko Pelangi: harga awal {hB|price}, diskon {pB|percent}. Tidak ada biaya lain. Di toko mana Rina membayar paling murah?",
+      "steps": [
+        {
+          "id": "s1", "tahap": 1, "points": 1, "input": "choice",
+          "ask": "Apa yang perlu kamu hitung lebih dulu?",
+          "options": ["Toko dengan harga awal paling murah", "Harga akhir tas di setiap toko", "Selisih persen diskon kedua toko"],
+          "key": 1,
+          "optionFeedback": {
+            "0": "Harga awal belum dipotong diskon. Bandingkan harga yang dibayar.",
+            "2": "Persen saja belum cukup. Harga awal kedua toko berbeda."
+          },
+          "hints": ["Rina ingin membayar paling murah. Harga mana yang dibayar Rina?"],
+          "good": "Tepat. Bandingkan harga yang benar-benar dibayar."
+        },
+        {
+          "id": "s2a", "tahap": 2, "label": "2a", "points": 1, "input": "rupiah",
+          "ask": "Berapa harga akhir tas di Toko Ceria?",
+          "key": { "fn": "finalPrice", "args": ["hA", "pA"] },
+          "traps": [
+            { "value": { "fn": "discountAmount", "args": ["hA", "pA"] }, "fb": "Itu besar diskonnya. Kurangkan dari harga awal." }
+          ],
+          "fb": "Hitung besar diskon dulu, lalu kurangkan dari harga awal.",
+          "hints": ["25% = 25/100. Cari 1% dari Rp180.000 dulu.", "1% dari Rp180.000 = Rp1.800. Kalikan 25, lalu kurangkan dari harga awal."]
+        },
+        {
+          "id": "s2b", "tahap": 2, "label": "2b", "points": 1, "input": "rupiah",
+          "ask": "Berapa harga akhir tas di Toko Pelangi?",
+          "key": { "fn": "finalPrice", "args": ["hB", "pB"] },
+          "traps": [
+            { "value": { "fn": "discountAmount", "args": ["hB", "pB"] }, "fb": "Itu besar diskonnya. Kurangkan dari harga awal." }
+          ],
+          "fb": "Hitung besar diskon dulu, lalu kurangkan dari harga awal.",
+          "hints": ["10% artinya bagi harga awal dengan 10.", "Rp160.000 : 10 = Rp16.000. Kurangkan dari harga awal."]
+        },
+        {
+          "id": "s3", "tahap": 3, "points": 1, "input": "choice",
+          "ask": "Hasilmu: Toko Ceria {s2a|result}, Toko Pelangi {s2b|result}. Bagaimana perbandingannya?",
+          "options": ["Harga akhir Ceria lebih kecil dari Pelangi", "Harga akhir Ceria lebih besar dari Pelangi", "Harga akhir keduanya sama"],
+          "key": { "fn": "compareIndex", "args": ["s2a", "s2b"] },
+          "ecf": true,
+          "fb": "Bandingkan angka dari kiri. Angka lebih kecil berarti lebih murah.",
+          "hints": ["Lihat angka puluh ribuannya dulu."]
+        },
+        {
+          "id": "s4", "tahap": 4, "points": 1, "input": "choice",
+          "ask": "Di toko mana Rina sebaiknya membeli tas?",
+          "options": ["Toko Ceria", "Toko Pelangi"],
+          "key": { "fn": "compareIndex", "args": ["s2a", "s2b"] },
+          "ecf": true,
+          "fb": "Pilih toko dengan harga akhir paling kecil.",
+          "hints": ["Gunakan hasil perbandingan di tahap 3."]
+        },
+        {
+          "id": "s5", "tahap": 5, "points": 1, "input": "choice", "write": true,
+          "ask": "Pilih alasan yang paling tepat.",
+          "options": [
+            "Harga awal Toko Pelangi lebih murah, jadi lebih hemat.",
+            "Harga akhir Toko Ceria lebih murah Rp9.000.",
+            "Toko Ceria lebih hemat karena harga awalnya lebih mahal."
+          ],
+          "key": 1,
+          "optionFeedback": {
+            "0": "Harga awal murah belum tentu hemat. Lihat harga akhirnya.",
+            "2": "Harga awal mahal bukan alasan hemat. Yang penting harga akhirnya."
+          },
+          "fb": "Alasan yang kuat memakai harga akhir dan selisihnya.",
+          "hints": ["Hitung selisih kedua harga akhir."]
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "process": "formulate",
+      "title": "Membeli Air Minum untuk Lomba",
+      "context": "makanan dan minuman",
+      "rubric": [1, 1, 1, 1, 1, 1],
+      "formula": "Besar diskon = persen diskon × (banyak barang × harga satuan)",
+      "vars": { "n": 12, "h": 15000, "p": 2000, "uang": 150000 },
+      "text": "Panitia lomba membeli {n} kardus air minum. Harga satu kardus {h|price}. Toko memberi diskon {p|percent}. Panitia membawa uang {uang|rupiah}. Apakah uangnya cukup? Jika cukup, berapa sisanya?",
+      "steps": [
+        {
+          "id": "s1", "tahap": 1, "points": 1, "input": "choice",
+          "ask": "Mana informasi yang diketahui dengan benar?",
+          "options": [
+            "Harga per kardus Rp15.000, diskon 20%, uang Rp150.000",
+            "Harga awal Rp150.000 dan persen diskon 20%",
+            "Harga per kardus Rp15.000 dan besar diskon Rp20"
+          ],
+          "key": 0,
+          "optionFeedback": {
+            "1": "Rp150.000 adalah uang panitia, bukan harga barang.",
+            "2": "20% adalah persen diskon, bukan Rp20."
+          },
+          "hints": ["Tanyakan untuk setiap angka: ini harga, persen, atau uang?"]
+        },
+        {
+          "id": "s2", "tahap": 2, "points": 1, "input": "rupiah",
+          "ask": "Berapa harga seluruh air minum sebelum diskon?",
+          "key": { "fn": "mul", "args": ["h", "n"] },
+          "traps": [
+            { "value": { "fn": "mul", "args": ["h", 1] }, "fb": "Itu harga satu kardus. Panitia membeli 12 kardus." }
+          ],
+          "fb": "Harga seluruhnya = banyak kardus × harga satu kardus.",
+          "hints": ["Ada 12 kardus. Kalikan dengan harga satu kardus.", "Hitung 10 × Rp15.000 dulu, lalu tambah 2 × Rp15.000."]
+        },
+        {
+          "id": "s3", "tahap": 3, "points": 1, "input": "choice",
+          "ask": "Model matematika yang tepat untuk besar diskon adalah …",
+          "options": ["20/100 × (12 × Rp15.000)", "20/100 × Rp150.000", "20/100 × Rp15.000"],
+          "key": 0,
+          "optionFeedback": {
+            "1": "Diskon dihitung dari harga barang, bukan dari uang panitia.",
+            "2": "Itu diskon satu kardus saja. Panitia membeli 12 kardus."
+          },
+          "hints": ["Diskon berlaku untuk seluruh barang yang dibeli."]
+        },
+        {
+          "id": "s4", "tahap": 4, "points": 1, "input": "rupiah",
+          "ask": "Berapa besar diskonnya?",
+          "key": { "fn": "discountAmount", "args": ["s2", "p"] },
+          "ecf": true,
+          "traps": [
+            { "value": { "fn": "discountAmount", "args": ["h", "p"] }, "fb": "Itu diskon satu kardus. Hitung dari harga seluruhnya." }
+          ],
+          "fb": "Besar diskon = 20/100 × harga seluruh air minum.",
+          "hints": ["20% = 20/100. Cari 1% dari harga seluruhnya dulu.", "1% dari Rp180.000 = Rp1.800. Kalikan 20."]
+        },
+        {
+          "id": "s5", "tahap": 5, "points": 1, "input": "rupiah",
+          "ask": "Berapa total harga setelah diskon?",
+          "key": { "fn": "subtract", "args": ["s2", "s4"] },
+          "ecf": true,
+          "traps": [
+            { "value": { "fn": "mul", "args": ["s4", 1] }, "fb": "Itu besar diskonnya. Yang ditanya harga setelah diskon." }
+          ],
+          "fb": "Harga setelah diskon = harga seluruhnya − besar diskon.",
+          "hints": ["Kurangkan besar diskon dari harga seluruh air minum."]
+        },
+        {
+          "id": "s6", "tahap": 6, "points": 1, "input": "choice",
+          "ask": "Apa kesimpulanmu tentang uang panitia?",
+          "options": ["Tidak cukup, kurang Rp30.000", "Cukup, sisa Rp114.000", "Cukup, sisa Rp6.000"],
+          "key": 2,
+          "optionFeedback": {
+            "0": "Sepertinya diskon terlupa. Bandingkan uang dengan harga SETELAH diskon.",
+            "1": "Itu uang dikurangi besar diskon. Kurangkan dengan harga setelah diskon."
+          },
+          "hints": ["Bandingkan uang panitia dengan hasil tahap 5."]
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "process": "employ",
+      "title": "Diskon Paket Pizza",
+      "context": "makanan dan minuman",
+      "rubric": [1, 2, 2, 1],
+      "formula": "Besar diskon = persen diskon × harga awal · Harga akhir = harga awal − besar diskon",
+      "vars": { "h": 120000, "p": 3500 },
+      "text": "Sebuah restoran menjual paket pizza dengan harga awal {h|price}. Hari ini ada diskon {p|percent}. Bayu membeli satu paket. Berapa besar potongan harga yang Bayu dapat? Berapa yang harus Bayu bayar?",
+      "steps": [
+        {
+          "id": "s1", "tahap": 1, "points": 1, "input": "choice",
+          "ask": "Apa yang diketahui dari soal?",
+          "options": [
+            "Harga awal Rp120.000 dan persen diskon 35%",
+            "Harga akhir Rp120.000 dan besar diskon Rp35",
+            "Harga awal Rp120.000 dan besar diskon Rp35.000"
+          ],
+          "key": 0,
+          "optionFeedback": {
+            "1": "Rp120.000 adalah harga sebelum diskon. 35% adalah persen.",
+            "2": "35% adalah persen diskon. Besar diskonnya belum diketahui."
+          },
+          "hints": ["Harga mana yang tertulis sebelum diskon?"]
+        },
+        {
+          "id": "s2a", "tahap": 2, "label": "2a", "points": 1, "input": "choice",
+          "ask": "Rumus besar diskon yang tepat adalah …",
+          "options": ["Rp120.000 : 35", "35/100 × Rp120.000", "Rp120.000 − 35"],
+          "key": 1,
+          "optionFeedback": {
+            "0": "Persen berarti per seratus. Ubah 35% menjadi 35/100 dulu.",
+            "2": "35% artinya 35 per 100, bukan Rp35."
+          },
+          "hints": ["Persen artinya per seratus."]
+        },
+        {
+          "id": "s2b", "tahap": 2, "label": "2b", "points": 1, "input": "rupiah",
+          "ask": "Berapa besar potongan harga yang Bayu dapat?",
+          "key": { "fn": "discountAmount", "args": ["h", "p"] },
+          "traps": [
+            { "value": { "fn": "finalPrice", "args": ["h", "p"] }, "fb": "Itu harga akhir. Yang ditanya besar potongannya dulu." }
+          ],
+          "fb": "Bagi harga awal dengan 100, lalu kalikan 35.",
+          "hints": ["Rp120.000 : 100 = Rp1.200. Itu 1% dari harga awal.", "Kalikan Rp1.200 dengan 35."]
+        },
+        {
+          "id": "s3a", "tahap": 3, "label": "3a", "points": 1, "input": "choice",
+          "ask": "Rumus harga setelah diskon yang tepat adalah …",
+          "options": ["Harga awal − besar diskon", "Harga awal + besar diskon", "Besar diskon − harga awal"],
+          "key": 0,
+          "optionFeedback": {
+            "1": "Diskon mengurangi harga, bukan menambah.",
+            "2": "Urutannya terbalik. Harga awal dikurangi besar diskon."
+          },
+          "hints": ["Setelah diskon, harga jadi lebih murah atau lebih mahal?"]
+        },
+        {
+          "id": "s3b", "tahap": 3, "label": "3b", "points": 1, "input": "rupiah",
+          "ask": "Berapa harga yang harus Bayu bayar?",
+          "key": { "fn": "subtract", "args": ["h", "s2b"] },
+          "ecf": true,
+          "traps": [
+            { "value": { "fn": "add", "args": ["h", "s2b"] }, "fb": "Diskon mengurangi harga, bukan menambah." }
+          ],
+          "fb": "Kurangkan besar potongan dari harga awal.",
+          "hints": ["Harga awal dikurangi hasil tahap 2."]
+        },
+        {
+          "id": "s4", "tahap": 4, "points": 1, "input": "choice",
+          "ask": "Kesimpulan yang tepat adalah …",
+          "options": [
+            "Bayu mendapat potongan {s2b|rupiah} dan membayar {s3b|rupiah}.",
+            "Bayu mendapat potongan {s3b|rupiah} dan membayar {s2b|rupiah}.",
+            "Bayu mendapat potongan {s2b|rupiah} dan membayar {h|rupiah}."
+          ],
+          "key": 0,
+          "optionFeedback": {
+            "1": "Potongan dan harga bayar tertukar.",
+            "2": "Bayu mendapat diskon, jadi ia tidak membayar harga awal."
+          },
+          "hints": ["Potongan adalah bagian yang dikurangkan dari harga awal."]
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "process": "interpret",
+      "title": "Memeriksa Harga Buku Gambar",
+      "context": "perlengkapan sekolah",
+      "rubric": [1, 1, 1, 1, 1, 1],
+      "formula": "Harga akhir = harga awal − besar diskon",
+      "vars": { "h": 60000, "p": 1500 },
+      "text": "Buku gambar berharga awal {h|price} dengan diskon {p|percent}. Budi menghitung 15/100 × Rp60.000 = Rp9.000. Lalu Budi berkata: harga yang harus dibayar Rp9.000. Apakah kesimpulan Budi benar?",
+      "steps": [
+        {
+          "id": "s1", "tahap": 1, "points": 1, "input": "choice",
+          "ask": "Apakah kamu setuju dengan Budi?",
+          "options": ["Tidak setuju. Rp9.000 itu besar diskon, bukan harga akhir.", "Setuju, karena perhitungannya benar.", "Setuju, karena diskon membuat harga murah."],
+          "key": 0,
+          "optionFeedback": {
+            "1": "Hitungannya benar, tetapi kesimpulannya belum. Rp9.000 itu apa?",
+            "2": "Murah boleh, tetapi Rp9.000 terlalu murah untuk diskon 15%."
+          },
+          "hints": ["15/100 × harga awal menghasilkan besar diskon atau harga akhir?"]
+        },
+        {
+          "id": "s2", "tahap": 2, "points": 1, "input": "choice",
+          "ask": "Informasi apa yang seharusnya dipakai?",
+          "options": ["Harga awal Rp9.000 dan persen diskon 15%", "Harga awal Rp60.000 dan persen diskon 15%", "Harga akhir Rp60.000 dan besar diskon Rp15"],
+          "key": 1,
+          "optionFeedback": {
+            "0": "Rp9.000 adalah hasil hitungan Budi, bukan harga awal.",
+            "2": "Rp60.000 adalah harga sebelum diskon."
+          },
+          "hints": ["Gunakan data asli dari soal."]
+        },
+        {
+          "id": "s3", "tahap": 3, "points": 1, "input": "choice",
+          "ask": "Langkah Budi yang sudah benar adalah …",
+          "options": ["Menghitung besar diskon: 15/100 × Rp60.000", "Menyimpulkan harga yang dibayar", "Tidak ada yang benar"],
+          "key": 0,
+          "optionFeedback": {
+            "1": "Kesimpulannya keliru. Budi lupa satu langkah.",
+            "2": "Ada langkah Budi yang benar. Periksa lagi hitungannya."
+          },
+          "hints": ["Periksa langkah Budi satu per satu."]
+        },
+        {
+          "id": "s4", "tahap": 4, "points": 1, "input": "rupiah",
+          "ask": "Berapa besar diskonnya?",
+          "key": { "fn": "discountAmount", "args": ["h", "p"] },
+          "traps": [
+            { "value": { "fn": "finalPrice", "args": ["h", "p"] }, "fb": "Itu harga akhir. Yang ditanya besar diskon." }
+          ],
+          "fb": "Besar diskon = 15/100 × harga awal.",
+          "hints": ["Hitungan Budi untuk bagian ini sudah benar."]
+        },
+        {
+          "id": "s5", "tahap": 5, "points": 1, "input": "rupiah",
+          "ask": "Berapa harga yang seharusnya dibayar?",
+          "key": { "fn": "subtract", "args": ["h", "s4"] },
+          "ecf": true,
+          "traps": [
+            { "value": { "fn": "mul", "args": ["s4", 1] }, "fb": "Itu besar diskonnya, sama seperti kesalahan Budi." }
+          ],
+          "fb": "Harga akhir = harga awal − besar diskon.",
+          "hints": ["Langkah yang terlupa: kurangkan besar diskon dari harga awal."]
+        },
+        {
+          "id": "s6", "tahap": 6, "points": 1, "input": "choice", "write": true,
+          "ask": "Hasil mana yang masuk akal? Pilih alasannya.",
+          "options": [
+            "Rp9.000 masuk akal untuk buku seharga Rp60.000.",
+            "Rp51.000 masuk akal: diskon 15% hanya memotong sedikit.",
+            "Harga akhir harus lebih besar dari Rp60.000."
+          ],
+          "key": 1,
+          "optionFeedback": {
+            "0": "Diskon 15% hanya memotong sedikit. Rp9.000 terlalu murah.",
+            "2": "Diskon membuat harga akhir lebih kecil dari harga awal."
+          },
+          "hints": ["Diskon 15% memotong sedikit atau banyak?"]
+        }
+      ]
+    }
+  ]
+}

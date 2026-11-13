@@ -213,3 +213,34 @@ h1, h2, .step-title, .btn, .option, .chip, .module .id, .numpad button, .answer 
 }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ---- navigasi utama: Materi | Latihan | Tes ---- */
+.tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: #fff; border-radius: 16px; padding: 4px; box-shadow: var(--shadow-chunky); }
+.tabs button { min-height: 44px; border: 0; border-radius: 12px; background: none; font-weight: 700; font-size: 16px; color: var(--c-muted); }
+.tabs button[aria-selected='true'] { background: var(--c-header); color: #fff; }
+.section-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; margin: 6px 0 0; }
+
+/* ---- materi ---- */
+.example .step-label { font-weight: 700; }
+.ex-steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 16px; line-height: 1.5; }
+.ex-steps p { margin: 0; }
+
+/* ---- tes & latihan literasi ---- */
+.chip-static { align-self: flex-start; background: #fff; border-radius: 999px; padding: 6px 12px; box-shadow: 0 3px 0 rgb(42 29 36 / 0.12); }
+.step-ask { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.5; }
+.option.option-text { font-size: 16px; font-weight: 600; line-height: 1.35; padding: 10px 16px; }
+.option:disabled { color: var(--c-text); opacity: 0.75; }
+.textarea { min-height: 84px; font-size: 16px; padding: 10px 14px; resize: vertical; font-family: inherit; }
+.rules { margin: 0; padding-left: 32px; gap: 6px; }
+.score-card { text-align: center; }
+.score { font-family: var(--font-display); }
+.score b { font-size: 48px; color: var(--c-focus); }
+.score span { font-size: 22px; color: var(--c-muted); margin-left: 4px; }
+.bar { height: 12px; border-radius: 6px; background: #fbe3e8; overflow: hidden; }
+.bar span { display: block; height: 100%; background: var(--c-focus); border-radius: 6px; }
+.review summary { display: flex; gap: 8px; align-items: center; cursor: pointer; min-height: 40px; font-weight: 600; }
+.review-steps { margin: 8px 0 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.review-steps li { border-left: 5px solid var(--c-line); padding: 4px 0 4px 10px; display: flex; flex-direction: column; gap: 2px; }
+.review-steps li.ok { border-color: var(--c-focus); }
+.review-steps li.no { border-color: var(--c-discount); }
+.fb-line { font-style: italic; }
