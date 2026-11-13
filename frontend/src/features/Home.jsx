@@ -1,18 +1,17 @@
-// Dunia toko HitungHemat: Beranda, Identitas, Sapaan, Perjalanan Belajar, Simulasi Belanja, Profil.
-// Animasi hanya di layar tanpa tugas hitung (beranda, perjalanan). Komponen tidak menghitung sendiri:
-// semua angka lewat domain/ (materialVars, checkoutChoices, receipt).
+// Dunia toko HitungHemat: Beranda, Identitas, Sapaan, Perjalanan Belajar, hub Materi.
+// (Simulasi Belanja → Shop.jsx, Profil → Profile.jsx.)
+// Animasi hanya di layar tanpa tugas hitung. Komponen tidak menghitung sendiri: angka lewat domain/.
 import { useEffect, useMemo, useState } from 'react';
-import { assessment, journey, modules, shop } from '../content/index.js';
+import { journey } from '../content/index.js';
 import { logEvent } from '../data/events.js';
 import { materialVars } from '../domain/literacy.js';
-import { formatBp, formatRp } from '../domain/money.js';
-import { mulberry32 } from '../domain/rng.js';
-import { CHOICE_FEEDBACK, checkoutChoices, receipt } from '../domain/shop.js';
 import { t } from '../i18n/id.js';
-import { Feedback, Header, RichText, Sheet } from '../ui/components.jsx';
+import { play } from '../ui/audio.js';
+import { Header, RichText } from '../ui/components.jsx';
 import Icon from '../ui/Icon.jsx';
 import { KikoSays } from '../ui/Mascot.jsx';
-import { Critter, JourneyStreet, PAL, ProductIcon, ShopStreet } from '../ui/ShopArt.jsx';
+import { Critter, JourneyStreet, PAL, ShopStreet } from '../ui/ShopArt.jsx';
+import { SoundButtons } from '../ui/SoundToggle.jsx';
 import { MaterialList } from './Material.jsx';
 
 const MENU = [
@@ -33,6 +32,7 @@ export function Home({ profile, onMenu }) {
   };
   return (
     <div className="screen home">
+      <SoundButtons />
       <div className="home-hero">
         <h1 className="home-title" aria-label={t.appName}>
           {t.appTitle.split('').map((ch, i) => (
@@ -193,7 +193,7 @@ export function Journey({ profile, onDone }) {
       </div>
       <div className="actions">
         {i > 0 && <button className="btn" onClick={() => setI(i - 1)}>{t.back}</button>}
-        <button className="btn btn-primary" onClick={() => (last ? onDone() : setI(i + 1))}>
+        <button className="btn btn-primary" onClick={() => (last ? (play('success'), onDone()) : setI(i + 1))}>
           {last ? t.goToMap : t.continue}
         </button>
       </div>
@@ -203,165 +203,11 @@ export function Journey({ profile, onDone }) {
 
 /* ---------------- Materi (dari beranda) ---------------- */
 
-export function MaterialHub({ onOpen }) {
+export function MaterialHub({ onOpen, onFormulas, onGlossary, seen }) {
   return (
     <div className="screen">
       <Header title={t.tabs.material} />
-      <MaterialList onOpen={onOpen} />
-    </div>
-  );
-}
-
-/* ---------------- Simulasi Belanja ---------------- */
-
-function Checkout({ product, onAdd, onClose }) {
-  const choices = useMemo(() => checkoutChoices(product, mulberry32((Date.now() >>> 0) ^ product.price)), [product]);
-  const [picked, setPicked] = useState(null);
-  const pick = (k) => {
-    setPicked(k);
-    logEvent('scene_interact', { moduleId: 'SIM', payload: { scene: 'checkout', product: product.id, choice: choices[k].kind, correct: choices[k].kind === 'correct' } });
-  };
-  const ok = picked !== null && choices[picked].kind === 'correct';
-  return (
-    <Sheet onClose={onClose}>
-      <div className="row">
-        <svg viewBox="0 0 100 130" width="56" height="72" aria-hidden="true">
-          <Critter type="cat" role="cashier" shirt={PAL.lilac} x={50} y={128} wave={ok} />
-        </svg>
-        <div className="grow">
-          <h2 style={{ margin: 0 }}>{product.name}</h2>
-          <div className="muted small">{product.shop}</div>
-        </div>
-      </div>
-      <RichText
-        text="Harga awal {price|price}, diskon {pct|percent}."
-        vars={{ price: product.price, pct: product.pct }}
-        className="problem-text"
-      />
-      <div className="step-title">{t.simAsk}</div>
-      <div className="options" role="radiogroup">
-        {choices.map((c, k) => (
-          <button
-            key={k}
-            role="radio"
-            aria-checked={picked === k}
-            className={`option ${picked === k ? 'on' : ''}`}
-            disabled={ok}
-            onClick={() => pick(k)}
-          >
-            {formatRp(c.value)}
-          </button>
-        ))}
-      </div>
-      {picked !== null && (
-        <Feedback kind={ok ? 'good' : 'bad'} kiko>{CHOICE_FEEDBACK[choices[picked].kind]}</Feedback>
-      )}
-      <div className="actions">
-        <button className="btn" onClick={onClose}>{t.close}</button>
-        <button className="btn btn-primary" disabled={!ok} onClick={onAdd}>{t.simAdd}</button>
-      </div>
-    </Sheet>
-  );
-}
-
-export function ShopSim() {
-  const [cart, setCart] = useState([]);
-  const [open, setOpen] = useState(null);
-  const r = receipt(cart);
-  return (
-    <div className="screen">
-      <Header title={t.simTitle} />
-      <div className="stack grow">
-        <KikoSays mood="think" size={72}>{t.simIntro}</KikoSays>
-        <div className="shelf">
-          {shop.products.map((p) => (
-            <button key={p.id} className="product" onClick={() => setOpen(p)} aria-label={`${p.name}, ${formatRp(p.price)}, diskon ${formatBp(p.pct)}`}>
-              <span className="product-tag">-{formatBp(p.pct)}</span>
-              <ProductIcon kind={p.kind} />
-              <b>{p.name}</b>
-              <span className="product-price">{formatRp(p.price)}</span>
-            </button>
-          ))}
-        </div>
-        <div className="card receipt" aria-label={t.simCart}>
-          <div className="row"><b className="grow">🧾 {t.simCart}</b>{cart.length > 0 && <span>{cart.length} barang</span>}</div>
-          {cart.length === 0 ? (
-            <div className="muted small">{t.simEmpty}</div>
-          ) : (
-            <>
-              {r.lines.map((l, k) => (
-                <div key={k} className="small">
-                  <div className="line"><span>{l.name.toUpperCase()}</span><b className="n" style={{ color: 'var(--c-price)' }}>{formatRp(l.price)}</b></div>
-                  <div className="line"><span>  DISKON {formatBp(l.pct)}</span><b className="n" style={{ color: 'var(--c-discount)' }}>−{formatRp(l.disc)}</b></div>
-                </div>
-              ))}
-              <hr />
-              <div className="line"><span>{t.simSaved.toUpperCase()}</span><b className="n" style={{ color: 'var(--c-discount)' }}>{formatRp(r.totalDisc)}</b></div>
-              <div className="line"><span>{t.simTotal.toUpperCase()}</span><b className="n" style={{ color: 'var(--c-result)' }}>{formatRp(r.total)}</b></div>
-            </>
-          )}
-        </div>
-      </div>
-      {cart.length > 0 && (
-        <div className="actions">
-          <button className="btn" onClick={() => setCart([])}>{t.simReset}</button>
-        </div>
-      )}
-      {open && (
-        <Checkout
-          product={open}
-          onClose={() => setOpen(null)}
-          onAdd={() => {
-            setCart([...cart, open]);
-            setOpen(null);
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
-/* ---------------- Profil ---------------- */
-
-export function Profile({ profile, progress, onEdit }) {
-  const doneMods = modules.filter((m) => progress[m.id]?.completed).length;
-  const stars = modules.reduce((s, m) => s + (progress[m.id]?.stars ?? 0), 0);
-  const lit = profile.literacy;
-  const practiceDone = Object.keys(profile.literacyPractice ?? {}).length;
-  const rows = [
-    [t.profileModules, `${doneMods}/${modules.length} · ${stars}★`],
-    [t.profilePre, profile.pretestDone ? `${profile.preScore ?? 0}/${assessment.items.length}` : t.notYet],
-    [t.profilePost, profile.posttestDone ? `${profile.postScore ?? 0}/${assessment.items.length}` : t.notYet],
-    [t.profilePractice, `${practiceDone}/4`],
-    [t.profileLitFirst, lit ? `${lit.first.total}/${lit.first.max}` : t.notYet],
-    [t.profileLit, lit ? `${lit.last.total}/${lit.last.max}` : t.notYet],
-  ];
-  return (
-    <div className="screen">
-      <Header title={t.profileTitle} />
-      <div className="stack grow">
-        <div className="card profile-card">
-          <svg viewBox="0 0 100 130" width="80" height="104" aria-hidden="true">
-            <Critter type="bunny" shirt={PAL.pink} x={50} y={128} wave />
-          </svg>
-          <div className="stack" style={{ gap: 2 }}>
-            <div className="section-title">{profile.name ?? '-'}</div>
-            <div className="small">{t.classLabel}: <b>{profile.kelas ?? '-'}</b></div>
-            <div className="small muted">Kode: {profile.studentCode}</div>
-          </div>
-        </div>
-        <div className="card stack">
-          {rows.map(([k, v]) => (
-            <div key={k} className="row small profile-row">
-              <span className="grow">{k}</span>
-              <b>{v}</b>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="actions">
-        <button className="btn" onClick={onEdit}>{t.profileEdit}</button>
-      </div>
+      <MaterialList onOpen={onOpen} onFormulas={onFormulas} onGlossary={onGlossary} seen={seen} />
     </div>
   );
 }

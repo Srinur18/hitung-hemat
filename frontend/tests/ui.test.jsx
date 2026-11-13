@@ -78,7 +78,7 @@ describe('alur aplikasi', () => {
     expect(screen.getByText('Kode: S01')).toBeTruthy();
     // siswa baru mulai di tab Materi; modul ada di tab Latihan
     expect(screen.getByRole('tab', { name: 'Materi' }).getAttribute('aria-selected')).toBe('true');
-    expect(screen.getByRole('button', { name: /Apa itu Diskon \(Rabat\)\?/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /Apa Itu Diskon \(Rabat\)\?/ })).toBeTruthy();
     click(screen.getByRole('tab', { name: 'Latihan' }));
     // M1 terbuka, M2 terkunci
     expect(btn('Apa itu Diskon?').disabled).toBe(false);

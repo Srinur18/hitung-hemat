@@ -202,7 +202,10 @@ def validate_journey(jr: dict) -> list[str]:
 
 def validate_shop(shop: dict) -> list[str]:
     errs = []
+    cats = {c["id"] for c in shop.get("categories", [])}
     for p in shop["products"]:
+        if cats and p.get("category") not in cats:
+            errs.append(f"shop.{p['id']}: kategori {p.get('category')} tidak dikenal")
         d = LFN["discountAmount"](p["price"], p["pct"])
         if d is None or LFN["finalPrice"](p["price"], p["pct"]) is None:
             errs.append(f"shop.{p['id']}: diskon tidak menghasilkan Rupiah bulat")
@@ -211,23 +214,61 @@ def validate_shop(shop: dict) -> list[str]:
     return errs
 
 
+def _derive(where: str, block: dict, errs: list[str]) -> dict:
+    v = dict(block.get("vars", {}))
+    for name, spec in block.get("derived", {}).items():
+        v[name] = evaluate(spec, v)
+        if v[name] is None:
+            errs.append(f"{where}: nilai turunan {name} tidak bulat / tidak sah")
+    return v
+
+
+def _check_texts(where: str, texts: list[str], v: dict, errs: list[str]) -> None:
+    for i, text in enumerate(texts):
+        errs += text_problems(f"{where}.teks{i}", text)
+        for m in re.finditer(r"\{(\w+)", text):
+            if m.group(1) not in v:
+                errs.append(f"{where}: placeholder {{{m.group(1)}}} tidak punya nilai")
+
+
 def validate_material(mat: dict) -> list[str]:
+    """Materi v2: bab → kartu (badan, poin, contoh bertahap, tabel persen) + rangkuman rumus."""
+    errs: list[str] = []
+    ids = set()
+    for ch in mat["chapters"]:
+        if not ch.get("cards"):
+            errs.append(f"{ch['id']}: bab tanpa kartu")
+        for card in ch["cards"]:
+            cid = card["id"]
+            if cid in ids:
+                errs.append(f"{cid}: id kartu ganda")
+            ids.add(cid)
+            v = _derive(cid, card, errs)
+            ex = card.get("example") or {}
+            _check_texts(cid, [card["body"], *card.get("points", []), *([ex["text"]] if ex else []), *ex.get("steps", [])], v, errs)
+            tb = card.get("table")
+            if tb:
+                price = v.get(tb["price"])
+                for bp in tb["pcts"]:
+                    if price is None or LFN["finalPrice"](price, bp) is None:
+                        errs.append(f"{cid}: tabel persen {bp} tidak bulat")
+    for f in mat.get("formulas", []):
+        v = _derive(f["id"], f, errs)
+        _check_texts(f["id"], f["example"], v, errs)
+        if len(f.get("symbols", [])) < 2:
+            errs.append(f"{f['id']}: keterangan simbol kurang")
+    return errs
+
+
+def validate_glossary(gl: dict) -> list[str]:
     errs = []
-    for tp in mat["topics"]:
-        tid = tp["id"]
-        v = dict(tp.get("vars", {}))
-        for name, spec in tp.get("derived", {}).items():
-            v[name] = evaluate(spec, v)
-            if v[name] is None:
-                errs.append(f"{tid}: nilai turunan {name} tidak bulat / tidak sah")
-        errs += text_problems(f"{tid}.body", tp["body"])
-        ex = tp.get("example")
-        if ex:
-            errs += text_problems(f"{tid}.example", ex["text"])
-            for i, s in enumerate(ex["steps"]):
-                errs += text_problems(f"{tid}.step{i + 1}", s)
-            for text in [ex["text"], *ex["steps"]]:
-                for m in re.finditer(r"\{(\w+)", text):
-                    if m.group(1) not in v:
-                        errs.append(f"{tid}: placeholder {{{m.group(1)}}} tidak punya nilai")
+    required = ["diskon", "rabat", "persen", "harga-awal", "potongan-harga", "harga-akhir",
+                "harga-setelah-diskon", "penghematan", "perbandingan-harga"]
+    for k in required:
+        if k not in gl:
+            errs.append(f"kamus: istilah {k} belum ada")
+    for k, g in gl.items():
+        if not g.get("meaning") or not g.get("example"):
+            errs.append(f"kamus.{k}: wajib punya pengertian dan contoh")
+        errs += text_problems(f"kamus.{k}", g.get("meaning", "")) + text_problems(f"kamus.{k}.contoh", g.get("example", ""))
     return errs

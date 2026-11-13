@@ -1,12 +1,29 @@
 {
-  "version": 1,
-  "note": "Barang di Simulasi Belanja. Harga = Rupiah bulat, diskon = basis point. Validator memastikan besar diskon & harga akhir selalu bulat.",
+  "version": 2,
+  "note": "Barang di Simulasi Belanja. Harga = Rupiah bulat, diskon = basis point (persen bulat). Validator memastikan besar diskon & harga akhir selalu bulat.",
+  "storeName": "Toko Serba Ada HitungHemat",
+  "categories": [
+    { "id": "pakaian", "name": "Pakaian" },
+    { "id": "sepatu", "name": "Sepatu" },
+    { "id": "tas", "name": "Tas" },
+    { "id": "alat-tulis", "name": "Alat Tulis" },
+    { "id": "sekolah", "name": "Perlengkapan Sekolah" },
+    { "id": "makanan", "name": "Makanan" }
+  ],
   "products": [
-    { "id": "kaos", "name": "Kaos", "shop": "Toko Baju", "kind": "baju", "price": 80000, "pct": 2500 },
-    { "id": "tas", "name": "Tas Sekolah", "shop": "Alat Sekolah", "kind": "tas", "price": 150000, "pct": 2000 },
-    { "id": "sepatu", "name": "Sepatu", "shop": "Toko Sepatu", "kind": "sepatu", "price": 240000, "pct": 1500 },
-    { "id": "eskrim", "name": "Es Krim Keluarga", "shop": "Toko Es Krim", "kind": "eskrim", "price": 48000, "pct": 1000 },
-    { "id": "roti", "name": "Paket Roti", "shop": "Toko Roti", "kind": "roti", "price": 36000, "pct": 2500 },
-    { "id": "buku", "name": "Paket Buku Tulis", "shop": "Alat Sekolah", "kind": "sekolah", "price": 45000, "pct": 2000 }
+    { "id": "kaos", "name": "Kaos", "category": "pakaian", "shop": "Toko Baju", "kind": "baju", "price": 80000, "pct": 2500 },
+    { "id": "jaket", "name": "Jaket", "category": "pakaian", "shop": "Toko Baju", "kind": "jaket", "price": 320000, "pct": 2500 },
+    { "id": "celana", "name": "Celana Panjang", "category": "pakaian", "shop": "Toko Baju", "kind": "celana", "price": 150000, "pct": 4000 },
+    { "id": "sepatu", "name": "Sepatu Sekolah", "category": "sepatu", "shop": "Toko Sepatu", "kind": "sepatu", "price": 240000, "pct": 1500 },
+    { "id": "sandal", "name": "Sandal", "category": "sepatu", "shop": "Toko Sepatu", "kind": "sepatu", "price": 60000, "pct": 1000 },
+    { "id": "tas", "name": "Tas Sekolah", "category": "tas", "shop": "Toko Tas", "kind": "tas", "price": 150000, "pct": 2000 },
+    { "id": "selempang", "name": "Tas Selempang", "category": "tas", "shop": "Toko Tas", "kind": "tas", "price": 90000, "pct": 3000 },
+    { "id": "pensil", "name": "Pensil Warna", "category": "alat-tulis", "shop": "Alat Sekolah", "kind": "pensil", "price": 36000, "pct": 2500 },
+    { "id": "buku", "name": "Paket Buku Tulis", "category": "alat-tulis", "shop": "Alat Sekolah", "kind": "sekolah", "price": 45000, "pct": 2000 },
+    { "id": "pulpen", "name": "Set Pulpen", "category": "alat-tulis", "shop": "Alat Sekolah", "kind": "pensil", "price": 24000, "pct": 5000 },
+    { "id": "botol", "name": "Botol Minum", "category": "sekolah", "shop": "Alat Sekolah", "kind": "botol", "price": 55000, "pct": 2000 },
+    { "id": "bekal", "name": "Kotak Bekal", "category": "sekolah", "shop": "Alat Sekolah", "kind": "bekal", "price": 48000, "pct": 2500 },
+    { "id": "eskrim", "name": "Es Krim Keluarga", "category": "makanan", "shop": "Toko Es Krim", "kind": "eskrim", "price": 48000, "pct": 1000 },
+    { "id": "roti", "name": "Paket Roti", "category": "makanan", "shop": "Toko Roti", "kind": "roti", "price": 36000, "pct": 2500 }
   ]
 }

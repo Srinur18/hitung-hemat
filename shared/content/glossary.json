@@ -1,8 +1,14 @@
 {
-  "rabat": { "term": "Rabat", "meaning": "Sama dengan diskon: potongan harga dari penjual." },
-  "potongan-harga": { "term": "Potongan harga", "meaning": "Sama dengan diskon. Harga dikurangi sejumlah rupiah." },
-  "potongan-kotor": { "term": "Potongan kotor", "meaning": "Diskon yang dihitung dari harga awal, sebelum biaya lain." },
-  "harga-bandrol": { "term": "Harga bandrol", "meaning": "Harga awal yang tertulis di label, sebelum diskon." },
-  "harga-bersih": { "term": "Harga bersih", "meaning": "Harga akhir yang dibayar setelah diskon." },
-  "persen": { "term": "Persen (%)", "meaning": "Per seratus. 20% artinya 20 dari setiap 100." }
+  "diskon": { "term": "Diskon", "meaning": "Potongan harga yang diberikan penjual kepada pembeli.", "example": "Sepatu Rp200.000 diskon 10%. Potongannya Rp20.000." },
+  "rabat": { "term": "Rabat", "meaning": "Sama dengan diskon: potongan harga dari penjual.", "example": "Rabat 5% untuk pembelian satu lusin buku." },
+  "persen": { "term": "Persentase (%)", "meaning": "Per seratus. 20% artinya 20 dari setiap 100.", "example": "25% = 25/100 = 0,25." },
+  "harga-awal": { "term": "Harga awal", "meaning": "Harga barang sebelum dipotong diskon.", "example": "Label kaos bertuliskan Rp80.000. Itu harga awal." },
+  "potongan-harga": { "term": "Potongan harga", "meaning": "Sama dengan besar diskon: banyak rupiah yang dipotong dari harga awal.", "example": "20% × Rp50.000 = Rp10.000." },
+  "harga-akhir": { "term": "Harga akhir", "meaning": "Harga yang dibayar setelah dipotong diskon.", "example": "Rp50.000 − Rp10.000 = Rp40.000." },
+  "harga-setelah-diskon": { "term": "Harga setelah diskon", "meaning": "Nama lain harga akhir. Rumusnya harga awal dikurangi besar diskon.", "example": "Baju Rp100.000 diskon 30% menjadi Rp70.000." },
+  "penghematan": { "term": "Penghematan", "meaning": "Uang yang tidak jadi dikeluarkan karena diskon. Besarnya sama dengan potongan harga.", "example": "Potongan Rp15.000 berarti kamu hemat Rp15.000." },
+  "perbandingan-harga": { "term": "Perbandingan harga", "meaning": "Membandingkan harga akhir beberapa toko untuk memilih yang termurah.", "example": "Toko A Rp96.000, Toko B Rp99.000. Toko A lebih hemat." },
+  "potongan-kotor": { "term": "Potongan kotor", "meaning": "Diskon yang dihitung dari harga awal, sebelum biaya lain.", "example": "Diskon 10% dari Rp200.000 = Rp20.000, sebelum ongkos kirim." },
+  "harga-bandrol": { "term": "Harga bandrol", "meaning": "Harga awal yang tertulis di label, sebelum diskon.", "example": "Bandrol tas tertulis Rp150.000." },
+  "harga-bersih": { "term": "Harga bersih", "meaning": "Harga akhir yang dibayar setelah diskon.", "example": "Harga bersih tas setelah diskon 20% adalah Rp120.000." }
 }

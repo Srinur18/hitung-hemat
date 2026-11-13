@@ -1,9 +1,10 @@
 // Komponen dasar. Aturan: satu langkah per layar, ≤ 3 aksi utama, tanpa dekorasi.
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { glossary } from '../content/index.js';
 import { formatValue } from '../domain/money.js';
 import { parseText } from '../domain/text.js';
 import { t } from '../i18n/id.js';
+import { play } from './audio.js';
 import Icon from './Icon.jsx';
 import Mascot from './Mascot.jsx';
 
@@ -154,12 +155,24 @@ export function NumberPad({ value, onChange, kind = 'rupiah', role }) {
   );
 }
 
+/**
+ * Umpan balik benar/salah. Benar: bintang memancar + suara "benar". Salah: Kiko berpikir
+ * (bergoyang pelan) + suara lembut. Animasi pendek, mati pada "kurangi gerakan".
+ */
 export function Feedback({ kind, children, kiko = false }) {
+  useEffect(() => {
+    if (children && (kind === 'good' || kind === 'bad')) play(kind === 'good' ? 'correct' : 'wrong');
+  }, [kind, children]);
   if (!children) return null;
   return (
-    <div className={`feedback ${kind} ${kiko ? 'with-kiko' : ''}`} role="status">
-      {kiko && <Mascot mood={kind === 'good' ? 'cheer' : 'think'} size={44} />}
+    <div className={`feedback ${kind} ${kiko ? 'with-kiko' : ''}`} role="status" key={`${kind}-${String(children)}`}>
+      {kiko && <Mascot mood={kind === 'good' ? 'cheer' : 'think'} size={44} className={kind === 'bad' ? 'shake' : 'hop'} />}
       <span>{children}</span>
+      {kind === 'good' && (
+        <span className="burst" aria-hidden="true">
+          {Array.from({ length: 6 }, (_, i) => <i key={i} style={{ '--a': `${i * 60}deg` }}>★</i>)}
+        </span>
+      )}
     </div>
   );
 }

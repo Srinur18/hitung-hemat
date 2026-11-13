@@ -17,6 +17,7 @@ Proyek ini dikembangkan dengan model ADDIE. Dasar perancangannya adalah wawancar
 - **Simulasi struk belanja**, **Jelaskan ke Teman**, dan **Cek kewajaran**.
 - **Pre/post-test literasi**, **skala usaha mental**, dan **ekspor CSV**. Data siswa hanya berupa kode, tanpa nama.
 - **Beranda "Jalan Ruko Hemat"** dengan 5 menu (Mulai Belajar, Materi, Simulasi Belanja, Kuis/Tes, Profil), ilustrasi ruko & karakter kartun beranimasi ringan, perjalanan belajar 6 tahap, dan Simulasi Belanja dengan kasir.
+- **Materi 5 bab** dengan kartu bertahap, **Rangkuman Rumus**, dan **Kamus Istilah**. **Simulasi Belanja** lengkap dengan keranjang dan struk digital. **Profil** dengan lencana, riwayat nilai, dan aspirasi. Animasi ringan dan **efek suara** yang bisa dimatikan; musik latar mati bawaan.
 - **Menu Materi | Latihan | Tes**: ringkasan materi 7 topik dengan contoh bertahap, Latihan Literasi per indikator, dan **Tes Literasi Matematis** 4 soal (4 indikator, skor bertahap maks. 24 poin, skor parsial).
 - **Kisi-kisi tes** untuk guru di Panel Peneliti (PIN).
 
@@ -25,7 +26,7 @@ Proyek ini dikembangkan dengan model ADDIE. Dasar perancangannya adalah wawancar
 | | Link |
 |---|---|
 | 🌐 **Versi web** (buka di browser HP/laptop) | https://srinur18.github.io/hitung-hemat/ |
-| 📱 **APK Android** | https://github.com/Srinur18/hitung-hemat/raw/main/release/HitungHemat-v0.3.0-debug.apk |
+| 📱 **APK Android** | https://github.com/Srinur18/hitung-hemat/raw/main/release/HitungHemat-v0.4.0-debug.apk |
 | 💻 **Kode sumber** | https://github.com/Srinur18/hitung-hemat |
 
 Memperbarui versi web setelah kode berubah (dari folder `APK`, Git Bash):
@@ -36,7 +37,7 @@ source ~/hh-tools/env.sh && bash scripts/deploy-web.sh
 
 ## Unduh & Pasang APK
 
-APK siap pakai: [`release/HitungHemat-v0.3.0-debug.apk`](release/HitungHemat-v0.3.0-debug.apk) (4 MB, Android 5.1+).
+APK siap pakai: [`release/HitungHemat-v0.4.0-debug.apk`](release/HitungHemat-v0.4.0-debug.apk) (4 MB, Android 5.1+).
 
 1. Kirim berkas APK ke HP (WhatsApp, Google Drive, atau kabel USB).
 2. Ketuk berkasnya. Bila muncul peringatan, izinkan **"Instal dari sumber tidak dikenal"** untuk aplikasi pembuka berkas tersebut.

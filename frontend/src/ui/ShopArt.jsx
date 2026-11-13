@@ -200,6 +200,46 @@ function Goods({ kind, x, y, w }) {
           <circle cx={c} cy={y + 25} r="1.8" fill={PAL.yellow} />
         </g>
       );
+    case 'jaket':
+      return (
+        <g>
+          <path d={`M${c - 16} ${y + 12} l-9 7 l3 18 h7 v2 h30 v-2 h7 l3 -18 l-9 -7 l-8 3 h-16 z`} fill={PAL.blue} stroke={PAL.ink} strokeWidth="0.9" />
+          <line x1={c} y1={y + 15} x2={c} y2={y + 39} stroke={PAL.yellow} strokeWidth="2" />
+          <path d={`M${c - 8} ${y + 12} l8 7 l8 -7`} fill={PAL.white} stroke={PAL.ink} strokeWidth="0.7" />
+        </g>
+      );
+    case 'celana':
+      return (
+        <path d={`M${c - 13} ${y + 8} h26 l3 31 h-11 l-5 -21 l-5 21 h-11 z`} fill={PAL.brown} stroke={PAL.ink} strokeWidth="0.9" />
+      );
+    case 'pensil':
+      return (
+        <g>
+          {[PAL.pink, PAL.yellow, PAL.blue, PAL.green, PAL.purple].map((col, i) => (
+            <g key={i} transform={`rotate(${(i - 2) * 9} ${c} ${y + 40})`}>
+              <rect x={c - 2.5} y={y + 10} width="5" height="26" fill={col} stroke={PAL.ink} strokeWidth="0.5" />
+              <path d={`M${c - 2.5} ${y + 10} l2.5 -6 l2.5 6 z`} fill="#f3d3a4" stroke={PAL.ink} strokeWidth="0.5" />
+            </g>
+          ))}
+        </g>
+      );
+    case 'botol':
+      return (
+        <g>
+          <rect x={c - 5} y={y + 5} width="10" height="6" rx="2" fill={PAL.pink} />
+          <rect x={c - 9} y={y + 10} width="18" height="30" rx="7" fill={PAL.sky} stroke={PAL.ink} strokeWidth="0.9" />
+          <rect x={c - 9} y={y + 22} width="18" height="9" fill={PAL.yellow} opacity="0.9" />
+        </g>
+      );
+    case 'bekal':
+      return (
+        <g>
+          <rect x={c - 18} y={y + 16} width="36" height="22" rx="6" fill={PAL.greenSoft} stroke={PAL.ink} strokeWidth="0.9" />
+          <rect x={c - 18} y={y + 12} width="36" height="8" rx="4" fill={PAL.green} />
+          <circle cx={c - 7} cy={y + 28} r="4" fill={PAL.yellow} />
+          <circle cx={c + 6} cy={y + 28} r="4" fill={PAL.pink} />
+        </g>
+      );
     case 'kasir':
       return (
         <g>
@@ -389,6 +429,41 @@ export function ProductIcon({ kind, size = 56 }) {
   return (
     <svg viewBox="0 0 60 50" width={size} height={size * (50 / 60)} aria-hidden="true">
       <Goods kind={kind} x={0} y={4} w={60} />
+    </svg>
+  );
+}
+
+/** Muka toko Simulasi Belanja: pintu membuka sekali saat siswa masuk, pelanggan berjalan masuk. */
+export function StoreFront({ name }) {
+  return (
+    <svg viewBox="0 0 360 150" className="storefront" role="img" aria-label={name}>
+      <rect x="0" y="134" width="360" height="16" fill="#f6e2c8" />
+      <rect x="20" y="10" width="320" height="10" rx="4" fill={PAL.purple} />
+      <rect x="24" y="18" width="312" height="118" fill={PAL.cream} />
+      <rect x="60" y="24" width="240" height="24" rx="10" fill="#fff" stroke={PAL.purple} strokeWidth="2.5" />
+      <text x="180" y="41" textAnchor="middle" fontSize="12.5" fontWeight="700" fill={PAL.purple} className="svg-display">{name}</text>
+      {Array.from({ length: 12 }, (_, i) => (
+        <g key={i}>
+          <rect x={24 + i * 26} y="54" width="26" height="14" fill={i % 2 ? PAL.white : PAL.pink} />
+          <circle cx={37 + i * 26} cy="68" r="13" fill={i % 2 ? PAL.white : PAL.pink} />
+        </g>
+      ))}
+      <rect x="40" y="86" width="100" height="46" rx="6" fill={PAL.glass} stroke="#fff" strokeWidth="3" />
+      <Goods kind="baju" x={40} y={88} w={100} />
+      <rect x="220" y="86" width="100" height="46" rx="6" fill={PAL.glass} stroke="#fff" strokeWidth="3" />
+      <Goods kind="tas" x={220} y={88} w={100} />
+      <rect x="154" y="82" width="52" height="54" rx="4" fill={PAL.brown} />
+      <rect x="157" y="85" width="46" height="51" fill="#fff3c4" />
+      <g className="door-enter" style={{ transformOrigin: '157px 85px' }}>
+        <rect x="157" y="85" width="46" height="51" fill={PAL.pink} />
+        <rect x="161" y="90" width="38" height="16" rx="2" fill={PAL.glass} />
+        <text x="180" y="122" textAnchor="middle" fontSize="8" fontWeight="800" fill="#fff">BUKA</text>
+      </g>
+      <g className="walk-in">
+        <Critter type="bunny" shirt={PAL.pink} x={180} y={148} scale={0.42} />
+      </g>
+      <Star x={34} y={28} r={6} />
+      <Star x={326} y={30} r={6} />
     </svg>
   );
 }

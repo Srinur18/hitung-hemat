@@ -7,7 +7,6 @@ import literacy from '../../shared/content/literacy.json';
 import material from '../../shared/content/material.json';
 import vectors from '../../shared/test-vectors.json';
 import { LiteracyResult, LiteracyRunner } from '../src/features/Literacy.jsx';
-import { MaterialTopic } from '../src/features/Material.jsx';
 import { answerKey, leaksAnswer, materialVars, rubricOf, scoreItem, scoreTest, stepFeedback } from '../src/domain/literacy.js';
 import { fillText } from '../src/domain/text.js';
 
@@ -77,10 +76,11 @@ describe('sistem penilaian', () => {
   });
 
   it('angka contoh materi selalu bulat', () => {
-    for (const tp of material.topics) {
-      const v = materialVars(tp);
+    for (const card of material.chapters.flatMap((c) => c.cards)) {
+      const v = materialVars(card);
       expect(Object.values(v).every(Number.isInteger)).toBe(true);
-      for (const s of [tp.example.text, ...tp.example.steps]) expect(fillText(s, v)).not.toMatch(/\{|(^|\s)\?/); // placeholder kosong tampil sebagai "?"
+      const texts = [card.body, ...(card.points ?? []), ...(card.example ? [card.example.text, ...card.example.steps] : [])];
+      for (const s of texts) expect(fillText(s, v)).not.toMatch(/\{|(^|\s)\?/); // placeholder kosong tampil sebagai "?"
     }
   });
 });
@@ -159,23 +159,7 @@ describe('layar latihan literasi', () => {
   });
 });
 
-describe('layar materi', () => {
-  it('contoh bisa dimajukan, dimundurkan, dan diulang', () => {
-    const onIndex = vi.fn();
-    render(<MaterialTopic index={2} onIndex={onIndex} onBack={() => {}} />);
-    expect(screen.getByText('Besar diskon = persen diskon × harga awal')).toBeTruthy();
-    const next = btn('Langkah berikutnya');
-    click(next);
-    click(next);
-    expect(document.querySelectorAll('.ex-steps li')).toHaveLength(2);
-    click(btn('Langkah sebelumnya'));
-    expect(document.querySelectorAll('.ex-steps li')).toHaveLength(1);
-    click(btn('Ulang'));
-    expect(document.querySelectorAll('.ex-steps li')).toHaveLength(0);
-    click(btn('Berikutnya'));
-    expect(onIndex).toHaveBeenCalledWith(3);
-  });
-});
+// Uji layar materi dipindah ke tests/home.test.jsx (struktur bab v0.4).
 
 describe('alur aplikasi: tab Tes → Tes Literasi → hasil tersimpan', () => {
   it('skor 24/24 tersimpan di profil dan bisa dilihat lagi', async () => {

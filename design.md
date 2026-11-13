@@ -75,6 +75,20 @@ Pemilik produk meminta tema belajar lewat pengalaman berbelanja di ruko, dengan 
 - **Privasi**: *nama* dan *kelas* hanya disimpan di perangkat (profil lokal) untuk sapaan dan Profil. Keduanya **tidak** masuk event penelitian, CSV, atau server. Penelitian tetap memakai `studentCode`. Bila kode dikosongkan, aplikasi membuat kode anonim `HHxxxx`.
 - Laptop (≥ 960px): beranda dua kolom (ilustrasi kiri, menu kanan).
 
+### 2.3 Materi, Simulasi, Profil, Suara (permintaan pemilik produk, 14 Nov 2026, v0.4)
+
+- **Materi**: 5 bab berisi kartu (satu kartu per layar, ≤ 40 kata). Persen **selalu** diubah ke desimal sebelum dikalikan harga. Ada fitur **Rangkuman Rumus** (3 rumus, simbol, contoh) dan **Kamus Istilah** (dapat dicari). Bab yang sudah dibaca sampai kartu terakhir ditandai ✓.
+- **Simulasi Belanja**: kategori barang, rincian otomatis *Harga Awal → Potongan → Harga Akhir*, keranjang (tambah, hapus, total diperbarui), bayar, lalu **struk digital**. Tantangan Kasir (v0.3) tetap ada sebagai pilihan.
+- **Profil**: progres (cincin %), pencapaian, 9 lencana, nilai & riwayat, aspirasi/refleksi, pengaturan suara.
+- **Animasi**: transisi halaman 0,28 dtk, barang muncul bergantian, pintu toko membuka sekali, bintang memancar saat benar, Kiko berpikir/bergoyang saat salah, hadiah lencana. Semua berbasis `transform/opacity` dan mati pada *kurangi gerakan*.
+- **Suara** (`ui/audio.js`), keputusan terhadap P12:
+  - Efek suara disintesis Web Audio (tanpa berkas, bebas lisensi). Bunyi **hanya sebagai respons ketukan siswa**, volume 35%, dan bisa dimatikan (🔊 di beranda, atau di Profil).
+  - **Musik latar mati bawaan**. Musik hanya menyala bila siswa menyalakannya (🎵) dan **dijeda otomatis saat mengerjakan soal**.
+  - Tidak ada suara sebelum interaksi pertama (aturan peramban).
+  - Selama Tes Literasi tidak ada bunyi benar/salah, sehingga tes tidak membocorkan kunci.
+  - Berkas suara asli dapat dipasang kapan saja: `registerSound('correct', 'sounds/benar.mp3')`.
+- **Privasi**: aspirasi/refleksi hanya disimpan di perangkat (profil lokal), tidak masuk event/CSV/server.
+
 ## 3. Tipografi & Ukuran
 
 | Elemen | Ukuran | Bobot |

@@ -1,23 +1,29 @@
-// Alur aplikasi (v0.3):
+// Alur aplikasi (v0.4):
 //   Beranda ─┬─ Mulai Belajar → Identitas → Sapaan → Perjalanan "Jalan Ruko Hemat"
 //            │      → Tes Awal → Cek Kesiapan (→ Bekal) → Peta Belajar ⇄ Modul → Tes Akhir
-//            ├─ Materi → topik T1–T7
-//            ├─ Simulasi Belanja (kasir bertanya harga akhir)
-//            ├─ Kuis / Tes → Tes Literasi Matematis (4 soal, maks. 24 poin) & Tes Akhir
-//            └─ Profil (identitas & nilai)
+//            ├─ Materi → 5 bab (kartu) + Rangkuman Rumus + Kamus Istilah
+//            ├─ Simulasi Belanja → rincian barang → keranjang → bayar → struk digital
+//            ├─ Kuis / Tes → Tes Literasi Matematis (4 soal, maks. 24 poin), Tes Awal & Tes Akhir
+//            └─ Profil (identitas, progres, lencana, nilai, riwayat, aspirasi, suara)
 // Peta Belajar tetap punya tab Materi | Latihan | Tes. Setiap halaman punya tombol Beranda (HomeContext).
-import { useCallback, useEffect, useState } from 'react';
+// Suara: baru aktif setelah ketukan pertama; musik dijeda saat mengerjakan soal.
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { assessment, diagnostic } from './content/index.js';
 import { getProfile, getProgress, resetProfile, saveProfile } from './data/db.js';
 import { logEvent, setStudent } from './data/events.js';
 import { syncEvents } from './data/sync.js';
 import { scoreTest } from './domain/literacy.js';
-import { Greeting, Home, Identity, Journey, MaterialHub, Profile, ShopSim } from './features/Home.jsx';
+import { formatRp } from './domain/money.js';
+import { earnedBadges } from './domain/progress.js';
+import { Greeting, Home, Identity, Journey, MaterialHub } from './features/Home.jsx';
 import { LiteracyResult, LiteracyRunner, testItems } from './features/Literacy.jsx';
-import { MaterialTopic } from './features/Material.jsx';
+import { FormulaSummary, Glossary, MaterialChapter } from './features/Material.jsx';
+import { BadgeToast, META, Profile } from './features/Profile.jsx';
+import { ShopSim } from './features/Shop.jsx';
 import ModuleRunner from './features/ModuleRunner.jsx';
 import { LearningMap, Quiz, Remedial, ResearchPanel } from './features/Screens.jsx';
 import { t } from './i18n/id.js';
+import { play, setMusicPaused, unlock } from './ui/audio.js';
 import { HomeContext } from './ui/components.jsx';
 import Decor from './ui/Decor.jsx';
 
@@ -30,6 +36,35 @@ export default function App() {
   const [screen, setScreen] = useState({ name: 'home' });
   const [tab, setTab] = useState(null); // null = pilih otomatis
   const [solving, setSolving] = useState(false); // sedang mengerjakan soal → hiasan diredupkan
+  const [newBadges, setNewBadges] = useState([]);
+  const badgeBase = useRef(null); // lencana yang sudah dimiliki saat aplikasi dibuka
+
+  // Suara: aktif setelah interaksi pertama; bunyi klik untuk setiap tombol.
+  useEffect(() => {
+    const onDown = (e) => {
+      unlock();
+      if (e.target.closest?.('button, [role="tab"], summary')) play('click');
+    };
+    document.addEventListener('pointerdown', onDown);
+    return () => document.removeEventListener('pointerdown', onDown);
+  }, []);
+  useEffect(() => setMusicPaused(solving), [solving]);
+
+  // Lencana baru → animasi hadiah + suara.
+  useEffect(() => {
+    if (profile === undefined) return;
+    const now = earnedBadges(profile ?? {}, progress, META);
+    if (badgeBase.current === null) {
+      badgeBase.current = new Set(now);
+      return;
+    }
+    const fresh = now.filter((id) => !badgeBase.current.has(id));
+    if (fresh.length) {
+      fresh.forEach((id) => badgeBase.current.add(id));
+      setNewBadges(fresh);
+      play('badge');
+    }
+  }, [profile, progress]);
 
   const refresh = useCallback(async (p) => {
     if (p?.studentCode) setProgress(await getProgress(p.studentCode));
@@ -79,7 +114,10 @@ export default function App() {
     if (mode === 'test') {
       const last = { total: r.total, max: r.max, byProcess: r.byProcess, answers, texts, at: new Date().toISOString() };
       const prev = profile.literacy;
-      await update({ literacy: { attempts: (prev?.attempts ?? 0) + 1, first: prev?.first ?? last, last } });
+      const before = prev?.history ?? (prev?.last ? [{ total: prev.last.total, max: prev.last.max, at: prev.last.at }] : []);
+      const history = [...before, { total: r.total, max: r.max, at: last.at }].slice(-20);
+      await update({ literacy: { attempts: (prev?.attempts ?? 0) + 1, first: prev?.first ?? last, last, history } });
+      play('success');
     } else {
       await update({ literacyPractice: { ...(profile.literacyPractice ?? {}), [items[0].id]: { total: r.total, max: r.max } } });
     }
@@ -96,7 +134,9 @@ export default function App() {
       setTab(k);
       if (forcedTab) go('map');
     },
-    onMaterial: (index) => go('material', { index, from: 'map' }),
+    onMaterial: (index) => go('material', { index, card: 0, from: 'map' }),
+    onFormulas: () => go('formulas', { from: 'map' }),
+    onGlossary: () => go('glossary', { from: 'map' }),
     onLiteracyPractice: (item) => {
       setSolving(true);
       go('literacy', { mode: 'practice', items: [item], run: Date.now(), from: 'map' });
@@ -123,17 +163,44 @@ export default function App() {
     const s = screen.name;
 
     if (s === 'home') return <Home profile={profile} onMenu={openMenu} />;
-    if (s === 'material-hub') return <MaterialHub onOpen={(index) => go('material', { index, from: 'material-hub' })} />;
-    if (s === 'material') {
+    if (s === 'material-hub') {
       return (
-        <MaterialTopic
-          index={screen.index}
-          onIndex={(index) => go('material', { index, from: screen.from })}
-          onBack={() => go(screen.from ?? 'map')}
+        <MaterialHub
+          seen={profile?.materialSeen ?? []}
+          onOpen={(index) => go('material', { index, card: 0, from: 'material-hub' })}
+          onFormulas={() => go('formulas', { from: 'material-hub' })}
+          onGlossary={() => go('glossary', { from: 'material-hub' })}
         />
       );
     }
-    if (s === 'sim') return <ShopSim />;
+    if (s === 'material') {
+      return (
+        <MaterialChapter
+          index={screen.index}
+          card={screen.card ?? 0}
+          onNav={(index, card) => go('material', { index, card, from: screen.from })}
+          onBack={() => go(screen.from ?? 'map')}
+          onSeen={(id) => {
+            const seen = profile?.materialSeen ?? [];
+            if (!seen.includes(id)) update({ materialSeen: [...seen, id] });
+          }}
+        />
+      );
+    }
+    if (s === 'formulas') return <FormulaSummary onBack={() => go(screen.from ?? 'material-hub')} />;
+    if (s === 'glossary') return <Glossary onBack={() => go(screen.from ?? 'material-hub')} />;
+    if (s === 'sim') {
+      return (
+        <ShopSim
+          profile={profile}
+          onComplete={({ items, total, saved }) => {
+            const entry = { at: new Date().toISOString(), items, total, saved, savedText: formatRp(saved) };
+            const hist = [...(profile?.simHistory ?? []), entry].slice(-20);
+            update({ simCount: (profile?.simCount ?? 0) + 1, simHistory: hist });
+          }}
+        />
+      );
+    }
 
     if (s === 'identity' || !profile?.studentCode) {
       return (
@@ -165,7 +232,9 @@ export default function App() {
         />
       );
     }
-    if (s === 'profile') return <Profile profile={profile} progress={progress} onEdit={() => go('identity', { next: 'profile' })} />;
+    if (s === 'profile') {
+      return <Profile profile={profile} progress={progress} onSave={update} onEdit={() => go('identity', { next: 'profile' })} />;
+    }
     if (s === 'testhub') return <LearningMap {...mapProps('test')} title={t.menu.test.label} />;
 
     if (s === 'literacy') {
@@ -282,10 +351,13 @@ export default function App() {
   })();
 
   const scenic = screen.name === 'home' || screen.name === 'journey';
+  // Transisi halus antarhalaman: kunci berubah → halaman baru masuk dengan animasi pendek.
+  const pageKey = `${screen.name}-${screen.index ?? ''}-${screen.card ?? ''}`;
   return (
     <HomeContext.Provider value={screen.name === 'home' ? null : goHome}>
       {!scenic && <Decor calm={solving && (screen.name === 'module' || screen.name === 'literacy')} />}
-      {view}
+      <div className="page" key={pageKey}>{view}</div>
+      {newBadges.length > 0 && <BadgeToast ids={newBadges} onClose={() => setNewBadges([])} />}
     </HomeContext.Provider>
   );
 }

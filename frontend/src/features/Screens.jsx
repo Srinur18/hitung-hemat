@@ -1,6 +1,6 @@
 // Layar pendukung: masuk, tes awal/akhir, cek kesiapan, bekal prasyarat, peta belajar, panel peneliti.
 import { useEffect, useState } from 'react';
-import { diagnostic, modules } from '../content/index.js';
+import { assessment, diagnostic, modules } from '../content/index.js';
 import { db } from '../data/db.js';
 import { logEvent } from '../data/events.js';
 import { exportCsv } from '../data/export.js';
@@ -147,7 +147,7 @@ const TABS = ['material', 'practice', 'test'];
  */
 export function LearningMap({
   progress, profile, tab = 'practice', onTab = () => {}, onOpen, onPosttest, onResearch, title = t.mapTitle,
-  onMaterial = () => {}, onLiteracyPractice = () => {}, onLiteracyTest = () => {}, onLiteracyResult = () => {},
+  onMaterial = () => {}, onFormulas, onGlossary, onLiteracyPractice = () => {}, onLiteracyTest = () => {}, onLiteracyResult = () => {},
 }) {
   const allDone = modules.every((m) => progress[m.id]?.completed);
   const nextModule = modules.find((m) => !progress[m.id]?.completed);
@@ -172,7 +172,9 @@ export function LearningMap({
         </div>
         <KikoSays mood={allDone && tab === 'practice' ? 'cheer' : 'wave'} size={80}>{kiko}</KikoSays>
 
-        {tab === 'material' && <MaterialList onOpen={onMaterial} />}
+        {tab === 'material' && (
+          <MaterialList onOpen={onMaterial} onFormulas={onFormulas} onGlossary={onGlossary} seen={profile.materialSeen ?? []} />
+        )}
 
         {tab === 'test' && (
           <>
@@ -187,6 +189,10 @@ export function LearningMap({
                 {lit && <button className="btn" onClick={onLiteracyResult}>{t.literacySeeResult}</button>}
                 <button className="btn btn-primary" onClick={onLiteracyTest}>{lit ? t.literacyRetry : t.literacyStart}</button>
               </div>
+            </div>
+            <div className="card stack small">
+              <div>{profile.pretestDone ? t.pretestStatus(profile.preScore ?? 0, assessment.items.length) : `${t.pretestTitle}: ${t.notYet}`}</div>
+              {!allDone && !profile.posttestDone && <div className="muted">{t.posttestLocked}</div>}
             </div>
             {allDone && !profile.posttestDone && (
               <div className="card stack">
