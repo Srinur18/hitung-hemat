@@ -15,11 +15,11 @@ import { SoundButtons } from '../ui/SoundToggle.jsx';
 import { MaterialList } from './Material.jsx';
 
 const MENU = [
-  { key: 'start', icon: 'start', tone: 'blue' },
-  { key: 'material', icon: 'book', tone: 'pink' },
-  { key: 'sim', icon: 'cart', tone: 'green' },
-  { key: 'test', icon: 'quiz', tone: 'purple' },
-  { key: 'profile', icon: 'user', tone: 'yellow' },
+  { key: 'start', icon: 'start', tone: 'coral' },
+  { key: 'material', icon: 'book', tone: 'butter' },
+  { key: 'sim', icon: 'cart', tone: 'mint' },
+  { key: 'test', icon: 'quiz', tone: 'lavender' },
+  { key: 'profile', icon: 'user', tone: 'coral' },
 ];
 
 /* ---------------- Beranda ---------------- */

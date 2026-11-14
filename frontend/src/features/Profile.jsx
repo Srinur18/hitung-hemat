@@ -17,7 +17,7 @@ function Ring({ value }) {
   const c = 2 * Math.PI * r;
   return (
     <svg viewBox="0 0 84 84" width="84" height="84" role="img" aria-label={t.progressLabel(value)} className="ring">
-      <circle cx="42" cy="42" r={r} fill="none" stroke="#fbe3e8" strokeWidth="9" />
+      <circle cx="42" cy="42" r={r} fill="none" stroke="#ffe3e5" strokeWidth="9" className="ring-track" />
       <circle
         cx="42" cy="42" r={r} fill="none" stroke={PAL.green} strokeWidth="9" strokeLinecap="round"
         strokeDasharray={c} strokeDashoffset={c * (1 - value / 100)} transform="rotate(-90 42 42)" className="ring-fill"
@@ -79,9 +79,9 @@ export function Profile({ profile, progress, onEdit, onSave }) {
         {/* pencapaian */}
         <div className="section-title">{t.achievements}</div>
         <div className="stat-grid">
-          <div className="stat tone-pink"><b>{a.materials}/{a.chapters}</b><small>{t.statMaterial}</small></div>
-          <div className="stat tone-green"><b>{a.sims}</b><small>{t.statSim}</small></div>
-          <div className="stat tone-purple"><b>{a.quizzes}</b><small>{t.statQuiz}</small></div>
+          <div className="stat tone-lavender"><b>{a.materials}/{a.chapters}</b><small>{t.statMaterial}</small></div>
+          <div className="stat tone-mint"><b>{a.sims}</b><small>{t.statSim}</small></div>
+          <div className="stat tone-butter"><b>{a.quizzes}</b><small>{t.statQuiz}</small></div>
         </div>
         <div className="card stack">
           <div className="row small"><span className="grow">{t.profileModules}</span><b>{a.modulesDone}/{a.modules}</b></div>

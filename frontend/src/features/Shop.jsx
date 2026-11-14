@@ -43,7 +43,7 @@ function CashierChallenge({ product, onDone }) {
       <div className="step-title">{t.simAsk}</div>
       <div className="options" role="radiogroup">
         {choices.map((c, k) => (
-          <button key={k} role="radio" aria-checked={picked === k} className={`option ${picked === k ? 'on' : ''}`} disabled={ok} onClick={() => pick(k)}>
+          <button key={k} role="radio" aria-checked={picked === k} className={`option ${picked === k ? `on ${choices[k].kind === 'correct' ? 'good' : 'bad'}` : ''}`} disabled={ok} onClick={() => pick(k)}>
             {formatRp(c.value)}
           </button>
         ))}

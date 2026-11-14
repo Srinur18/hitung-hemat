@@ -3,12 +3,12 @@
 // calm = true di layar mengerjakan soal: hiasan diredupkan & benda melayang disembunyikan
 // agar tidak menambah beban kognitif ekstrinsik (EL03, DS03).
 
-const G = '#2E8B57'; // hijau palet
-const G2 = '#7CC79A'; // tint hijau palet
-const Y = '#FFD600';
-const P = '#F863A8';
+const G = '#5FBF9E'; // hijau palet
+const G2 = '#8DDCC0'; // tint hijau palet
+const Y = '#FFD66B';
+const P = '#FF7F87';
 const W = '#FFFFFF';
-const B = '#1A8FE3';
+const B = '#BBA5E8';
 
 const Cloud = ({ className }) => (
   <svg className={`d ${className}`} viewBox="0 0 110 60" aria-hidden="true">
@@ -50,8 +50,8 @@ const Tag = ({ className }) => (
 const Coin = ({ className }) => (
   <svg className={`d float ${className}`} viewBox="0 0 44 44" aria-hidden="true">
     <circle cx="22" cy="22" r="20" fill={Y} />
-    <circle cx="22" cy="22" r="14" fill="none" stroke="#E0B800" strokeWidth="2.5" />
-    <text x="22" y="27" textAnchor="middle" fontSize="13" fontWeight="700" fill="#8A6A00" fontFamily="Fredoka, sans-serif">Rp</text>
+    <circle cx="22" cy="22" r="14" fill="none" stroke="#E6B53F" strokeWidth="2.5" />
+    <text x="22" y="27" textAnchor="middle" fontSize="13" fontWeight="700" fill="#9A6200" fontFamily="Fredoka, sans-serif">Rp</text>
   </svg>
 );
 

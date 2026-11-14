@@ -7,9 +7,9 @@ const C = {
   furDark: '#D9711A',
   cream: '#FFF4E6',
   brown: '#4A2A17',
-  purple: '#8E44C9',
-  pink: '#F863A8',
-  yellow: '#FFD600',
+  purple: '#9C83D6',
+  pink: '#FF7F87',
+  yellow: '#FFD66B',
 };
 
 function Arms({ mood }) {

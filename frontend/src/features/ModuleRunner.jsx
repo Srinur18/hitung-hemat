@@ -101,7 +101,7 @@ export default function ModuleRunner({ module, studentCode, saved, onExit, onSol
           <h2 className="title">{t.summaryTitle}</h2>
         </div>
         <div className="card stack" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 34, color: '#e0a800' }}><Stars n={result.stars} /></div>
+          <div style={{ fontSize: 34, color: 'var(--butter-deep)' }}><Stars n={result.stars} /></div>
           <div>{module.goal}</div>
           <div className="muted small">
             {result.mastered ? 'Kamu sudah menguasai modul ini.' : 'Ulangi modul ini kapan saja untuk menambah bintang.'}

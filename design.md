@@ -21,24 +21,33 @@ Dokumen ini menerjemahkan temuan wawancara dan Cognitive Load Theory menjadi kep
 
 Warna semantik **hanya** dipakai untuk peran besaran. Warna lain bersifat netral.
 
-**Tema "Vibe"**, mengikuti gambar palet referensi dari pemilik produk (11 Nov 2026): putih `#FFFFFF`, kuning `#FFD600`, pink muda `#FFA8B0`, pink terang `#F863A8`, hijau `#2E8B57`, biru `#1A8FE3`. Mode gelap dinonaktifkan.
+**Tema "Playful Pastel Candy Shop"** (pemilik produk, 14 Nov 2026, v0.5) menggantikan tema "Vibe". Semua warna didefinisikan **satu kali** di `:root` (`frontend/src/styles.css`). Tidak ada warna hex di luar blok itu (dijaga `tests/theme.test.js`). Palet ilustrasi SVG (`ui/ShopArt.jsx`, `ui/Decor.jsx`, `ui/Mascot.jsx`) memakai nilai hex yang sama. Mode gelap dinonaktifkan.
 
-| Token | Nilai | Peran | Catatan |
-|---|---|---|---|
-| `--c-bg` | `#FFA8B0` pink muda | Latar halaman | teks gelap 8,8:1 |
-| `--c-header` | `#1677D2` biru | Pita header (teks putih) + garis kiri kartu soal | biru palet digelapkan sedikit → putih 4,56:1 |
-| `--c-yellow` | `#FFD600` kuning | Garis bawah header, tepi atas lembar petunjuk | aksen |
-| `--c-surface-2` | `#FFD600` kuning | Tombol angka | teks gelap 11,4:1 |
-| `--c-pink` | `#F863A8` pink terang | Garis kiri kartu rumus & petunjuk | aksen (bukan teks) |
-| `--c-surface` | `#FFFFFF` putih | Kartu, kartu soal, kotak jawaban, ilustrasi | semua angka berwarna diletakkan di sini |
-| `--c-focus` | `#237A4B` hijau | Tombol utama (teks putih) | hijau palet digelapkan sedikit → putih 5,31:1 |
-| `--c-price` | `#1A56C4` | Harga awal | ikon 🏷 + garis bawah tebal; 6,6:1 di atas putih |
-| `--c-percent` | `#9A4600` | Persen diskon | ikon % + garis bawah putus-putus |
-| `--c-discount` | `#B3261E` | Besar diskon (Rp) | garis bawah titik-titik |
-| `--c-result` | `#146C33` | Harga akhir / hasil | kotak |
-| `--c-text` / `--c-muted` | `#2A1D24` / `#5A3D48` | Teks / teks sekunder | ≥ 5,2:1 di atas pink muda |
+| Token palet | Nilai | Peran |
+|---|---|---|
+| `--coral` | `#FF7F87` pink coral | Warna utama: header, tombol utama, opsi terpilih, tab aktif |
+| `--butter` | `#FFD66B` butter yellow | Sekunder: label diskon, tombol angka, kotak rumus, lencana |
+| `--mint` | `#8DDCC0` mint green | Pendukung: harga akhir/penghematan, batang progres, keranjang |
+| `--lavender` | `#BBA5E8` lavender | Variasi: garis kartu soal, petunjuk, profil, Kuis/Tes |
+| `--cream` | `#FFF8ED` warm cream | Latar halaman |
+| `--white` | `#FFFFFF` | Kartu (semua angka berwarna diletakkan di sini) |
+| `--cocoa` | `#493A40` dark cocoa | Teks utama (10,5:1 di krem) |
+| `--muted-brown` | `#82747A` muted brown | Teks sekunder besar & tombol nonaktif |
+| `--success` / `--error` | `#66BE91` / `#F17D7D` | Garis & latar lembut jawaban benar / salah |
+| `-soft` / `-deep` | turunan tiap warna | latar lembut / bayangan tombol |
 
-**Aturan:** angka berwarna (peran besaran) **hanya** boleh tampil di atas putih, karena di atas pink muda kontrasnya cuma ~3,6:1. Pola garis berkelok dari gambar referensi **tidak** dipakai karena tergolong hiasan yang mengganggu fokus (EL03, DS03).
+**Penyesuaian kontras** (aturan "kontras nyaman dibaca"):
+
+| Token | Nilai | Alasan |
+|---|---|---|
+| `--c-on-color` | `#3A2D33` | Teks di atas coral/butter/mint/lavender. Putih di atas coral hanya ±2,5:1, cocoa gelap ≥ 5,4:1 |
+| `--c-muted` | `#75676D` | Teks kecil sekunder. `#82747A` di krem ±4,2:1 (< 4,5), versi ini ±5,1:1 |
+| `--c-price` | `#6A4FB3` (lavender tua) | Harga awal: ikon 🏷 + garis bawah tebal; 6,2:1 di atas putih |
+| `--c-percent` | `#9A6200` (butter tua) | Persen diskon: ikon % + garis bawah putus-putus; 5,1:1 |
+| `--c-discount` | `#C2454A` (merah lembut tua) | Besar diskon: garis bawah titik-titik; 4,9:1 |
+| `--c-result` | `#277A56` (mint tua) | Harga akhir: kotak; 5,3:1 |
+
+**Aturan:** warna pastel dipakai untuk latar, garis, label, dan bayangan. **Teks** selalu cocoa/`--c-on-color` atau versi tua palet. Angka berperan **hanya** tampil di atas putih. Bentuk penanda (garis tebal, putus-putus, titik-titik, kotak) tetap ada, sehingga peran angka tidak bergantung pada warna saja (ramah buta warna).
 
 ### 2.1 Hiasan Latar & Maskot (permintaan pemilik produk, 11 Nov 2026)
 

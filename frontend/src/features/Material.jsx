@@ -14,7 +14,7 @@ import Icon from '../ui/Icon.jsx';
 export const chapters = material.chapters;
 export const formulas = material.formulas;
 
-const CH_TONE = ['pink', 'yellow', 'blue', 'green', 'purple'];
+const CH_TONE = ['coral', 'butter', 'mint', 'lavender', 'coral'];
 
 /** Daftar bab + dua fitur khusus. Dipakai di menu Materi dan tab Materi peta belajar. */
 export function MaterialList({ onOpen, onFormulas, onGlossary, seen = [] }) {
@@ -34,13 +34,13 @@ export function MaterialList({ onOpen, onFormulas, onGlossary, seen = [] }) {
       {(onFormulas || onGlossary) && (
         <div className="feature-row">
           {onFormulas && (
-            <button className="feature-btn tone-blue" onClick={onFormulas}>
+            <button className="feature-btn tone-lavender" onClick={onFormulas}>
               <span className="menu-ic"><Icon name="quiz" /></span>
               <b>{t.formulaSummary}</b>
             </button>
           )}
           {onGlossary && (
-            <button className="feature-btn tone-green" onClick={onGlossary}>
+            <button className="feature-btn tone-mint" onClick={onGlossary}>
               <span className="menu-ic"><Icon name="book" /></span>
               <b>{t.glossaryTitle}</b>
             </button>
@@ -167,7 +167,7 @@ export function FormulaSummary({ onBack }) {
         {formulas.map((f, i) => {
           const v = materialVars(f);
           return (
-            <div key={f.id} className={`card formula-card tone-${['pink', 'blue', 'green'][i % 3]} pop-in`} style={{ animationDelay: `${i * 0.1}s` }}>
+            <div key={f.id} className={`card formula-card tone-${['coral', 'lavender', 'mint'][i % 3]} pop-in`} style={{ animationDelay: `${i * 0.1}s` }}>
               <div className="formula-name">{f.name}</div>
               <div className="formula-main">{f.formula}</div>
               <div className="formula-short">{f.short}</div>

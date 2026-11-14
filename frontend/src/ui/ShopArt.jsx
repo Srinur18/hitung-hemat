@@ -4,24 +4,25 @@
 // Label harga pada ilustrasi selalu memuat angka diskon (P3: visual memuat relasi matematis).
 
 export const PAL = {
-  blue: '#1677d2',
-  sky: '#bfe6ff',
-  yellow: '#ffd600',
-  pink: '#f863a8',
-  pinkSoft: '#ffd1e3',
-  green: '#2e8b57',
-  greenSoft: '#9fdcb7',
-  mint: '#c9f2e0',
-  purple: '#8e44c9',
-  lilac: '#e6d4ff',
+  // Tema "Playful Pastel Candy Shop" — nilai sama dengan token :root di styles.css.
+  blue: '#9c83d6', // lavender tua (papan nama & topi kasir)
+  sky: '#efe8fb',
+  yellow: '#ffd66b',
+  pink: '#ff7f87',
+  pinkSoft: '#ffe3e5',
+  green: '#5fbf9e',
+  greenSoft: '#8ddcc0',
+  mint: '#e3f7ef',
+  purple: '#bba5e8',
+  lilac: '#efe8fb',
   peach: '#ffd9b8',
-  orange: '#f28c28',
-  cream: '#fff8ec',
-  brown: '#6b3f22',
-  ink: '#2a1d24',
+  orange: '#f6a96c',
+  cream: '#fff8ed',
+  brown: '#8a5a44',
+  ink: '#493a40',
   white: '#ffffff',
-  glass: '#d9f1ff',
-  percent: '#9a4600',
+  glass: '#e3f7ef',
+  percent: '#9a6200',
 };
 
 /* ---------------- karakter ---------------- */

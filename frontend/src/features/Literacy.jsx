@@ -195,7 +195,7 @@ export function LiteracyRunner({ mode, items, onFinish, onExit }) {
                 key={k}
                 role="radio"
                 aria-checked={choice === k}
-                className={`option option-text ${choice === k ? 'on' : ''}`}
+                className={`option option-text ${choice === k ? 'on' : ''} ${choice === k && fb ? fb.kind : ''}`}
                 disabled={solved}
                 onClick={() => { setChoice(k); setFb(null); }}
               >
