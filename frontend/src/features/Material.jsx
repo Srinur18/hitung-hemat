@@ -7,6 +7,7 @@ import { logEvent } from '../data/events.js';
 import { materialVars } from '../domain/literacy.js';
 import { formatBp, formatRp } from '../domain/money.js';
 import { percentTable } from '../domain/progress.js';
+import { priceBreakdown } from '../domain/shop.js';
 import { t } from '../i18n/id.js';
 import { Header, RichText } from '../ui/components.jsx';
 import Icon from '../ui/Icon.jsx';
@@ -66,11 +67,36 @@ function ExampleSteps({ example, vars }) {
         ))}
       </ol>
       {shown < n && <div className="muted small">{t.exampleHelp}</div>}
+      {shown < n && (
+        <button className="chip disc-chip" onClick={() => setShown(n)}>📘 {t.showFullSolution}</button>
+      )}
       <div className="player-ctrl">
         <button className="icon-btn" onClick={() => setShown((x) => Math.max(0, x - 1))} aria-label="Langkah sebelumnya">◀</button>
         <button className="icon-btn" onClick={() => setShown(0)} aria-label={t.replay}>↻</button>
         <button className="icon-btn" onClick={() => setShown((x) => Math.min(n, x + 1))} aria-label="Langkah berikutnya">▶</button>
       </div>
+    </div>
+  );
+}
+
+/** Model batang: harga awal = potongan + harga akhir. Panjang sebanding persen; angka dari domain. */
+export function PriceBar({ price, pct }) {
+  const b = priceBreakdown({ price, pct });
+  if (b.disc === null) return null;
+  const cut = pct / 100; // basis point → persen lebar
+  return (
+    <div className="card price-bar-card" aria-label={t.priceBarLabel}>
+      <div className="step-label">{t.priceBarTitle}</div>
+      <div className="pb-total"><span>{t.roles.price}</span><b className="c-price">{formatRp(b.price)}</b></div>
+      <div className="pb-bar" role="img" aria-label={`${formatRp(b.final)} + ${formatRp(b.disc)} = ${formatRp(b.price)}`}>
+        <span className="pb-final" style={{ width: `${100 - cut}%` }}>{100 - cut}%</span>
+        <span className="pb-cut" style={{ width: `${cut}%` }}>{formatBp(pct)}</span>
+      </div>
+      <div className="pb-legend small">
+        <span><i className="dot final" /> {t.roles.result}: <b className="c-result">{formatRp(b.final)}</b></span>
+        <span><i className="dot cut" /> {t.roles.discount}: <b className="c-discount">{formatRp(b.disc)}</b></span>
+      </div>
+      <div className="muted small">{t.priceBarWhy(formatBp(pct), formatRp(b.disc), formatRp(b.final))}</div>
     </div>
   );
 }
@@ -140,6 +166,7 @@ export function MaterialChapter({ index, card = 0, onNav, onBack, onSeen = () =>
           </div>
         )}
         {c.table && <PercentTable price={vars[c.table.price]} pcts={c.table.pcts} />}
+        {Number.isInteger(vars.h) && Number.isInteger(vars.p) && <PriceBar price={vars.h} pct={vars.p} />}
         {c.example && <ExampleSteps key={c.id} example={c.example} vars={vars} />}
       </div>
       <div className="actions">

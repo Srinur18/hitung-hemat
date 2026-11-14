@@ -6,7 +6,7 @@
 // - Volume rendah. Pengaturan disimpan per perangkat (localStorage, aman bila diblokir).
 
 const KEY = 'hh-sound-v1';
-const DEFAULTS = { sfx: true, music: false, volume: 0.35 };
+const DEFAULTS = { sfx: true, music: false, volume: 0.35, musicVolume: 0.18 }; // musik 18% (pemilik produk: 15–20%)
 
 function load() {
   try {
@@ -19,6 +19,7 @@ function load() {
 let settings = load();
 let ctx = null;
 let master = null;
+let musicGain = null; // jalur musik terpisah → volume musik diatur sendiri
 let unlocked = false; // sudah ada interaksi siswa?
 let musicTimer = null;
 let musicPaused = false;
@@ -44,6 +45,9 @@ function audio() {
       master = ctx.createGain();
       master.gain.value = settings.volume;
       master.connect(ctx.destination);
+      musicGain = ctx.createGain();
+      musicGain.gain.value = settings.musicVolume;
+      musicGain.connect(ctx.destination);
     } catch {
       ctx = null;
       return null;
@@ -53,7 +57,7 @@ function audio() {
   return ctx;
 }
 
-function tone(c, { f, at = 0, dur = 0.12, type = 'sine', gain = 0.25, to }) {
+function tone(c, { f, at = 0, dur = 0.12, type = 'sine', gain = 0.25, to, out }) {
   const t0 = c.currentTime + at;
   const osc = c.createOscillator();
   const g = c.createGain();
@@ -63,7 +67,7 @@ function tone(c, { f, at = 0, dur = 0.12, type = 'sine', gain = 0.25, to }) {
   g.gain.setValueAtTime(0.0001, t0);
   g.gain.exponentialRampToValueAtTime(gain, t0 + 0.012);
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  osc.connect(g).connect(master);
+  osc.connect(g).connect(out ?? master);
   osc.start(t0);
   osc.stop(t0 + dur + 0.02);
 }
@@ -120,26 +124,90 @@ export function play(name) {
   for (const n of RECIPES[name] ?? []) tone(c, n);
 }
 
-/* ---------------- musik latar: arpeggio pentatonik pelan ---------------- */
-const MELODY = [523, 659, 784, 659, 587, 698, 880, 698, 523, 659, 784, 1047, 880, 784, 659, 587];
-const BASS = [131, 131, 175, 175, 147, 147, 196, 196];
+/* ---------------- musik latar "Plum Arcade" ----------------
+   Instrumental cute-arcade yang lembut: arpeggio pentatonik + bass pelan, disintesis Web Audio
+   (legal, offline, 0 KB). Suasana menyesuaikan halaman (setMusicMode). Hanya ADA SATU pemutar:
+   pindah halaman cukup mengganti suasana, tidak pernah memulai musik kedua (tidak bertumpuk).
+   Berkas musik asli bisa dipasang nanti: registerMusic('home', 'music/arcade.mp3'). */
+const SCALE = {
+  // nada (Hz) per suasana; tempo dalam ms per ketukan; gain relatif terhadap volume musik
+  home: { melody: [523, 659, 784, 659, 587, 698, 880, 698, 523, 659, 784, 1047, 880, 784, 659, 587], bass: [131, 131, 175, 175, 147, 147, 196, 196], tempo: 400, gain: 0.32, wave: 'triangle' },
+  calm: { melody: [440, 523, 659, 523, 494, 587, 659, 587], bass: [110, 110, 147, 147], tempo: 640, gain: 0.26, wave: 'sine' },
+  soft: { melody: [523, 659, 587, 523, 494, 523, 587, 659], bass: [131, 147], tempo: 720, gain: 0.16, wave: 'sine' },
+  happy: { melody: [587, 740, 880, 740, 659, 784, 988, 784, 587, 740, 880, 1175, 988, 880, 784, 659], bass: [147, 147, 196, 196, 165, 165, 220, 220], tempo: 330, gain: 0.34, wave: 'triangle' },
+};
+export const MUSIC_MODES = ['home', 'calm', 'soft', 'happy', 'off'];
+let musicMode = 'home';
+const musicFiles = {};
+let musicEl = null; // pemutar berkas (jika registerMusic dipakai)
+
+/** Halaman → suasana musik. Tes (literasi, tes awal/akhir, cek kesiapan) → 'off'. */
+export function musicModeFor(screenName, opts = {}) {
+  if (opts.testing) return 'off';
+  if (['home', 'greeting', 'identity'].includes(screenName)) return 'home';
+  if (['material-hub', 'material', 'formulas', 'glossary', 'journey'].includes(screenName)) return 'calm';
+  if (['sim'].includes(screenName)) return 'happy';
+  if (['literacy-result', 'profile', 'testhub', 'research'].includes(screenName)) return 'home';
+  return 'soft'; // peta belajar, modul, latihan literasi
+}
+
+export function registerMusic(mode, url) {
+  musicFiles[mode] = url;
+}
 
 function startMusic() {
-  if (musicTimer || !settings.music || musicPaused) return;
+  if (!settings.music || musicPaused || musicMode === 'off') return;
+  if (musicFiles[musicMode]) {
+    if (musicTimer) stopSynth();
+    if (!musicEl) {
+      musicEl = new Audio();
+      musicEl.loop = true;
+    }
+    if (!musicEl.src.endsWith(musicFiles[musicMode])) musicEl.src = musicFiles[musicMode];
+    musicEl.volume = settings.musicVolume;
+    musicEl.play().catch(() => {});
+    return;
+  }
+  if (musicTimer) return; // sudah berjalan → jangan menumpuk
   const c = audio();
   if (!c) return;
   let step = 0;
-  musicTimer = setInterval(() => {
+  musicTimer = setInterval(tick, SCALE[musicMode].tempo);
+  function tick() {
     if (!ctx || musicPaused) return;
-    tone(ctx, { f: MELODY[step % MELODY.length], dur: 0.42, gain: 0.045, type: 'sine' });
-    if (step % 2 === 0) tone(ctx, { f: BASS[(step / 2) % BASS.length], dur: 0.8, gain: 0.04, type: 'triangle' });
+    const sc = SCALE[musicMode];
+    if (!sc) return;
+    tone(ctx, { f: sc.melody[step % sc.melody.length], dur: (sc.tempo / 1000) * 1.05, gain: sc.gain * 0.5, type: sc.wave, out: musicGain });
+    if (step % 2 === 0) tone(ctx, { f: sc.bass[(step / 2) % sc.bass.length], dur: (sc.tempo / 1000) * 2, gain: sc.gain * 0.45, type: 'sine', out: musicGain });
     step += 1;
-  }, 420);
+  }
+}
+
+function stopSynth() {
+  clearInterval(musicTimer);
+  musicTimer = null;
 }
 
 function stopMusic() {
-  clearInterval(musicTimer);
-  musicTimer = null;
+  stopSynth();
+  if (musicEl) musicEl.pause();
+}
+
+/** Ganti suasana musik sesuai halaman (tanpa membuat pemutar kedua). */
+export function setMusicMode(mode) {
+  const next = MUSIC_MODES.includes(mode) ? mode : 'home';
+  if (next === musicMode) return;
+  const tempoChanged = SCALE[next]?.tempo !== SCALE[musicMode]?.tempo;
+  musicMode = next;
+  if (next === 'off') return stopMusic();
+  if (musicTimer && tempoChanged) stopSynth(); // mulai ulang dengan tempo baru (tetap satu pemutar)
+  if (settings.music && unlocked) startMusic();
+  return undefined;
+}
+
+/** Untuk pengujian & tampilan: apakah musik sedang berbunyi, dan suasananya. */
+export function musicState() {
+  return { playing: !!musicTimer || !!(musicEl && !musicEl.paused), mode: musicMode, timers: musicTimer ? 1 : 0 };
 }
 
 /** Dipanggil App pada interaksi pertama siswa (ketukan): baru boleh ada suara. */
@@ -149,7 +217,7 @@ export function unlock() {
   if (settings.music) startMusic();
 }
 
-/** Musik dijeda saat siswa mengerjakan soal agar tidak mengganggu konsentrasi. */
+/** Jeda paksa (dipertahankan untuk kompatibilitas). */
 export function setMusicPaused(paused) {
   musicPaused = paused;
   if (paused) stopMusic();
@@ -163,6 +231,8 @@ export function getSettings() {
 export function setSetting(patch) {
   settings = { ...settings, ...patch };
   if (master) master.gain.value = settings.volume;
+  if (musicGain) musicGain.gain.value = settings.musicVolume;
+  if (musicEl) musicEl.volume = settings.musicVolume;
   if ('music' in patch) {
     unlocked = true; // menyalakan musik selalu lewat ketukan siswa
     if (settings.music) startMusic();

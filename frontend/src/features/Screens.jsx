@@ -25,7 +25,7 @@ export function Onboarding({ onDone }) {
         <div className="stack grow">
           <div className="hero">
             <h2 className="title">{t.appName}</h2>
-            <KikoSays mood="wave" size={110}>Halo, aku Kiko! {t.welcome}</KikoSays>
+            <KikoSays mood="wave" size={110}>Halo, aku Plum! {t.welcome}</KikoSays>
           </div>
           <label className="stack small">
             {t.codeLabel}

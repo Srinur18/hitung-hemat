@@ -8,11 +8,11 @@ import { shop } from '../content/index.js';
 import { logEvent } from '../data/events.js';
 import { formatBp, formatRp, formatValue } from '../domain/money.js';
 import { mulberry32 } from '../domain/rng.js';
-import { addToCart, CHOICE_FEEDBACK, checkoutChoices, priceBreakdown, receipt, removeFromCart } from '../domain/shop.js';
+import { addToCart, BUDGETS, CHOICE_FEEDBACK, checkoutChoices, evaluateCart, priceBreakdown, receipt, removeFromCart } from '../domain/shop.js';
 import { t } from '../i18n/id.js';
 import { play } from '../ui/audio.js';
 import { Feedback, Header, Sheet } from '../ui/components.jsx';
-import { KikoSays } from '../ui/Mascot.jsx';
+import Mascot, { KikoSays } from '../ui/Mascot.jsx';
 import { Critter, PAL, ProductIcon, Star, StoreFront } from '../ui/ShopArt.jsx';
 
 const catName = Object.fromEntries(shop.categories.map((c) => [c.id, c.name]));
@@ -30,11 +30,12 @@ function PriceFlow({ b }) {
   );
 }
 
-function CashierChallenge({ product, onDone }) {
+function CashierChallenge({ product, onDone, onResult = () => {} }) {
   const choices = useMemo(() => checkoutChoices(product, mulberry32((Date.now() >>> 0) ^ product.price)), [product]);
   const [picked, setPicked] = useState(null);
   const ok = picked !== null && choices[picked].kind === 'correct';
   const pick = (k) => {
+    if (picked === null) onResult(choices[k].kind === 'correct'); // hanya percobaan pertama yang dihitung
     setPicked(k);
     logEvent('scene_interact', { moduleId: 'SIM', payload: { scene: 'checkout', product: product.id, choice: choices[k].kind, correct: choices[k].kind === 'correct' } });
   };
@@ -55,7 +56,7 @@ function CashierChallenge({ product, onDone }) {
 }
 
 /** Rincian barang: dihitung otomatis. */
-function ProductSheet({ product, onAdd, onClose }) {
+function ProductSheet({ product, onAdd, onClose, onChallenge }) {
   const b = priceBreakdown(product);
   const [challenge, setChallenge] = useState(false);
   return (
@@ -71,7 +72,7 @@ function ProductSheet({ product, onAdd, onClose }) {
         </svg>
       </div>
       {challenge ? (
-        <CashierChallenge product={product} onDone={() => setChallenge(false)} />
+        <CashierChallenge product={product} onDone={() => setChallenge(false)} onResult={onChallenge} />
       ) : (
         <>
           <PriceFlow b={b} />
@@ -91,8 +92,43 @@ function ProductSheet({ product, onAdd, onClose }) {
   );
 }
 
+/** Batang perbandingan total sebelum vs sesudah diskon (panjang sebanding nilai). */
+function CompareBars({ r }) {
+  if (!r.count) return null;
+  const pct = (100 * r.total) / r.totalPrice;
+  return (
+    <div className="compare" aria-label={t.simCompare}>
+      <div className="cmp-row"><span>{t.simBefore}</span><div className="cmp-bar before" style={{ width: '100%' }}><b>{formatRp(r.totalPrice)}</b></div></div>
+      <div className="cmp-row"><span>{t.simAfter}</span><div className="cmp-bar after" style={{ width: `${pct}%` }}><b>{formatRp(r.total)}</b></div></div>
+      <div className="small c-discount">{t.simSaved}: −{formatRp(r.totalDisc)}</div>
+    </div>
+  );
+}
+
+/** Evaluasi pilihan belanja oleh Plum. */
+function Evaluation({ r, budget }) {
+  const ev = evaluateCart(r, budget);
+  if (ev.code === 'empty') return null;
+  const mood = ev.code === 'over' ? 'think' : 'cheer';
+  return (
+    <div className={`card eval eval-${ev.code}`} aria-label={t.simEvalTitle}>
+      <div className="plum-guide">
+        <Mascot mood={mood} size={64} className={ev.code === 'over' ? 'shake' : 'hop'} />
+        <div className="bubble">{t.simEval[ev.code]}</div>
+      </div>
+      <ul className="small eval-list">
+        {budget !== null && (ev.within
+          ? <li>✓ {t.simWithin(formatRp(budget), formatRp(ev.remaining))}</li>
+          : <li>✗ {t.simOver(formatRp(budget), formatRp(ev.over))}</li>)}
+        <li>{t.simSavedPct(formatBp(ev.savedBp))}</li>
+        {ev.best && <li>{t.simBest(ev.best.name, formatRp(ev.best.unitDisc), formatBp(ev.best.pct))}</li>}
+      </ul>
+    </div>
+  );
+}
+
 /** Struk digital setelah bayar. */
-function DigitalReceipt({ r, buyer, at, onAgain }) {
+function DigitalReceipt({ r, buyer, at, onAgain, budget = null }) {
   return (
     <div className="stack grow">
       <div className="receipt-paper pop-in" aria-label={t.simReceipt}>
@@ -124,6 +160,7 @@ function DigitalReceipt({ r, buyer, at, onAgain }) {
         </div>
         <div className="rp-thanks">{t.simThanks}</div>
       </div>
+      <Evaluation r={r} budget={budget} />
       <div className="actions">
         <button className="btn btn-primary" onClick={onAgain}>{t.simAgain}</button>
       </div>
@@ -136,12 +173,20 @@ export function ShopSim({ profile, onComplete = () => {} }) {
   const [cart, setCart] = useState([]);
   const [open, setOpen] = useState(null);
   const [paid, setPaid] = useState(null);
+  const [budget, setBudget] = useState(null); // misi uang belanja (null = bebas)
+  const [game, setGame] = useState({ right: 0, tries: 0, streak: 0, best: 0 }); // skor Tantangan Kasir
   const r = receipt(cart);
+  const ev = evaluateCart(r, budget);
+  const onChallenge = (ok) =>
+    setGame((g) => {
+      const streak = ok ? g.streak + 1 : 0;
+      return { right: g.right + (ok ? 1 : 0), tries: g.tries + 1, streak, best: Math.max(g.best, streak) };
+    });
   const products = shop.products.filter((p) => cat === 'semua' || p.category === cat);
 
   const pay = () => {
     const at = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
-    setPaid({ r, at });
+    setPaid({ r, at, budget });
     play('success');
     logEvent('scene_interact', { moduleId: 'SIM', payload: { scene: 'pay', items: r.count, total: r.total, saved: r.totalDisc } });
     onComplete({ items: r.count, total: r.total, saved: r.totalDisc });
@@ -152,7 +197,7 @@ export function ShopSim({ profile, onComplete = () => {} }) {
     return (
       <div className="screen">
         <Header title={t.simReceipt} />
-        <DigitalReceipt r={paid.r} at={paid.at} buyer={profile?.name?.split(' ')[0]} onAgain={() => { setCart([]); setPaid(null); }} />
+        <DigitalReceipt r={paid.r} at={paid.at} budget={paid.budget} buyer={profile?.name?.split(' ')[0]} onAgain={() => { setCart([]); setPaid(null); }} />
       </div>
     );
   }
@@ -163,6 +208,24 @@ export function ShopSim({ profile, onComplete = () => {} }) {
       <div className="stack grow">
         <StoreFront name={shop.storeName} />
         <KikoSays mood="think" size={64}>{t.simIntro}</KikoSays>
+        <div className="card stack mission">
+          <div className="row small"><b className="grow">🎯 {t.simMission}</b>
+            {game.tries > 0 && <span className="score-chip" aria-label={t.simGameScore}>⭐ {game.right}/{game.tries} · 🔥{game.streak}</span>}
+          </div>
+          <div className="chips-scroll" role="radiogroup" aria-label={t.simMission}>
+            {BUDGETS.map((b) => (
+              <button key={String(b)} role="radio" aria-checked={budget === b} className={`chip ${budget === b ? 'on' : ''}`} onClick={() => setBudget(b)}>
+                {b === null ? t.simFree : formatRp(b)}
+              </button>
+            ))}
+          </div>
+          {budget !== null && r.count > 0 && (
+            <div className={`small ${ev.within ? 'c-result' : 'c-discount'}`} role="status">
+              {ev.within ? t.simLeft(formatRp(ev.remaining)) : t.simShort(formatRp(ev.over))}
+            </div>
+          )}
+          {game.streak >= 3 && <div className="small c-percent">🔥 {t.simStreak(game.streak)}</div>}
+        </div>
         <div className="chips-scroll" role="tablist" aria-label={t.simCategory}>
           {[{ id: 'semua', name: t.simAll }, ...shop.categories].map((c) => (
             <button key={c.id} role="tab" aria-selected={cat === c.id} className={`chip ${cat === c.id ? 'on' : ''}`} onClick={() => setCat(c.id)}>
@@ -211,6 +274,7 @@ export function ShopSim({ profile, onComplete = () => {} }) {
               <div className="line"><span>{t.simTotalBefore}</span><b className="n c-price">{formatRp(r.totalPrice)}</b></div>
               <div className="line"><span>{t.simSaved}</span><b className="n c-discount">−{formatRp(r.totalDisc)}</b></div>
               <div className="line"><span>{t.simTotal}</span><b className="n c-result">{formatRp(r.total)}</b></div>
+              <CompareBars r={r} />
             </>
           )}
         </div>
@@ -225,6 +289,7 @@ export function ShopSim({ profile, onComplete = () => {} }) {
         <ProductSheet
           product={open}
           onClose={() => setOpen(null)}
+          onChallenge={onChallenge}
           onAdd={() => {
             setCart(addToCart(cart, open));
             play('coin');

@@ -23,7 +23,7 @@ import { ShopSim } from './features/Shop.jsx';
 import ModuleRunner from './features/ModuleRunner.jsx';
 import { LearningMap, Quiz, Remedial, ResearchPanel } from './features/Screens.jsx';
 import { t } from './i18n/id.js';
-import { play, setMusicPaused, unlock } from './ui/audio.js';
+import { musicModeFor, play, setMusicMode, unlock } from './ui/audio.js';
 import { HomeContext } from './ui/components.jsx';
 import Decor from './ui/Decor.jsx';
 
@@ -48,7 +48,11 @@ export default function App() {
     document.addEventListener('pointerdown', onDown);
     return () => document.removeEventListener('pointerdown', onDown);
   }, []);
-  useEffect(() => setMusicPaused(solving), [solving]);
+  // Musik mengikuti halaman; dimatikan otomatis selama tes (literasi, tes awal/akhir, cek kesiapan).
+  const gatedQuiz =
+    !!profile?.studentCode && ['map', 'module', 'posttest'].includes(screen.name) && (!profile.pretestDone || !profile.diagnosticDone);
+  const testing = (screen.name === 'literacy' && screen.mode === 'test') || screen.name === 'posttest' || gatedQuiz;
+  useEffect(() => setMusicMode(musicModeFor(screen.name, { testing })), [screen.name, testing]);
 
   // Lencana baru → animasi hadiah + suara.
   useEffect(() => {
@@ -105,14 +109,14 @@ export default function App() {
   };
 
   /** Tes/latihan literasi selesai: hitung skor lewat domain, simpan, catat event penelitian. */
-  const finishLiteracy = async (mode, items, { answers, texts }, from) => {
+  const finishLiteracy = async (mode, items, { answers, texts, helped = {} }, from) => {
     const r = scoreTest(items, answers);
     logEvent('literacy_result', {
       problemId: items.length === 1 ? items[0].id : 'test',
-      payload: { kind: mode, total: r.total, max: r.max, byProcess: r.byProcess, texts },
+      payload: { kind: mode, total: r.total, max: r.max, byProcess: r.byProcess, texts, hintsUsed: Object.keys(helped).length },
     });
     if (mode === 'test') {
-      const last = { total: r.total, max: r.max, byProcess: r.byProcess, answers, texts, at: new Date().toISOString() };
+      const last = { total: r.total, max: r.max, byProcess: r.byProcess, answers, texts, hintsUsed: Object.keys(helped).length, at: new Date().toISOString() };
       const prev = profile.literacy;
       const before = prev?.history ?? (prev?.last ? [{ total: prev.last.total, max: prev.last.max, at: prev.last.at }] : []);
       const history = [...before, { total: r.total, max: r.max, at: last.at }].slice(-20);
@@ -263,6 +267,7 @@ export default function App() {
           items={screen.items}
           answers={screen.answers}
           texts={screen.texts}
+          studentName={profile?.name}
           onRetry={startAgain}
           onBack={() => go(screen.from ?? 'map')}
         />
@@ -350,13 +355,14 @@ export default function App() {
     return <LearningMap {...mapProps()} />;
   })();
 
-  const scenic = screen.name === 'home' || screen.name === 'journey';
+  const scenic = screen.name === 'journey'; // perjalanan punya latar jalan sendiri
+  const BG = { sim: 'shop', testhub: 'quiz', literacy: 'quiz', 'literacy-result': 'quiz', profile: 'profile', 'material-hub': 'learn', material: 'learn', formulas: 'learn', glossary: 'learn', module: 'learn' };
   // Transisi halus antarhalaman: kunci berubah → halaman baru masuk dengan animasi pendek.
   const pageKey = `${screen.name}-${screen.index ?? ''}-${screen.card ?? ''}`;
   return (
     <HomeContext.Provider value={screen.name === 'home' ? null : goHome}>
       {!scenic && <Decor calm={solving && (screen.name === 'module' || screen.name === 'literacy')} />}
-      <div className="page" key={pageKey}>{view}</div>
+      <div className="page" key={pageKey} data-bg={BG[screen.name] ?? 'home'}>{view}</div>
       {newBadges.length > 0 && <BadgeToast ids={newBadges} onClose={() => setNewBadges([])} />}
     </HomeContext.Provider>
   );

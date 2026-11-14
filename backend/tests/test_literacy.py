@@ -103,3 +103,18 @@ def test_analitik_mencatat_skor_literasi():
     st = s["students"][0]
     assert (st["literacy_attempts"], st["literacy_first"], st["literacy_last"]) == (2, 10, 21)
     assert s["class"]["mean_literacy_last"] == 21
+
+
+def test_pembahasan_dan_bantuan_tes_divalidasi():
+    # setiap tahap tes punya bantuan, setiap soal punya pembahasan lengkap
+    for it in TEST:
+        assert all(st.get("hints") for st in it["steps"])
+        assert {"known", "asked", "formula", "steps", "result", "conclusion"} <= set(it["discussion"])
+    # pembahasan yang angkanya tidak cocok dengan kunci ditolak
+    bad = copy.deepcopy(LIT)
+    bad["test"][2]["discussion"]["derived"]["d"] = {"fn": "discountAmount", "args": ["h", 2000]}
+    assert any("tidak sama dengan kunci" in e for e in validate_literacy(bad))
+    # bantuan yang membocorkan jawaban ditolak
+    bad = copy.deepcopy(LIT)
+    bad["test"][2]["steps"][2]["hints"] = ["Jawabannya Rp80.000."]
+    assert any("membocorkan" in e for e in validate_literacy(bad))

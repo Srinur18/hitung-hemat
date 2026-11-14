@@ -9,7 +9,7 @@ import { t } from '../i18n/id.js';
 import { play } from '../ui/audio.js';
 import { Header, RichText } from '../ui/components.jsx';
 import Icon from '../ui/Icon.jsx';
-import { KikoSays } from '../ui/Mascot.jsx';
+import Mascot, { KikoSays } from '../ui/Mascot.jsx';
 import { Critter, JourneyStreet, PAL, ShopStreet } from '../ui/ShopArt.jsx';
 import { SoundButtons } from '../ui/SoundToggle.jsx';
 import { MaterialList } from './Material.jsx';
@@ -40,7 +40,13 @@ export function Home({ profile, onMenu }) {
           ))}
         </h1>
         <p className="home-slogan">{t.slogan}</p>
-        {profile?.name && <div className="home-hello">{t.hello(profile.name.split(' ')[0])}</div>}
+        <div className="home-plum">
+          <Mascot mood="wave" size={92} />
+          <div className="bubble">
+            {profile?.name ? `${t.hello(profile.name.split(' ')[0])} ` : ''}
+            {t.plumHello}
+          </div>
+        </div>
         <div className="home-scene">
           <ShopStreet />
         </div>
@@ -135,8 +141,8 @@ export function Greeting({ profile, onContinue, onMap }) {
       <div className="stack grow greet">
         <svg viewBox="0 0 200 140" className="greet-art" role="img" aria-label="Kelinci pelanggan dan beruang pemilik toko melambai">
           <Critter type="bunny" shirt={PAL.pink} wave x={70} y={136} scale={1} className="bob" />
-          <Critter type="bear" role="owner" shirt={PAL.green} wave x={140} y={136} scale={0.9} />
         </svg>
+        <Mascot mood="cheer" size={110} />
         <h2 className="greet-title">{t.hello(profile.name ?? profile.studentCode)}</h2>
         <p className="card greet-text">{t.welcomeLong}</p>
       </div>

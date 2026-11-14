@@ -70,7 +70,7 @@ function HintSheet({ problem, step, idx, hint, onNext, onClose }) {
     <Sheet onClose={onClose}>
       <div className="row">
         <Mascot mood="think" size={56} />
-        <h2>{t.hint} dari Kiko</h2>
+        <h2>{t.hint} dari Plum</h2>
       </div>
       {step.hints.slice(0, Math.min(3, hint.level)).map((h, i) => (
         <div key={i} className="card hint">
@@ -115,6 +115,8 @@ export default function ProblemSolver({ problem, moduleId, sceneKind, mode, leve
   const [sheet, setSheet] = useState(null); // 'hint' | 'offer'
   const [fb, setFb] = useState(null);
   const [showModel, setShowModel] = useState(!sc.markMode);
+  const [showDisc, setShowDisc] = useState(false); // pembahasan langkah yang sudah selesai
+  const fbId = useRef(0);
   const stats = useRef({ hardSteps: 0, wrong: 0, maxHint: 0, t0: Date.now(), stepT0: Date.now() });
 
   const step = problem.steps[idx];
@@ -145,9 +147,25 @@ export default function ProblemSolver({ problem, moduleId, sceneKind, mode, leve
     const ok = checkAnswer(step, ans);
     const mc = ok ? null : step.input === 'choice' ? step.options[ans]?.mc ?? null : classify(step, problem.vars, ans);
     log('answer_submit', { answer: ans, correct: ok, mc, attempt: hint.attempts + 1, ms: Date.now() - stats.current.stepT0 });
+    fbId.current += 1;
     if (ok) {
       if (hint.attempts >= 2) stats.current.hardSteps += 1;
-      setFb({ kind: 'good', text: t.correct });
+      // apresiasi Plum + alasan mengapa benar (langkah kerja dengan angka soal)
+      const praise = t.praises[fbId.current % t.praises.length];
+      setFb({
+        kind: 'good',
+        id: fbId.current,
+        node: (
+          <span className="fb-rich">
+            <b>{praise}</b>{' '}
+            {step.worked && (
+              <span className="fb-why">
+                {t.whyCorrect} <RichText text={step.worked} vars={problem.vars} signaling={false} className="" />
+              </span>
+            )}
+          </span>
+        ),
+      });
       setInput('');
       setChoice(null);
       setHint(initialHintState());
@@ -160,7 +178,21 @@ export default function ProblemSolver({ problem, moduleId, sceneKind, mode, leve
     stats.current.wrong += 1;
     const r = onWrong(hint);
     setHint(r.state);
-    setFb({ kind: 'bad', text: FEEDBACK[mc] ?? FEEDBACK.DEFAULT });
+    // letak kesalahan (miskonsepsi) + cara memperbaiki (petunjuk H1, tanpa membocorkan angka jawaban)
+    setFb({
+      kind: 'bad',
+      id: fbId.current,
+      node: (
+        <span className="fb-rich">
+          <span>{FEEDBACK[mc] ?? FEEDBACK.DEFAULT}</span>
+          {step.hints?.[0] && (
+            <span className="fix-tip">
+              <b>{t.howToFix}</b> <RichText text={step.hints[0]} vars={problem.vars} signaling={false} className="" />
+            </span>
+          )}
+        </span>
+      ),
+    });
     if (r.offer) setSheet('offer');
   };
 
@@ -213,6 +245,19 @@ export default function ProblemSolver({ problem, moduleId, sceneKind, mode, leve
               <RichText text={`${s.label}: ${showValue(s)}`} vars={problem.vars} signaling className="" />
             </div>
           ))}
+          <button className="chip disc-chip" aria-expanded={showDisc} onClick={() => setShowDisc((x) => !x)}>
+            📘 {showDisc ? t.hideSteps : t.showSteps}
+          </button>
+          {showDisc && (
+            <ol className="ex-steps step-disc" aria-label={t.discussionTitle}>
+              {doneSteps.map((s) => (
+                <li key={s.id} className="pop-in">
+                  <b>{s.label}.</b> <RichText text={s.worked} vars={problem.vars} className="" />
+                  {s.formula && <div className="muted small">{s.formula}</div>}
+                </li>
+              ))}
+            </ol>
+          )}
         </div>
       )}
 
@@ -235,7 +280,7 @@ export default function ProblemSolver({ problem, moduleId, sceneKind, mode, leve
             <div className="step-title">{step.label}</div>
           </div>
           <FormulaDock key={step.id} formula={step.formula} defaultOpen={sc.formulaOpen || completion} />
-          <Feedback kind={fb?.kind} kiko>{fb?.text}</Feedback>
+          <Feedback kind={fb?.kind} kiko id={fb?.id}>{fb?.node ?? fb?.text}</Feedback>
           {step.input === 'choice' ? (
             <div className="options">
               {step.options.map((o, i) => (

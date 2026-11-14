@@ -78,3 +78,23 @@ export function receipt(items) {
   const sum = (k) => lines.reduce((s, l) => s + l[k], 0);
   return { lines, totalPrice: sum('lineprice'), totalDisc: sum('disc'), total: sum('final'), count: sum('qty') };
 }
+
+/** Pilihan misi uang belanja (Rupiah). null = bebas tanpa batas. */
+export const BUDGETS = [null, 100000, 200000, 300000];
+
+/**
+ * Evaluasi pilihan belanja: apakah sesuai uang, berapa sisa/kurang, berapa persen hemat,
+ * dan barang mana yang memberi potongan rupiah terbesar. Semua bilangan bulat.
+ * @returns {{code:'empty'|'over'|'great'|'good', within:boolean, remaining:number, over:number, savedBp:number, best:object|null}}
+ */
+export function evaluateCart(r, budget = null) {
+  if (!r.count) return { code: 'empty', within: true, remaining: budget ?? 0, over: 0, savedBp: 0, best: null };
+  const within = budget === null || r.total <= budget;
+  const remaining = budget === null ? 0 : within ? subtract(budget, r.total) : 0;
+  const over = within ? 0 : subtract(r.total, budget);
+  // persen hemat dalam basis point (dibulatkan ke 0,01%) — hanya untuk ditampilkan
+  const savedBp = r.totalPrice ? Math.round((r.totalDisc * BP) / r.totalPrice) : 0;
+  const best = r.lines.reduce((b, l) => (!b || l.unitDisc > b.unitDisc ? l : b), null);
+  const code = !within ? 'over' : savedBp >= 2000 ? 'great' : 'good';
+  return { code, within, remaining, over, savedBp, best };
+}

@@ -160,10 +160,51 @@ def validate_item(item: dict, *, practice: bool) -> list[str]:
             errs += text_problems(sid, t)
             if st["input"] == "rupiah" and format_rp(k) in t:
                 errs.append(f"{sid}: petunjuk/umpan balik membocorkan jawaban (aturan P8)")
-        if practice and not st.get("hints"):
-            errs.append(f"{sid}: soal latihan wajib punya petunjuk")
+        if not st.get("hints"):
+            errs.append(f"{sid}: setiap tahap wajib punya petunjuk (Bantuan)")
         if not practice and not st.get("rubricText"):
             errs.append(f"{sid}: soal tes wajib punya kisi-kisi (rubricText)")
+    return errs
+
+
+# Pembahasan harus memuat angka kunci: nilai turunan → kunci tahap yang wajib sama.
+DISCUSSION_MATCH = {
+    "L1": {"fA": "s2a", "fB": "s2b"},
+    "L2": {"tot": "s2", "d": "s4", "f": "s5"},
+    "L3": {"d": "s2b", "f": "s3b"},
+    "L4": {"d": "s4", "f": "s5"},
+    "P1": {"fA": "s2a", "fB": "s2b"},
+    "P2": {"tot": "s2", "d": "s4", "f": "s5"},
+    "P3": {"d": "s2b", "f": "s3b"},
+    "P4": {"d": "s4", "f": "s5"},
+}
+
+
+def validate_discussion(item: dict) -> list[str]:
+    """Pembahasan per soal: Diketahui, Ditanyakan, Rumus, Langkah, Hasil, Kesimpulan — angkanya dari domain."""
+    iid = item["id"]
+    d = item.get("discussion")
+    if not d:
+        return [f"{iid}: soal wajib punya pembahasan"]
+    errs = []
+    for k in ("known", "asked", "formula", "steps", "result", "conclusion"):
+        if not d.get(k):
+            errs.append(f"{iid}.pembahasan: bagian {k} kosong")
+    v = dict(item["vars"])
+    for name, spec in d.get("derived", {}).items():
+        v[name] = evaluate(spec, v)
+        if v[name] is None:
+            errs.append(f"{iid}.pembahasan: nilai {name} tidak bulat / tidak sah")
+    key = answer_key(item)
+    for name, sid in DISCUSSION_MATCH.get(iid, {}).items():
+        if v.get(name) != key[sid]:
+            errs.append(f"{iid}.pembahasan: {name}={v.get(name)} tidak sama dengan kunci {sid}={key[sid]}")
+    texts = [*d.get("known", []), d.get("asked", ""), *d.get("steps", []), d.get("result", ""), d.get("conclusion", "")]
+    for i, text in enumerate(texts):
+        errs += text_problems(f"{iid}.pembahasan{i}", text)
+        for m in re.finditer(r"\{(\w+)", text):
+            if m.group(1) not in v:
+                errs.append(f"{iid}.pembahasan: placeholder {{{m.group(1)}}} tidak punya nilai")
     return errs
 
 
@@ -176,6 +217,7 @@ def validate_literacy(lit: dict) -> list[str]:
             errs.append(f"{kind}: harus tepat satu soal untuk tiap indikator, ditemukan {procs}")
         for it in items:
             errs += validate_item(it, practice=kind == "practice")
+            errs += validate_discussion(it)  # tes & latihan wajib punya pembahasan
     total = sum(sum(rubric_of(it)) for it in lit["test"])
     if total != lit["maxScore"] or total != 24:
         errs.append(f"test: skor maksimum {total} ≠ 24")

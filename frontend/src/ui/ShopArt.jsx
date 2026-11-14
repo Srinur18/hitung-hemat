@@ -4,25 +4,28 @@
 // Label harga pada ilustrasi selalu memuat angka diskon (P3: visual memuat relasi matematis).
 
 export const PAL = {
-  // Tema "Playful Pastel Candy Shop" — nilai sama dengan token :root di styles.css.
-  blue: '#9c83d6', // lavender tua (papan nama & topi kasir)
-  sky: '#efe8fb',
-  yellow: '#ffd66b',
-  pink: '#ff7f87',
-  pinkSoft: '#ffe3e5',
-  green: '#5fbf9e',
-  greenSoft: '#8ddcc0',
-  mint: '#e3f7ef',
-  purple: '#bba5e8',
-  lilac: '#efe8fb',
+  // Tema "Plum Arcade World" — nilai sama dengan token :root di styles.css.
+  blue: '#8b5cf6', // ungu neon (papan nama, topi kasir)
+  sky: '#24123b',
+  yellow: '#fcd34d',
+  pink: '#f472b6',
+  pinkSoft: '#fbcfe8',
+  green: '#22d3ee', // cyan neon
+  greenSoft: '#67e8f9',
+  mint: '#164e63',
+  purple: '#c084fc', // lavender neon
+  lilac: '#e9d5ff',
   peach: '#ffd9b8',
-  orange: '#f6a96c',
-  cream: '#fff8ed',
-  brown: '#8a5a44',
-  ink: '#493a40',
+  orange: '#fb923c',
+  cream: '#2e1a45', // dinding ruko = warna kartu
+  brown: '#4c1d95', // kusen pintu ungu tua
+  ink: '#1e0b33',
   white: '#ffffff',
-  glass: '#e3f7ef',
-  percent: '#9a6200',
+  glass: '#1b2d4f', // kaca etalase malam
+  percent: '#b45309',
+  board: '#1d0f31', // papan nama gelap untuk tulisan neon
+  walk: '#24123b', // trotoar
+  walkLine: '#8b5cf6',
 };
 
 /* ---------------- karakter ---------------- */
@@ -264,7 +267,7 @@ function Goods({ kind, x, y, w }) {
  * Satu ruko: papan nama, tenda bergaris, etalase, pintu yang membuka, dan label diskon.
  * (x, y) = pojok kiri atas; tinggi total h, alas di y + h.
  */
-export function Ruko({ x, y, w = 110, h = 160, wall = PAL.cream, awningA = PAL.pink, awningB = PAL.white, sign, signColor = PAL.blue, kind, tag, doorDelay = 0, active = false }) {
+export function Ruko({ x, y, w = 110, h = 160, wall = PAL.cream, awningA = PAL.pink, awningB = '#f8eeff', sign, signColor = PAL.blue, kind, tag, doorDelay = 0, active = false }) {
   const stripes = 6;
   const sw = w / stripes;
   const awY = y + 52;
@@ -278,8 +281,8 @@ export function Ruko({ x, y, w = 110, h = 160, wall = PAL.cream, awningA = PAL.p
       <rect x={x - 3} y={y + 6} width={w + 6} height="10" rx="4" fill={signColor} />
       <rect x={x} y={y + 14} width={w} height={h - 14} fill={wall} stroke="#00000014" />
       {/* papan nama */}
-      <rect x={x + 8} y={y + 20} width={w - 16} height="24" rx="8" fill={PAL.white} stroke={signColor} strokeWidth="2.5" />
-      <text x={x + w / 2} y={y + 37} textAnchor="middle" fontSize={sign && sign.length > 10 ? 10 : 12} fontWeight="700" fill={signColor} className="svg-display">
+      <rect x={x + 8} y={y + 20} width={w - 16} height="24" rx="8" fill={PAL.board} stroke={signColor} strokeWidth="2.5" />
+      <text x={x + w / 2} y={y + 37} textAnchor="middle" fontSize={sign && sign.length > 10 ? 10 : 12} fontWeight="700" fill={signColor} className="svg-display neon-sign">
         {sign}
       </text>
       {/* tenda bergaris + gerigi */}
@@ -341,12 +344,12 @@ export function ShopStreet() {
       <Star x={330} y={30} r={6} />
       <Coin x={180} y={18} />
       <Ruko x={6} y={30} w={110} h={170} sign="TOKO BAJU" signColor={PAL.pink} awningA={PAL.pink} kind="baju" tag="-25%" doorDelay={0} />
-      <Ruko x={125} y={14} w={110} h={186} sign="ALAT SEKOLAH" signColor={PAL.blue} awningA={PAL.blue} wall="#eef7ff" kind="sekolah" tag="-20%" doorDelay={1.2} />
-      <Ruko x={244} y={30} w={110} h={170} sign="ES KRIM" signColor={PAL.green} awningA={PAL.green} wall="#f1fff6" kind="eskrim" tag="-10%" doorDelay={2.4} />
+      <Ruko x={125} y={14} w={110} h={186} sign="ALAT SEKOLAH" signColor={PAL.blue} awningA={PAL.blue} wall="#2a1747" kind="sekolah" tag="-20%" doorDelay={1.2} />
+      <Ruko x={244} y={30} w={110} h={170} sign="ES KRIM" signColor={PAL.green} awningA={PAL.green} wall="#251640" kind="eskrim" tag="-10%" doorDelay={2.4} />
       {/* trotoar */}
-      <rect x="0" y="200" width="360" height="36" fill="#f6e2c8" />
+      <rect x="0" y="200" width="360" height="36" fill={PAL.walk} />
       {Array.from({ length: 12 }, (_, i) => (
-        <rect key={i} x={i * 32 - 4} y="200" width="28" height="5" rx="2" fill="#ead0ae" />
+        <rect key={i} x={i * 32 - 4} y="200" width="28" height="4" rx="2" fill={i % 2 ? PAL.green : PAL.walkLine} opacity="0.8" />
       ))}
       <Critter type="bunny" shirt={PAL.pink} wave x={104} y={232} scale={0.62} className="bob" />
       <Critter type="penguin" shirt={PAL.yellow} x={262} y={232} scale={0.55} />
@@ -407,15 +410,15 @@ export function JourneyStreet({ stage, walking }) {
         height="200"
         style={{ transform: `translateX(${-journeyX(stage)}px)` }}
       >
-        <rect x="0" y="180" width={W} height="20" fill="#f6e2c8" />
-        <rect x="0" y="178" width={W} height="4" fill="#ead0ae" />
+        <rect x="0" y="180" width={W} height="20" fill={PAL.walk} />
+        <rect x="0" y="178" width={W} height="3" fill={PAL.walkLine} />
         <Gate cx={journeyX(0)} />
         <Ruko x={journeyX(1) - 60} y={20} w={120} h={160} sign="TOKO BAJU" signColor={PAL.pink} awningA={PAL.pink} kind="baju" tag="-25%" active={stage === 1} />
-        <Ruko x={journeyX(2) - 60} y={20} w={120} h={160} sign="ALAT SEKOLAH" signColor={PAL.blue} awningA={PAL.blue} wall="#eef7ff" kind="sekolah" tag="-20%" active={stage === 2} />
-        <Ruko x={journeyX(3) - 60} y={20} w={120} h={160} sign="KASIR" signColor={PAL.purple} awningA={PAL.purple} wall="#f7f0ff" kind="kasir" active={stage === 3} />
+        <Ruko x={journeyX(2) - 60} y={20} w={120} h={160} sign="ALAT SEKOLAH" signColor={PAL.blue} awningA={PAL.blue} wall="#2a1747" kind="sekolah" tag="-20%" active={stage === 2} />
+        <Ruko x={journeyX(3) - 60} y={20} w={120} h={160} sign="KASIR" signColor={PAL.purple} awningA={PAL.purple} wall="#2c1648" kind="kasir" active={stage === 3} />
         <Critter type="cat" role="cashier" shirt={PAL.lilac} x={journeyX(3) + 70} y={182} scale={0.55} wave={stage === 3} />
         <Ruko x={journeyX(4) - 100} y={36} w={96} h={144} sign="TOKO A" signColor={PAL.orange} awningA={PAL.orange} kind="sepatu" tag="-30%" active={stage === 4} />
-        <Ruko x={journeyX(4) + 4} y={36} w={96} h={144} sign="TOKO B" signColor={PAL.green} awningA={PAL.green} wall="#f1fff6" kind="sepatu" tag="-20%" active={stage === 4} />
+        <Ruko x={journeyX(4) + 4} y={36} w={96} h={144} sign="TOKO B" signColor={PAL.green} awningA={PAL.green} wall="#251640" kind="sepatu" tag="-20%" active={stage === 4} />
         <Finish cx={journeyX(5)} />
       </svg>
       <svg className={`journey-walker ${walking ? 'walking' : ''}`} viewBox="0 0 100 130" width="62" height="80">
@@ -438,11 +441,12 @@ export function ProductIcon({ kind, size = 56 }) {
 export function StoreFront({ name }) {
   return (
     <svg viewBox="0 0 360 150" className="storefront" role="img" aria-label={name}>
-      <rect x="0" y="134" width="360" height="16" fill="#f6e2c8" />
+      <rect x="0" y="134" width="360" height="16" fill={PAL.walk} />
+      <rect x="0" y="134" width="360" height="2.5" fill={PAL.walkLine} />
       <rect x="20" y="10" width="320" height="10" rx="4" fill={PAL.purple} />
       <rect x="24" y="18" width="312" height="118" fill={PAL.cream} />
-      <rect x="60" y="24" width="240" height="24" rx="10" fill="#fff" stroke={PAL.purple} strokeWidth="2.5" />
-      <text x="180" y="41" textAnchor="middle" fontSize="12.5" fontWeight="700" fill={PAL.purple} className="svg-display">{name}</text>
+      <rect x="60" y="24" width="240" height="24" rx="10" fill={PAL.board} stroke={PAL.pink} strokeWidth="2.5" />
+      <text x="180" y="41" textAnchor="middle" fontSize="12.5" fontWeight="700" fill={PAL.pink} className="svg-display neon-sign">{name}</text>
       {Array.from({ length: 12 }, (_, i) => (
         <g key={i}>
           <rect x={24 + i * 26} y="54" width="26" height="14" fill={i % 2 ? PAL.white : PAL.pink} />

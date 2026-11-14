@@ -21,7 +21,15 @@ Dokumen ini menerjemahkan temuan wawancara dan Cognitive Load Theory menjadi kep
 
 Warna semantik **hanya** dipakai untuk peran besaran. Warna lain bersifat netral.
 
-**Tema "Playful Pastel Candy Shop"** (pemilik produk, 14 Nov 2026, v0.5) menggantikan tema "Vibe". Semua warna didefinisikan **satu kali** di `:root` (`frontend/src/styles.css`). Tidak ada warna hex di luar blok itu (dijaga `tests/theme.test.js`). Palet ilustrasi SVG (`ui/ShopArt.jsx`, `ui/Decor.jsx`, `ui/Mascot.jsx`) memakai nilai hex yang sama. Mode gelap dinonaktifkan.
+> **Tema aktif: "PLUM ARCADE WORLD — Cute 3D Neon Purple"** (pemilik produk, 14 Nov 2026, menggantikan Candy Shop di bawah).
+> Latar `#160D25`/`#24123B`, kartu `#2E1A45`, neon ungu `#8B5CF6`, pink `#F472B6`, cyan `#22D3EE`, lavender `#C084FC`, teks `#F8EEFF`/`#D8C4E8`.
+> Penyesuaian kontras: tombol utama diisi `#7C3AED` (teks terang 5,1:1; `#8B5CF6` hanya 3,8:1) dengan cahaya `#8B5CF6`. Teks di atas tombol pink/cyan/lavender/emas memakai `#160D25`.
+> Angka berperan di atas kartu gelap: harga awal `#C084FC`, persen `#FCD34D`, potongan `#FB7185`, harga akhir `#4ADE80` (semua ≥ 5,8:1, dijaga `tests/theme.test.js`).
+> Maskot utama: **Kucing Plum** (`ui/Mascot.jsx`, SVG bergradien 3D, celemek pink, keranjang mini); Kiko tetap tersedia sebagai `KikoFox`.
+> Latar: `ui/Decor.jsx` (mesin arcade neon, lampu pink/cyan, grid neon, partikel). Mesin, partikel, dan grid disembunyikan saat mengerjakan soal. Variasi latar per halaman lewat `.page[data-bg]`.
+> Token lama (`--coral`, `--white`, ...) dipertahankan sebagai alias ke palet arcade agar semua komponen ikut berubah.
+
+**Tema "Playful Pastel Candy Shop"** (pemilik produk, 14 Nov 2026, digantikan Plum Arcade) menggantikan tema "Vibe". Semua warna didefinisikan **satu kali** di `:root` (`frontend/src/styles.css`). Tidak ada warna hex di luar blok itu (dijaga `tests/theme.test.js`). Palet ilustrasi SVG (`ui/ShopArt.jsx`, `ui/Decor.jsx`, `ui/Mascot.jsx`) memakai nilai hex yang sama. Mode gelap dinonaktifkan.
 
 | Token palet | Nilai | Peran |
 |---|---|---|

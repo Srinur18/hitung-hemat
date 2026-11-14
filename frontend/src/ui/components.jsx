@@ -6,6 +6,7 @@ import { parseText } from '../domain/text.js';
 import { t } from '../i18n/id.js';
 import { play } from './audio.js';
 import Icon from './Icon.jsx';
+import { MusicButton } from './SoundToggle.jsx';
 import Mascot from './Mascot.jsx';
 
 /** Disediakan App: fungsi kembali ke Beranda. Header menampilkan tombol 🏠 di setiap halaman. */
@@ -24,6 +25,7 @@ export function Header({ title, sub, onBack, right }) {
         {title}
         {sub && <div className="sub">{sub}</div>}
       </h1>
+      <MusicButton />
       {goHome && (
         <button className="icon-btn" onClick={goHome} aria-label={t.home}>
           <Icon name="home" />
@@ -159,13 +161,15 @@ export function NumberPad({ value, onChange, kind = 'rupiah', role }) {
  * Umpan balik benar/salah. Benar: bintang memancar + suara "benar". Salah: Kiko berpikir
  * (bergoyang pelan) + suara lembut. Animasi pendek, mati pada "kurangi gerakan".
  */
-export function Feedback({ kind, children, kiko = false }) {
+export function Feedback({ kind, children, kiko = false, id }) {
+  // `id` dipakai bila isi umpan balik berupa elemen (bukan teks) agar suara hanya berbunyi sekali per jawaban.
+  const sig = id ?? (typeof children === 'string' ? children : null);
   useEffect(() => {
     if (children && (kind === 'good' || kind === 'bad')) play(kind === 'good' ? 'correct' : 'wrong');
-  }, [kind, children]);
+  }, [kind, sig]); // eslint-disable-line react-hooks/exhaustive-deps
   if (!children) return null;
   return (
-    <div className={`feedback ${kind} ${kiko ? 'with-kiko' : ''}`} role="status" key={`${kind}-${String(children)}`}>
+    <div className={`feedback ${kind} ${kiko ? 'with-kiko' : ''}`} role="status" key={`${kind}-${sig}`}>
       {kiko && <Mascot mood={kind === 'good' ? 'cheer' : 'think'} size={44} className={kind === 'bad' ? 'shake' : 'hop'} />}
       <span>{children}</span>
       {kind === 'good' && (

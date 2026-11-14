@@ -8,7 +8,7 @@ import { randomSeed } from '../domain/rng.js';
 import { isMastered, masteryLevel, stars } from '../domain/scaffold.js';
 import { t } from '../i18n/id.js';
 import { Header, Stars } from '../ui/components.jsx';
-import Mascot from '../ui/Mascot.jsx';
+import Mascot, { KikoSays } from '../ui/Mascot.jsx';
 import { EffortRating, ExplainCards, Explore, WorkedExample } from './Learning.jsx';
 import ProblemSolver from './ProblemSolver.jsx';
 
@@ -64,6 +64,9 @@ export default function ModuleRunner({ module, studentCode, saved, onExit, onSol
   }, [solving, onSolvingChange]);
 
   const next = () => (i + 1 < tasks.length ? setI(i + 1) : setPhase('effort'));
+  // skor latihan: soal yang diselesaikan tanpa banyak salah (dari riwayat penguasaan yang sudah ada)
+  const solvedCount = history.length;
+  const goodCount = history.filter((h) => h.correct).length;
 
   const onSolved = (r) => {
     const h = [...history, { stage: task.kind, correct: r.correct, maxHint: r.maxHint }];
@@ -106,7 +109,9 @@ export default function ModuleRunner({ module, studentCode, saved, onExit, onSol
           <div className="muted small">
             {result.mastered ? 'Kamu sudah menguasai modul ini.' : 'Ulangi modul ini kapan saja untuk menambah bintang.'}
           </div>
+          {solvedCount > 0 && <div className="small"><b>{t.moduleSummaryScore(goodCount, solvedCount)}</b></div>}
         </div>
+        {solvedCount > 0 && <KikoSays mood="cheer" size={72}>{t.plumMotivate(goodCount / solvedCount)}</KikoSays>}
         <div className="actions">
           <button className="btn btn-primary" onClick={onExit}>{t.mapTitle}</button>
         </div>
@@ -136,6 +141,17 @@ export default function ModuleRunner({ module, studentCode, saved, onExit, onSol
   return (
     <div className="screen">
       <Header title={`${module.id} · ${module.title}`} sub={sub} onBack={onExit} />
+      {phase === 'tasks' && (
+        <div className="test-status card practice-status" aria-label={t.progressTest}>
+          <div className="row small">
+            <span className="grow">{t.practiceProgress(i + 1, tasks.length)}</span>
+            <b className="score-chip">⭐ {t.practiceScore(goodCount, solvedCount)}</b>
+          </div>
+          <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={tasks.length} aria-valuenow={i}>
+            <span style={{ width: `${(100 * i) / tasks.length}%` }} />
+          </div>
+        </div>
+      )}
       {body}
     </div>
   );

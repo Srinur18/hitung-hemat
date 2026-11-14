@@ -143,3 +143,28 @@ export function materialVars(topic) {
 
 /** Untuk validasi: apakah teks memuat jawaban (format Rupiah)? */
 export const leaksAnswer = (text, value) => isInt(value) && String(text).includes(formatRp(value));
+
+/** Kunci satu tahap (nilai benar berdasarkan data soal). */
+export function keyFor(item, stepId) {
+  return answerKey(item)[stepId];
+}
+
+/** Hitungan untuk halaman hasil: tahap dikerjakan, benar, salah. */
+export function tally(result) {
+  const steps = result.items.flatMap((r) => r.steps);
+  const answered = steps.filter((s) => s.answer !== null && s.answer !== undefined);
+  const correct = answered.filter((s) => s.earned > 0).length;
+  return {
+    totalSteps: steps.length,
+    answered: answered.length,
+    correct,
+    wrong: answered.length - correct,
+    itemsDone: result.items.filter((r) => r.steps.every((s) => s.answer !== null && s.answer !== undefined)).length,
+    percent: result.max ? Math.round((100 * result.total) / result.max) : 0,
+  };
+}
+
+/** Angka pembahasan satu soal: data soal + nilai turunan (dihitung fungsi domain). */
+export function discussionVars(item) {
+  return materialVars({ vars: item.vars, derived: item.discussion?.derived ?? {} });
+}

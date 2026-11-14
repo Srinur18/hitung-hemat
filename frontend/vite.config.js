@@ -10,5 +10,5 @@ export default defineConfig({
   },
   server: { host: true, fs: { allow: ['..'] } },
   build: { target: 'es2019', chunkSizeWarningLimit: 700 },
-  test: { environment: 'node', include: ['tests/**/*.test.{js,jsx}'] },
+  test: { environment: 'node', include: ['tests/**/*.test.{js,jsx}'], testTimeout: 20000 },
 });

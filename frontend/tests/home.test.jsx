@@ -2,7 +2,7 @@
 // Dunia toko v0.4: simulasi belanja (keranjang, struk), materi (bab, rumus, kamus), profil (lencana,
 // aspirasi), suara, tombol beranda, dan privasi nama.
 import 'fake-indexeddb/auto';
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { configure, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import glossary from '../../shared/content/glossary.json';
 import journey from '../../shared/content/journey.json';
@@ -12,16 +12,18 @@ import { db, getProfile, saveProfile } from '../src/data/db.js';
 import { materialVars } from '../src/domain/literacy.js';
 import { formatRp } from '../src/domain/money.js';
 import { activity, BADGES, earnedBadges, overallProgress, percentTable } from '../src/domain/progress.js';
-import { addToCart, checkoutChoices, priceBreakdown, receipt, removeFromCart } from '../src/domain/shop.js';
-import { FormulaSummary, Glossary, MaterialChapter } from '../src/features/Material.jsx';
+import { addToCart, checkoutChoices, evaluateCart, priceBreakdown, receipt, removeFromCart } from '../src/domain/shop.js';
+import { FormulaSummary, Glossary, MaterialChapter, PriceBar } from '../src/features/Material.jsx';
 import { ShopSim } from '../src/features/Shop.jsx';
-import { getSettings, play, setSetting, unlock } from '../src/ui/audio.js';
+import { getSettings, musicModeFor, musicState, play, setMusicMode, setSetting, unlock } from '../src/ui/audio.js';
 
 beforeAll(() => {
   HTMLCanvasElement.prototype.getContext = () => null;
   window.scrollTo = () => {};
 });
 afterEach(cleanup);
+// Layar kini merender SVG arcade & maskot yang lebih kaya → beri waktu tunggu lebih lama di jsdom.
+configure({ asyncUtilTimeout: 5000 });
 
 const click = (el) => fireEvent.click(el);
 const btn = (name) => screen.getByRole('button', { name });
@@ -133,7 +135,7 @@ describe('layar simulasi belanja', () => {
     expect(flow.textContent).toMatch(/Rp150\.000.*−Rp30\.000.*Rp120\.000/);
     // Tantangan kasir (fitur lama) tetap ada
     click(btn('Tantangan Kasir'));
-    const radios = () => within(screen.getByRole('radiogroup')).getAllByRole('radio');
+    const radios = () => within(document.querySelector('.sheet [role="radiogroup"]')).getAllByRole('radio');
     click(radios().find((r) => r.textContent === formatRp(30000)));
     expect(screen.getByText(/Itu besar diskonnya/)).toBeTruthy();
     click(radios().find((r) => r.textContent === formatRp(120000)));
@@ -224,7 +226,7 @@ describe('beranda, profil, dan privasi', () => {
       literacy: { attempts: 2, first: { total: 12, max: 24 }, last: { total: 20, max: 24 }, history: [{ total: 12, max: 24, at: '2026-11-13' }, { total: 20, max: 24, at: '2026-11-14' }] },
     });
     render(<App />);
-    expect(await screen.findByText('Halo, Rani!')).toBeTruthy();
+    expect(await screen.findByText(/Halo, Rani!/)).toBeTruthy();
     click(screen.getByRole('button', { name: /^Profil/ }));
     expect(await screen.findByText('Rani Putri')).toBeTruthy();
     expect(screen.getAllByText('12/24').length).toBeGreaterThanOrEqual(1);
@@ -243,5 +245,95 @@ describe('beranda, profil, dan privasi', () => {
     const events = await db.events.toArray();
     expect(events.length).toBeGreaterThan(0);
     expect(JSON.stringify(events)).not.toMatch(/Rani|Skor 24/);
+  });
+});
+
+describe('v0.6 — simulasi: misi uang, evaluasi, perbandingan, skor tantangan', () => {
+  it('evaluateCart: sesuai/kurang uang, persen hemat, potongan terbesar', () => {
+    const r = receipt([{ product: P.tas, qty: 1 }, { product: P.kaos, qty: 1 }]); // 230.000 → 180.000, hemat 50.000
+    expect(evaluateCart(r, 200000)).toMatchObject({ code: 'great', within: true, remaining: 20000, over: 0, savedBp: 2174 });
+    expect(evaluateCart(r, 100000)).toMatchObject({ code: 'over', within: false, over: 80000 });
+    expect(evaluateCart(r, null).best.id).toBe('tas'); // potongan Rp30.000 > Rp20.000
+    expect(evaluateCart(receipt([]), 100000).code).toBe('empty');
+  });
+
+  it('layar: pilih misi → sisa uang langsung; bayar → evaluasi Plum; skor Tantangan Kasir', () => {
+    render(<ShopSim onComplete={() => {}} />);
+    click(screen.getByRole('radio', { name: 'Rp200.000' }));
+    click(screen.getByRole('button', { name: /^Tas Sekolah,/ }));
+    click(btn('Tantangan Kasir'));
+    const kasir = () => within(document.querySelector('.sheet [role="radiogroup"]')).getAllByRole('radio');
+    click(kasir().find((r) => r.textContent === formatRp(120000)));
+    expect(document.querySelector('.mission .score-chip').textContent).toMatch(/1\/1 · 🔥1/);
+    click(btn('Lihat rincian'));
+    click(btn('Ke keranjang'));
+    expect(screen.getByText('Sisa uangmu Rp80.000.')).toBeTruthy();
+    expect(screen.getByLabelText('Perbandingan harga sebelum dan sesudah diskon').textContent).toMatch(/Rp150\.000.*Rp120\.000/);
+    click(screen.getByRole('radio', { name: 'Rp100.000' }));
+    expect(screen.getByText('Uangmu kurang Rp20.000. Coba hapus satu barang.')).toBeTruthy();
+    click(btn('Bayar'));
+    const ev = screen.getByLabelText('Evaluasi belanja');
+    expect(ev.textContent).toMatch(/uangnya kurang/);
+    expect(ev.textContent).toMatch(/Kurang Rp20\.000/);
+    expect(ev.textContent).toMatch(/hemat 20%/);
+  });
+});
+
+describe('v0.6 — materi: model batang & penyelesaian lengkap', () => {
+  it('model batang: harga akhir + potongan = harga awal', () => {
+    render(<PriceBar price={150000} pct={2000} />);
+    const card = screen.getByLabelText('Model batang harga awal, potongan, dan harga akhir');
+    expect(card.textContent).toMatch(/Rp150\.000/);
+    expect(card.textContent).toMatch(/Rp120\.000/);
+    expect(card.textContent).toMatch(/Rp30\.000/);
+    expect(screen.getByRole('img', { name: 'Rp120.000 + Rp30.000 = Rp150.000' })).toBeTruthy();
+  });
+
+  it('tombol "Lihat penyelesaian lengkap" membuka semua langkah contoh', () => {
+    render(<MaterialChapter index={2} card={0} onNav={() => {}} onBack={() => {}} />);
+    expect(document.querySelectorAll('.ex-steps li')).toHaveLength(0);
+    click(btn('📘 Lihat penyelesaian lengkap'));
+    expect(document.querySelectorAll('.ex-steps li')).toHaveLength(material.chapters[2].cards[0].example.steps.length);
+    expect(document.querySelector('.price-bar-card')).toBeTruthy(); // kartu ber-h & p menampilkan model batang
+  });
+});
+
+describe('v0.6 — musik latar', () => {
+  it('suasana per halaman; tes = mati', () => {
+    expect(musicModeFor('home')).toBe('home');
+    expect(musicModeFor('material')).toBe('calm');
+    expect(musicModeFor('module')).toBe('soft');
+    expect(musicModeFor('sim')).toBe('happy');
+    expect(musicModeFor('literacy', { testing: true })).toBe('off');
+    expect(musicModeFor('posttest', { testing: true })).toBe('off');
+  });
+
+  it('tidak bertumpuk saat pindah halaman; berhenti saat tes; volume musik 18% bawaan', () => {
+    // AudioContext tiruan (jsdom tidak punya Web Audio)
+    const node = () => ({ connect: (x) => x ?? node(), gain: { value: 0, setValueAtTime() {}, exponentialRampToValueAtTime() {} } });
+    window.AudioContext = class {
+      constructor() { this.state = 'running'; this.currentTime = 0; this.destination = {}; }
+      createGain() { return node(); }
+      createOscillator() { return { ...node(), type: '', frequency: { setValueAtTime() {}, exponentialRampToValueAtTime() {} }, start() {}, stop() {} }; }
+      resume() { return Promise.resolve(); }
+    };
+    expect(getSettings().musicVolume).toBe(0.18);
+    unlock();
+    setSetting({ music: true });
+    setMusicMode('home');
+    expect(musicState()).toMatchObject({ playing: true, timers: 1 });
+    for (const m of ['calm', 'soft', 'happy', 'home', 'home', 'calm']) {
+      setMusicMode(m);
+      expect(musicState().timers).toBe(1); // selalu satu pemutar
+    }
+    setMusicMode('off');
+    expect(musicState()).toMatchObject({ playing: false, mode: 'off' });
+    setMusicMode('home');
+    expect(musicState().playing).toBe(true);
+    setSetting({ music: false });
+    expect(musicState().playing).toBe(false);
+    setSetting({ musicVolume: 0.3 });
+    expect(JSON.parse(localStorage.getItem('hh-sound-v1')).musicVolume).toBe(0.3);
+    delete window.AudioContext;
   });
 });

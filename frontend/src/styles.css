@@ -1,66 +1,88 @@
 /* Token desain (design.md §2). SATU-SATUNYA sumber warna: ubah di sini, seluruh aplikasi ikut.
-   Tema "Playful Pastel Candy Shop" (v0.5, permintaan pemilik produk 14 Nov 2026).
-   - Palet pastel dipakai untuk LATAR, tombol, kartu, label, garis, dan bayangan.
-   - Teks di atas warna pastel memakai --c-on-color (cocoa gelap) → kontras ≥ 5,4:1.
-   - Angka berperan (harga awal, persen, potongan, harga akhir) memakai versi TUA palet
-     di atas kartu putih → kontras ≥ 4,7:1 (aturan P6/EL05). */
+   Tema "PLUM ARCADE WORLD — Cute 3D Neon Purple" (v0.5, pemilik produk 14 Nov 2026).
+   - Latar ungu gelap, kartu ungu tua, aksen neon ungu/pink/cyan.
+   - Teks di kartu: #F8EEFF (≥ 13:1). Teks di atas tombol neon pink/cyan/lavender/emas: --c-on-color gelap.
+   - Angka berperan (harga awal, persen, potongan, harga akhir) memakai warna neon terang
+     di atas kartu gelap → kontras ≥ 5,8:1 (aturan P6/EL05). Bentuk penanda tetap (ramah buta warna).
+   - Nama token lama (--coral, --butter, --mint, --white, ...) dipertahankan sebagai alias agar
+     seluruh komponen ikut berubah tanpa menyentuh logika. */
 :root {
-  /* palet utama */
-  --coral: #ff7f87;        /* warna utama */
-  --coral-deep: #e25f6a;   /* bayangan / garis tebal */
-  --coral-soft: #ffe3e5;
-  --butter: #ffd66b;       /* sekunder */
-  --butter-deep: #e6b53f;
-  --butter-soft: #fff3cf;
-  --mint: #8ddcc0;         /* pendukung */
-  --mint-deep: #5fbf9e;
-  --mint-soft: #e3f7ef;
-  --lavender: #bba5e8;     /* variasi */
-  --lavender-deep: #9c83d6;
-  --lavender-soft: #efe8fb;
-  --cream: #fff8ed;        /* latar */
-  --white: #ffffff;        /* kartu */
-  --cocoa: #493a40;        /* teks utama */
-  --muted-brown: #82747a;  /* teks sekunder (palet) */
-  --success: #66be91;
-  --success-soft: #e6f6ee;
-  --error: #f17d7d;
-  --error-soft: #fdecec;
+  /* palet Plum Arcade (pemilik produk) */
+  --bg: #160d25;           /* background utama */
+  --bg-2: #24123b;         /* background sekunder: header, panel, sheet */
+  --card: #2e1a45;         /* kartu */
+  --card-2: #3a2357;       /* kartu terangkat: tombol sekunder, tombol angka */
+  --neon-purple: #8b5cf6;
+  --neon-pink: #f472b6;
+  --neon-cyan: #22d3ee;
+  --plum-lavender: #c084fc;
+  --text: #f8eeff;         /* teks utama */
+  --text-2: #d8c4e8;       /* teks sekunder */
+  --gold: #fcd34d;         /* aksen koin/bintang arcade */
+  --purple-btn: #7c3aed;   /* isi tombol utama: teks #F8EEFF 5,1:1 (#8B5CF6 hanya 3,8:1) */
+  --line-neon: #4b2e6e;
+
+  /* alias nama lama → palet arcade */
+  --coral: #f472b6;
+  --coral-deep: #db2777;
+  --coral-soft: rgb(244 114 182 / 0.16);
+  --butter: #fcd34d;
+  --butter-deep: #d97706;
+  --butter-soft: rgb(252 211 77 / 0.14);
+  --mint: #22d3ee;
+  --mint-deep: #0891b2;
+  --mint-soft: rgb(34 211 238 / 0.14);
+  --lavender: #c084fc;
+  --lavender-deep: #8b5cf6;
+  --lavender-soft: rgb(192 132 252 / 0.16);
+  --cream: #160d25;        /* dulu latar krem → kini latar arcade */
+  --white: #2e1a45;        /* dulu kartu putih → kini kartu ungu */
+  --cocoa: #f8eeff;
+  --muted-brown: #d8c4e8;
+  --success: #4ade80;
+  --success-soft: rgb(74 222 128 / 0.14);
+  --error: #fb7185;
+  --error-soft: rgb(251 113 133 / 0.15);
+  --test-good: #34d399;    /* indikator benar halaman tes (pemilik produk) */
+  --test-bad: #fb7185;     /* indikator salah */
 
   /* teks berkontras aman */
-  --c-on-color: #3a2d33;   /* teks di atas coral/butter/mint/lavender: ≥ 5,4:1 */
-  --coral-text: #b8434f;   /* teks bernuansa coral di atas putih/krem: 5,3:1 */
-  --butter-text: #9a6200;  /* 5,1:1 */
-  --mint-text: #277a56;    /* 5,3:1 */
-  --lavender-text: #6a4fb3; /* 6,2:1 */
+  --c-on-color: #160d25;   /* teks di atas pink/cyan/lavender/emas: ≥ 6,8:1 */
+  --coral-text: #f9a8d4;
+  --butter-text: #fcd34d;
+  --mint-text: #67e8f9;
+  --lavender-text: #d8b4fe;
 
-  /* warna semantik peran besaran (P6) — versi tua palet, hanya di atas putih */
-  --c-price: var(--lavender-text);
-  --c-percent: var(--butter-text);
-  --c-discount: #c2454a;
-  --c-result: var(--mint-text);
+  /* warna semantik peran besaran (P6) — hex langsung (dibaca juga oleh scene 3D) */
+  --c-price: #c084fc;
+  --c-percent: #fcd34d;
+  --c-discount: #fb7185;
+  --c-result: #4ade80;
 
-  /* peran antarmuka (nama lama dipertahankan agar semua komponen ikut) */
-  --c-bg: var(--cream);
-  --c-header: var(--coral);
-  --c-yellow: var(--butter);
-  --c-pink: var(--coral);
-  --c-surface: var(--white);
-  --c-surface-2: var(--butter);
-  --c-surface-3d: var(--butter);
-  --c-text: var(--cocoa);
-  --c-muted: #75676d;      /* muted brown sedikit ditua: 5,1:1 di krem untuk teks kecil */
-  --c-focus: var(--coral);
-  --c-line: #f2ddd6;
-  --c-disabled-bg: #f4ece6;
-  --c-disabled-text: var(--muted-brown);
+  /* peran antarmuka */
+  --c-bg: #160d25;
+  --c-header: #24123b;
+  --c-yellow: #fcd34d;
+  --c-pink: #f472b6;
+  --c-surface: #2e1a45;
+  --c-surface-2: #3a2357;
+  --c-surface-3d: #2e1a45;
+  --c-text: #f8eeff;
+  --c-muted: #d8c4e8;
+  --c-focus: #7c3aed;
+  --c-line: #4b2e6e;
+  --c-disabled-bg: #2a1b3d;
+  --c-disabled-text: #9c8ab0;
 
   --radius: 20px;
   --font: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Fredoka', 'Nunito', system-ui, sans-serif;
-  --shadow-soft: 0 6px 16px rgb(73 58 64 / 0.08);
-  --shadow-chunky: 0 4px 0 rgb(73 58 64 / 0.08), 0 8px 18px rgb(73 58 64 / 0.06);
-  color-scheme: light;
+  --glow-purple: 0 0 18px rgb(139 92 246 / 0.55);
+  --glow-pink: 0 0 18px rgb(244 114 182 / 0.5);
+  --glow-cyan: 0 0 18px rgb(34 211 238 / 0.45);
+  --shadow-soft: 0 8px 22px rgb(0 0 0 / 0.35);
+  --shadow-chunky: 0 4px 0 rgb(0 0 0 / 0.35), 0 0 0 1px rgb(139 92 246 / 0.22);
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -612,3 +634,310 @@ svg .float { animation: floaty-s 3.6s ease-in-out infinite; }
 /* tombol suara di beranda: baris sendiri di atas judul agar tidak menutupi tulisan */
 .screen.home .sound-btns { position: static; justify-content: flex-end; margin: -4px -4px 2px; }
 @media (min-width: 960px) { .screen.home .sound-btns { position: absolute; top: 16px; right: 24px; margin: 0; } }
+
+/* =========================================================
+   v0.5 — PLUM ARCADE WORLD: lapisan gaya arcade neon (menimpa gaya terang lama)
+   Efek cahaya memakai box-shadow/text-shadow (ringan), bukan filter berat.
+   ========================================================= */
+html { background: var(--bg); }
+body {
+  color: var(--text);
+  background:
+    radial-gradient(circle at 15% -5%, rgb(139 92 246 / 0.35), transparent 42%),
+    radial-gradient(circle at 95% 15%, rgb(244 114 182 / 0.22), transparent 38%),
+    radial-gradient(circle at 50% 110%, rgb(34 211 238 / 0.18), transparent 48%),
+    var(--bg);
+  background-attachment: fixed;
+}
+/* variasi latar per halaman, tetap satu tema */
+.page[data-bg='shop'] { background: radial-gradient(circle at 80% 10%, rgb(244 114 182 / 0.2), transparent 45%); }
+.page[data-bg='quiz'] { background: radial-gradient(circle at 20% 15%, rgb(34 211 238 / 0.16), transparent 45%); }
+.page[data-bg='learn'] { background: radial-gradient(circle at 85% 30%, rgb(192 132 252 / 0.2), transparent 45%); }
+.page[data-bg='profile'] { background: radial-gradient(circle at 50% 0%, rgb(244 114 182 / 0.16), transparent 40%), radial-gradient(circle at 10% 60%, rgb(139 92 246 / 0.18), transparent 40%); }
+
+/* header: panel ungu dengan garis neon */
+.header {
+  background: linear-gradient(180deg, var(--bg-2), #1d0f31); color: var(--text);
+  border-bottom: 3px solid var(--neon-purple); box-shadow: 0 6px 20px rgb(139 92 246 / 0.35);
+}
+.header h1 { color: var(--text); text-shadow: 0 0 10px rgb(192 132 252 / 0.6); }
+.header .sub, .header .icon-btn { color: var(--text-2); }
+
+/* kartu & panel */
+.card, .problem-text, .bubble, .feedback, .box, .answer, .option, .sheet, .tabs, .stat, .badge, .receipt-paper, .product {
+  background-color: var(--card);
+  color: var(--text);
+}
+.card:not(.btn):not(.receipt-paper) { border: 1px solid var(--line-neon); }
+.problem-text { border-left-color: var(--neon-purple); }
+.sheet { background: var(--bg-2); border-top: 4px solid var(--neon-pink); box-shadow: 0 -10px 30px rgb(244 114 182 / 0.25); }
+.sheet-backdrop { background: rgb(10 4 20 / 0.6); }
+
+/* tombol: tidak ada tombol putih */
+.btn { color: var(--text); border: 1.5px solid var(--neon-purple); }
+.btn:not(.btn-primary) {
+  background: linear-gradient(180deg, var(--card-2), var(--card));
+  box-shadow: 0 4px 0 #120a1f, 0 0 12px rgb(139 92 246 / 0.25);
+}
+.btn-primary {
+  background: linear-gradient(180deg, #8f55f7, var(--purple-btn)); border-color: var(--neon-purple); color: var(--text);
+  box-shadow: 0 5px 0 #4c1d95, var(--glow-purple);
+}
+.btn-primary:active:not(:disabled) { box-shadow: 0 2px 0 #4c1d95, var(--glow-purple); }
+.btn:hover:not(:disabled) { box-shadow: 0 4px 0 #120a1f, var(--glow-purple); }
+.btn:disabled, .btn-primary:disabled { background: var(--c-disabled-bg); color: var(--c-disabled-text); border-color: var(--c-line); box-shadow: none; }
+.icon-btn { color: var(--text); }
+.chip { background: var(--card-2); color: var(--text); border-color: var(--line-neon); box-shadow: 0 3px 0 #120a1f; }
+.chip.on { background: var(--coral-soft) !important; border-color: var(--neon-pink); box-shadow: 0 0 0 2px var(--neon-pink) inset, var(--glow-pink); }
+.chip-static { background: var(--lavender-soft); color: var(--text); border: 1px solid var(--line-neon); }
+.tabs { border: 1px solid var(--line-neon); }
+.tabs button { color: var(--text-2); }
+.tabs button[aria-selected='true'] { background: var(--neon-pink); color: var(--c-on-color); box-shadow: 0 3px 0 var(--coral-deep), var(--glow-pink); }
+.option { border-color: var(--line-neon); color: var(--text); }
+.option.on { border-color: var(--neon-pink); background: var(--coral-soft); box-shadow: 0 0 0 2px var(--neon-pink) inset, var(--glow-pink); }
+.option.good { border-color: var(--success); background: var(--success-soft); box-shadow: 0 0 0 2px var(--success) inset, 0 0 16px rgb(74 222 128 / 0.35); }
+.option.bad { border-color: var(--error); background: var(--error-soft); box-shadow: 0 0 0 2px var(--error) inset; }
+.numpad button { background: linear-gradient(180deg, var(--card-2), var(--card)); color: var(--text); border: 1px solid var(--line-neon); box-shadow: 0 4px 0 #120a1f; }
+.numpad button:active { box-shadow: 0 1px 0 #120a1f, var(--glow-cyan); }
+.input, .textarea { background: var(--bg-2); color: var(--text); border-color: var(--line-neon); }
+.input::placeholder, .textarea::placeholder { color: #a996bd; }
+.answer { border-color: var(--line-neon); }
+.answer .ph { color: #a996bd; }
+.feedback.good { background: var(--success-soft); border-color: var(--success); }
+.feedback.bad { background: var(--error-soft); border-color: var(--error); }
+.formula { background: var(--butter-soft); border-left-color: var(--gold); }
+.hint { background: var(--lavender-soft); border-left-color: var(--plum-lavender); }
+.muted, .step-label, .box small { color: var(--text-2); }
+.term { color: var(--mint-text); }
+
+/* beranda arcade */
+.screen.home { background: none; }
+.home-title {
+  color: var(--text); -webkit-text-stroke: 0; letter-spacing: 2px;
+  text-shadow: 0 0 6px #fff, 0 0 14px var(--neon-pink), 0 0 28px var(--neon-purple), 0 4px 0 #7e22ce;
+}
+.home-slogan { background: var(--card); color: var(--mint-text); border: 1.5px solid var(--neon-cyan); box-shadow: var(--glow-cyan); }
+.home-hello { color: var(--text); }
+.home-plum { display: flex; align-items: flex-end; gap: 8px; margin-top: 6px; }
+.home-plum .bubble { margin-bottom: 30px; }
+.menu-btn { background: var(--card); color: var(--text); border: 1px solid var(--line-neon); box-shadow: 0 5px 0 #120a1f, 0 0 14px rgb(139 92 246 / 0.18); }
+.menu-btn:not(.menu-main) { border-top: 4px solid var(--tone); }
+.menu-btn:not(.menu-main) b { color: var(--text); }
+.menu-btn small, .menu-txt small { color: var(--text-2); }
+.menu-btn:hover { box-shadow: 0 5px 0 #120a1f, 0 0 20px var(--tone); }
+.menu-btn.menu-main { background: linear-gradient(135deg, var(--purple-btn), #a855f7 55%, var(--neon-pink)); color: var(--text); box-shadow: 0 5px 0 #4c1d95, var(--glow-purple); }
+.menu-btn.menu-main small { color: var(--text); }
+.menu-ic { background: var(--tone); color: var(--tone-ink, var(--c-on-color)); box-shadow: 0 0 14px var(--tone); }
+.menu-main .menu-ic { background: rgb(255 255 255 / 0.18); color: var(--text); box-shadow: none; }
+.sound-btn { background: var(--card); border: 1px solid var(--line-neon); box-shadow: 0 3px 0 #120a1f; }
+.sound-btn.on { background: var(--card-2); box-shadow: 0 3px 0 #120a1f, var(--glow-cyan); }
+.screen.home .home-hero { background: none; }
+@media (min-width: 960px) {
+  .screen.home .home-hero { background: rgb(36 18 59 / 0.75); border: 1px solid var(--line-neon); box-shadow: var(--glow-purple); }
+}
+
+/* nada warna (tombol & kartu) — isi neon + tinta kontras */
+.tone-purple { --tone: #8b5cf6; --tone-dark: #4c1d95; --tone-soft: rgb(139 92 246 / 0.18); --tone-text: #c4b5fd; --tone-ink: #f8eeff; }
+.tone-coral, .tone-blue { --tone: #f472b6; --tone-dark: #9d174d; --tone-soft: rgb(244 114 182 / 0.16); --tone-text: #f9a8d4; --tone-ink: #160d25; }
+.tone-pink, .tone-lavender { --tone: #c084fc; --tone-dark: #6b21a8; --tone-soft: rgb(192 132 252 / 0.16); --tone-text: #d8b4fe; --tone-ink: #160d25; }
+.tone-mint, .tone-green { --tone: #22d3ee; --tone-dark: #0e7490; --tone-soft: rgb(34 211 238 / 0.14); --tone-text: #67e8f9; --tone-ink: #160d25; }
+.tone-butter, .tone-yellow { --tone: #fcd34d; --tone-dark: #b45309; --tone-soft: rgb(252 211 77 / 0.14); --tone-text: #fcd34d; --tone-ink: #160d25; }
+.chapter .id, .module .id { color: var(--tone-ink, var(--c-on-color)); box-shadow: 0 0 12px var(--tone, var(--gold)); }
+.module .id { background: var(--gold); }
+.module.card.btn { border-left-color: var(--tone, var(--neon-purple)); }
+.module.card.btn:hover:not(:disabled) { box-shadow: 0 6px 0 #120a1f, var(--glow-purple); }
+.feature-btn { background: var(--card); color: var(--text); border: 1px solid var(--line-neon); border-top: 4px solid var(--tone); box-shadow: 0 5px 0 #120a1f, 0 0 14px var(--tone-soft); }
+.feature-btn .menu-ic { background: var(--tone); color: var(--tone-ink); }
+.formula-card { background: var(--card); border-top-color: var(--tone); }
+.formula-card .formula-short { background: var(--butter-soft); border-color: var(--gold); color: var(--gold); }
+.glossary-ex { background: var(--mint-soft); }
+.stat { background: var(--card); border: 1px solid var(--line-neon); border-top: 4px solid var(--tone); box-shadow: 0 4px 0 #120a1f, 0 0 12px var(--tone-soft); }
+.stat b { color: var(--tone-text); text-shadow: 0 0 10px var(--tone-soft); }
+
+/* simulasi belanja */
+.product { border: 1px solid var(--line-neon); box-shadow: 0 4px 0 #120a1f, 0 0 0 transparent; }
+.product:hover { box-shadow: 0 6px 0 #120a1f, var(--glow-pink); }
+.product-tag { background: var(--gold); color: var(--c-on-color); box-shadow: 0 0 10px rgb(252 211 77 / 0.6); }
+.product-old { color: var(--c-price); }
+.product-final { color: var(--c-result); text-shadow: 0 0 8px rgb(74 222 128 / 0.35); }
+.sheet-product { background: var(--mint-soft); }
+.calc { background: var(--bg); border: 1px solid var(--line-neon); }
+.cart { border-top: 4px solid var(--neon-cyan); }
+.receipt-paper { border-top: 4px solid var(--neon-pink); box-shadow: var(--glow-pink); }
+.rp-sep { border-top-color: var(--line-neon); }
+.rp-saved { background: var(--success-soft); color: var(--c-result); }
+.icon-btn.del { color: var(--error); }
+
+/* kuis & hasil */
+.score b { color: var(--neon-pink); text-shadow: 0 0 16px rgb(244 114 182 / 0.6); }
+.bar, .pct-bar { background: rgb(139 92 246 / 0.18); }
+.bar span { background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan)); box-shadow: var(--glow-cyan); }
+.review-steps li { border-left-color: var(--line-neon); }
+.review-steps li.ok { background: var(--success-soft); border-color: var(--success); }
+.review-steps li.no { background: var(--error-soft); border-color: var(--error); }
+.dots span { background: var(--card-2); box-shadow: inset 0 0 0 2px var(--line-neon); }
+.dots span.on { background: var(--neon-pink); box-shadow: var(--glow-pink); }
+
+/* profil & lencana */
+.profile-card { background: linear-gradient(135deg, rgb(192 132 252 / 0.22), var(--card) 55%, rgb(244 114 182 / 0.2)); border-top: 4px solid var(--plum-lavender); }
+.ring text { fill: var(--text); }
+.ring-track { stroke: rgb(139 92 246 / 0.25); }
+.ring-fill { stroke: var(--neon-cyan); }
+.badge { border: 1px solid var(--line-neon); }
+.badge.got { border: 2px solid var(--gold); background: linear-gradient(180deg, rgb(252 211 77 / 0.16), var(--card) 65%); box-shadow: 0 0 14px rgb(252 211 77 / 0.35); }
+.badge-ic { background: radial-gradient(circle at 35% 30%, #fff6c9, var(--gold) 60%, #d97706); color: var(--c-on-color); border-color: #b45309; }
+.badge.locked { background: rgb(46 26 69 / 0.6); border: 2px dashed var(--line-neon); }
+.badge.locked .badge-ic { background: var(--card-2); color: #a996bd; border-color: var(--line-neon); }
+.badge-toast { background: rgb(10 4 20 / 0.7); }
+.badge-toast-in { background: var(--bg-2); color: var(--text); border-top: 6px solid var(--gold); box-shadow: 0 0 40px rgb(252 211 77 / 0.35); }
+.history li { border-bottom-color: var(--line-neon); }
+.toggle-row input { accent-color: var(--neon-pink); }
+input[type='range'] { accent-color: var(--neon-pink); }
+
+/* perjalanan & ilustrasi */
+.journey-view { background: linear-gradient(180deg, #1d0f31, var(--bg-2) 70%); border: 1px solid var(--line-neon); box-shadow: var(--glow-purple); }
+.greet-title { color: var(--text); text-shadow: 0 0 12px var(--neon-pink), 0 0 26px var(--neon-purple); }
+.kiko-says .bubble { border: 1.5px solid var(--neon-purple); box-shadow: 0 0 14px rgb(139 92 246 / 0.3); }
+.bubble::before { border-right-color: var(--card); }
+.ruko-active > rect:nth-child(2) { stroke: var(--neon-cyan); }
+
+/* ---- latar arcade (Decor) ---- */
+.decor .d-arcade-l { left: -18px; bottom: 0; width: 132px; opacity: 0.55; }
+.decor .d-arcade-r { right: -22px; bottom: 0; width: 120px; opacity: 0.5; }
+.decor .d-lights { top: 58px; left: 0; width: 100%; height: 34px; }
+.decor .d-grid { bottom: 0; left: 0; width: 100%; height: 140px; opacity: 0.6; }
+.decor .d-spark { width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 8px 2px var(--neon-cyan); animation: twinkle 2.6s ease-in-out infinite; }
+.decor .d-spark.p { box-shadow: 0 0 8px 2px var(--neon-pink); }
+.decor .d-spark.g { box-shadow: 0 0 8px 2px var(--gold); }
+.lamp { animation: lamp 1.8s ease-in-out infinite; }
+@keyframes lamp { 50% { opacity: 0.35; } }
+.screen-glow { animation: screen-glow 2.4s ease-in-out infinite; }
+@keyframes screen-glow { 50% { opacity: 0.7; } }
+.decor.calm { opacity: 0.45; }
+.decor.calm .d-arcade-l, .decor.calm .d-arcade-r, .decor.calm .d-spark, .decor.calm .d-grid { display: none; }
+@media (min-width: 640px) {
+  .decor .d-arcade-l { left: 4%; width: 170px; }
+  .decor .d-arcade-r { right: 4%; width: 160px; }
+}
+@media (prefers-reduced-motion: reduce) { .lamp, .screen-glow, .decor .d-spark { animation: none !important; } }
+/* papan nama ruko bercahaya neon */
+.neon-sign { filter: drop-shadow(0 0 3px rgb(255 255 255 / 0.55)); }
+.greet { gap: 4px; }
+
+/* kartu bernuansa warna: tint transparan DI ATAS warna kartu pekat → hiasan latar tidak tembus */
+.formula { background: linear-gradient(var(--butter-soft), var(--butter-soft)), var(--card); }
+.hint { background: linear-gradient(var(--lavender-soft), var(--lavender-soft)), var(--card); }
+.feedback.good, .review-steps li.ok, .option.good { background: linear-gradient(var(--success-soft), var(--success-soft)), var(--card); }
+.feedback.bad, .review-steps li.no, .option.bad { background: linear-gradient(var(--error-soft), var(--error-soft)), var(--card); }
+.option.on { background: linear-gradient(var(--coral-soft), var(--coral-soft)), var(--card); }
+.chip-static { background: linear-gradient(var(--lavender-soft), var(--lavender-soft)), var(--card); }
+.chip.on { background: linear-gradient(var(--coral-soft), var(--coral-soft)), var(--card) !important; }
+.badge.locked { background: var(--card); }
+.formula-card .formula-short { background: linear-gradient(var(--butter-soft), var(--butter-soft)), var(--card); }
+.option:disabled { opacity: 1; color: var(--text-2); }
+
+/* =========================================================
+   v0.5 — Halaman TES LITERASI MATEMATIKA (Plum Arcade)
+   ========================================================= */
+.test-status { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+.score-chip {
+  background: linear-gradient(var(--butter-soft), var(--butter-soft)), var(--card-2); color: var(--gold);
+  border: 1px solid var(--gold); border-radius: 999px; padding: 2px 10px; box-shadow: 0 0 10px rgb(252 211 77 / 0.35);
+}
+.test-status .bar { height: 10px; }
+.test-status .bar span { transition: width 0.5s ease; }
+.plum-guide { display: flex; align-items: flex-end; gap: 6px; }
+.plum-guide .bubble { margin-bottom: 18px; font-size: 15px; }
+.plum-guide .mascot { flex: none; }
+.help-box {
+  border: 1.5px solid var(--neon-cyan); box-shadow: var(--glow-cyan);
+  background: linear-gradient(var(--mint-soft), var(--mint-soft)), var(--card); display: flex; flex-direction: column; gap: 6px;
+  animation: pop-in 0.3s ease-out both;
+}
+.btn-help { border-color: var(--neon-cyan) !important; color: var(--mint-text) !important; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.btn-help.on, .btn-disc.on { box-shadow: 0 4px 0 #120a1f, var(--glow-cyan) !important; }
+.btn-disc { border-color: var(--neon-pink) !important; color: var(--coral-text) !important; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.btn-disc.on { box-shadow: 0 4px 0 #120a1f, var(--glow-pink) !important; }
+.option.key { border-color: var(--test-good); box-shadow: 0 0 0 2px var(--test-good) inset; }
+.option.key::after { content: ' ✓ jawaban benar'; color: var(--test-good); font-size: 13px; }
+.option.good { border-color: var(--test-good); box-shadow: 0 0 0 2px var(--test-good) inset, 0 0 16px rgb(52 211 153 / 0.4); }
+.option.bad { border-color: var(--test-bad); box-shadow: 0 0 0 2px var(--test-bad) inset, 0 0 14px rgb(251 113 133 / 0.35); }
+.answer.ans-good { border-color: var(--test-good); box-shadow: 0 0 14px rgb(52 211 153 / 0.4); }
+.answer.ans-bad { border-color: var(--test-bad); box-shadow: 0 0 14px rgb(251 113 133 / 0.35); animation: shake 0.4s ease-in-out; }
+.result-banner {
+  position: relative; border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 6px;
+  animation: pop-in 0.35s cubic-bezier(.3, 1.4, .5, 1) both;
+}
+.result-banner.good { border: 2px solid var(--test-good); background: linear-gradient(rgb(52 211 153 / 0.14), rgb(52 211 153 / 0.14)), var(--card); box-shadow: 0 0 22px rgb(52 211 153 / 0.35); }
+.result-banner.bad { border: 2px solid var(--test-bad); background: linear-gradient(rgb(251 113 133 / 0.14), rgb(251 113 133 / 0.14)), var(--card); box-shadow: 0 0 18px rgb(251 113 133 / 0.3); }
+.rb-title { font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: 0.3px; }
+.result-banner.good .rb-title, .result-banner.good .rb-points { color: var(--test-good); text-shadow: 0 0 10px rgb(52 211 153 / 0.5); }
+.result-banner.bad .rb-title { color: var(--test-bad); text-shadow: 0 0 10px rgb(251 113 133 / 0.45); }
+.rb-points { font-weight: 800; font-size: 14px; color: var(--text-2); }
+.rb-key { background: var(--card-2); border-radius: 10px; padding: 6px 10px; border-left: 4px solid var(--test-good); }
+.rb-key b { color: var(--test-good); }
+.rb-why { color: var(--text-2); }
+.result-banner .burst { right: 30px; top: 22px; }
+.disc-card { border: 1.5px solid var(--neon-pink); box-shadow: var(--glow-pink); animation: pop-in 0.3s ease-out both; }
+.discussion { gap: 10px; font-size: 15px; }
+.disc-sec { display: flex; flex-direction: column; gap: 2px; }
+.disc-sec > b { color: var(--plum-lavender); font-family: var(--font-display); }
+.disc-sec ul, .disc-sec ol { margin: 2px 0 0; padding-left: 22px; display: flex; flex-direction: column; gap: 4px; }
+.disc-sec p { margin: 0; }
+.disc-formula { background: linear-gradient(var(--butter-soft), var(--butter-soft)), var(--card-2); border-radius: 10px; padding: 6px 10px; color: var(--gold); font-weight: 700; }
+.disc-conclusion { background: linear-gradient(rgb(52 211 153 / 0.12), rgb(52 211 153 / 0.12)), var(--card-2); border-radius: 12px; padding: 8px 10px; border-left: 4px solid var(--test-good); }
+.disc-in-review { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line-neon); display: flex; flex-direction: column; gap: 6px; }
+.finish-card { border: 2px solid var(--gold); box-shadow: 0 0 26px rgb(252 211 77 / 0.3); display: flex; flex-direction: column; gap: 10px; }
+.finish-title {
+  font-family: var(--font-display); font-weight: 700; font-size: 30px; text-align: center; color: var(--text);
+  text-shadow: 0 0 8px #fff, 0 0 18px var(--neon-pink), 0 0 30px var(--neon-purple);
+}
+.finish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.finish-grid > div { background: var(--card-2); border: 1px solid var(--line-neon); border-radius: 14px; padding: 8px 10px; display: flex; flex-direction: column; }
+.finish-grid small { color: var(--text-2); font-size: 12px; }
+.finish-grid b { font-family: var(--font-display); font-size: 18px; }
+.finish-grid .fg-good b { color: var(--test-good); }
+.finish-grid .fg-bad b { color: var(--test-bad); }
+.finish-cat { text-align: center; }
+.finish-cat b { color: var(--neon-pink); }
+.test-intro p { line-height: 1.5; }
+
+/* =========================================================
+   v0.6 — Latihan interaktif, Materi visual, Simulasi misi, Musik (Plum Arcade)
+   ========================================================= */
+.practice-status { margin-bottom: 4px; }
+.fb-rich { display: flex; flex-direction: column; gap: 4px; }
+.fb-rich p { margin: 0; display: inline; }
+.fb-why { color: var(--text-2); }
+.fix-tip { background: var(--card-2); border-left: 3px solid var(--neon-cyan); border-radius: 8px; padding: 4px 8px; color: var(--text); }
+.fix-tip b, .fb-why b { color: var(--mint-text); }
+.disc-chip { align-self: flex-start; min-height: 38px; font-size: 14px; border-color: var(--neon-pink); color: var(--coral-text); }
+.step-disc { margin-top: 6px; }
+.step-disc p { margin: 0; display: inline; }
+.music-btn { font-size: 18px; opacity: 0.7; }
+.music-btn.on { opacity: 1; text-shadow: 0 0 10px var(--neon-cyan); }
+
+/* simulasi: misi, perbandingan, evaluasi */
+.mission { border-top: 4px solid var(--gold); }
+.mission .chip { min-height: 38px; font-size: 14px; }
+.compare { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; font-family: var(--font); }
+.cmp-row { display: grid; grid-template-columns: 96px 1fr; align-items: center; gap: 6px; font-size: 13px; }
+.cmp-bar { height: 26px; border-radius: 8px; display: flex; align-items: center; padding: 0 8px; min-width: 92px; transition: width 0.5s ease; }
+.cmp-bar b { font-size: 12.5px; color: var(--c-on-color); white-space: nowrap; }
+.cmp-bar.before { background: linear-gradient(90deg, #a855f7, var(--c-price)); }
+.cmp-bar.after { background: linear-gradient(90deg, var(--mint-deep), var(--c-result)); box-shadow: 0 0 12px rgb(74 222 128 / 0.35); }
+.eval { border: 1.5px solid var(--gold); box-shadow: 0 0 18px rgb(252 211 77 / 0.25); }
+.eval-over { border-color: var(--test-bad); box-shadow: 0 0 18px rgb(251 113 133 / 0.3); }
+.eval-list { margin: 4px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+
+/* materi: model batang */
+.price-bar-card { border-top: 4px solid var(--plum-lavender); display: flex; flex-direction: column; gap: 6px; }
+.pb-total { display: flex; justify-content: space-between; font-size: 14px; }
+.pb-bar { display: flex; height: 34px; border-radius: 10px; overflow: hidden; border: 2px solid var(--c-price); }
+.pb-bar span { display: grid; place-items: center; font-weight: 800; font-size: 13px; color: var(--c-on-color); min-width: 34px; }
+.pb-final { background: var(--c-result); }
+.pb-cut { background: var(--c-discount); }
+.pb-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; vertical-align: middle; }
+.dot.final { background: var(--c-result); }
+.dot.cut { background: var(--c-discount); }

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 // Uji asap (smoke test) antarmuka: mensimulasikan siswa memakai aplikasi.
 import 'fake-indexeddb/auto';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { configure, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import curriculum from '../../shared/content/curriculum.json';
 import App from '../src/App.jsx';
@@ -15,6 +15,8 @@ beforeAll(() => {
   window.scrollTo = () => {};
 });
 afterEach(cleanup);
+// Layar kini merender SVG arcade & maskot yang lebih kaya → beri waktu tunggu lebih lama di jsdom.
+configure({ asyncUtilTimeout: 5000 });
 
 const click = (el) => fireEvent.click(el);
 const btn = (name) => screen.getByRole('button', { name });
@@ -163,5 +165,22 @@ describe('contoh terselesaikan untuk setiap template', () => {
     expect(onDone).toHaveBeenCalled();
     // placeholder tidak boleh bocor sebagai teks mentah
     expect(document.body.textContent).not.toMatch(/\{\w+\|?\w*\}/);
+  });
+});
+
+describe('v0.6 — latihan modul: apresiasi, cara memperbaiki, pembahasan langkah', () => {
+  it('benar → alasan; salah → cara memperbaiki; pembahasan langkah bisa dibuka', () => {
+    const p = buildProblem(curriculum, 'm3-t1', 2);
+    const { container } = render(
+      <ProblemSolver problem={p} moduleId="M3" sceneKind="priceTag" mode="independent" level={0} onDone={() => {}} />,
+    );
+    typeNumber(container, 1);
+    click(btn('Periksa'));
+    expect(screen.getByRole('status').textContent).toMatch(/Cara memperbaiki:/);
+    typeNumber(container, p.vars.disc);
+    click(btn('Periksa'));
+    expect(screen.getByRole('status').textContent).toMatch(/Alasannya:/);
+    click(screen.getByRole('button', { name: /Lihat pembahasan langkah/ }));
+    expect(screen.getByLabelText('Pembahasan').textContent).toMatch(/Rp/);
   });
 });
