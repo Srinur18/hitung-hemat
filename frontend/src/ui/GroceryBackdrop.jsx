@@ -204,7 +204,7 @@ function BakeryStore() {
         <path d="M198 258 q12 -18 24 0 z" style={f('lamp-shade')} />
         <circle cx="210" cy="260" r="5" style={f('bulb')} />
         <g transform="translate(168 282)">
-          <Mascot mood="wave" size={86} className="gs-plum" />
+          <Mascot mood="wave" size={86} className="gs-plum plum" />
         </g>
         <rect x="148" y="380" width="124" height="14" rx="5" style={f('counter-top')} />
         <rect x="154" y="394" width="112" height="60" style={f('counter')} />

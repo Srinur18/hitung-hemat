@@ -362,7 +362,10 @@ export default function App() {
     <HomeContext.Provider value={screen.name === 'home' ? null : goHome}>
       {/* Semua halaman: latar Toko Pakaian & Bakery Plumie's (siang/malam mengikuti tema).
           calm saat mengerjakan soal → bangunan disembunyikan (aturan lama latar arcade dipertahankan). */}
-      {['home', 'sim', 'profile'].includes(screen.name) && <GroceryBackdrop home={screen.name === 'home'} />}
+      <GroceryBackdrop
+        home={screen.name === 'home'}
+        calm={solving && (screen.name === 'module' || screen.name === 'literacy')}
+      />
       <div className="page" key={pageKey} data-bg={BG[screen.name] ?? 'home'}>{view}</div>
       {newBadges.length > 0 && <BadgeToast ids={newBadges} onClose={() => setNewBadges([])} />}
     </HomeContext.Provider>
