@@ -9,6 +9,7 @@ import { Header } from '../ui/components.jsx';
 import Icon from '../ui/Icon.jsx';
 import { Critter, PAL } from '../ui/ShopArt.jsx';
 import { SoundSettings } from '../ui/SoundToggle.jsx';
+import { ThemeSettings } from '../ui/ThemeSettings.jsx';
 
 export const META = { chapters: material.chapters.length, modules: modules.map((m) => m.id) };
 
@@ -75,6 +76,9 @@ export function Profile({ profile, progress, onEdit, onSave }) {
           </div>
           <Ring value={pct} />
         </div>
+
+        {/* tema tampilan: Gelap / Terang */}
+        <ThemeSettings />
 
         {/* pencapaian */}
         <div className="section-title">{t.achievements}</div>

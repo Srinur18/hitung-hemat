@@ -263,6 +263,8 @@ function Goods({ kind, x, y, w }) {
   }
 }
 
+const TONE_OF = { [PAL.pink]: 'pink', [PAL.blue]: 'purple', [PAL.green]: 'cyan', [PAL.purple]: 'lav', [PAL.orange]: 'orange' };
+
 /**
  * Satu ruko: papan nama, tenda bergaris, etalase, pintu yang membuka, dan label diskon.
  * (x, y) = pojok kiri atas; tinggi total h, alas di y + h.
@@ -275,33 +277,35 @@ export function Ruko({ x, y, w = 110, h = 160, wall = PAL.cream, awningA = PAL.p
   const doorX = x + w * 0.62;
   const doorW = w * 0.3;
   const baseY = y + h;
+  // nada ruko → kelas CSS; tema terang mengganti warnanya menjadi pastel (tema gelap tidak memakai kelas ini)
+  const tone = TONE_OF[signColor] ?? 'purple';
   return (
-    <g className={`ruko ${active ? 'ruko-active' : ''}`}>
+    <g className={`ruko rk-${tone} ${active ? 'ruko-active' : ''}`}>
       {/* atap & dinding */}
-      <rect x={x - 3} y={y + 6} width={w + 6} height="10" rx="4" fill={signColor} />
-      <rect x={x} y={y + 14} width={w} height={h - 14} fill={wall} stroke="#00000014" />
+      <rect className="rk-main" x={x - 3} y={y + 6} width={w + 6} height="10" rx="4" fill={signColor} />
+      <rect className="rk-wall" x={x} y={y + 14} width={w} height={h - 14} fill={wall} stroke="#00000014" />
       {/* papan nama */}
-      <rect x={x + 8} y={y + 20} width={w - 16} height="24" rx="8" fill={PAL.board} stroke={signColor} strokeWidth="2.5" />
-      <text x={x + w / 2} y={y + 37} textAnchor="middle" fontSize={sign && sign.length > 10 ? 10 : 12} fontWeight="700" fill={signColor} className="svg-display neon-sign">
+      <rect className="rk-board" x={x + 8} y={y + 20} width={w - 16} height="24" rx="8" fill={PAL.board} stroke={signColor} strokeWidth="2.5" />
+      <text x={x + w / 2} y={y + 37} textAnchor="middle" fontSize={sign && sign.length > 10 ? 10 : 12} fontWeight="700" fill={signColor} className="svg-display neon-sign rk-sign">
         {sign}
       </text>
       {/* tenda bergaris + gerigi */}
       {Array.from({ length: stripes }, (_, i) => (
-        <rect key={i} x={x + i * sw} y={awY} width={sw} height="18" fill={i % 2 ? awningB : awningA} />
+        <rect key={i} className={i % 2 ? undefined : 'rk-main'} x={x + i * sw} y={awY} width={sw} height="18" fill={i % 2 ? awningB : awningA} />
       ))}
       {Array.from({ length: stripes }, (_, i) => (
-        <circle key={`s${i}`} cx={x + i * sw + sw / 2} cy={awY + 18} r={sw / 2} fill={i % 2 ? awningB : awningA} />
+        <circle key={`s${i}`} className={i % 2 ? undefined : 'rk-main'} cx={x + i * sw + sw / 2} cy={awY + 18} r={sw / 2} fill={i % 2 ? awningB : awningA} />
       ))}
       {/* etalase */}
-      <rect x={x + 8} y={awY + 32} width={winW} height="46" rx="5" fill={PAL.glass} stroke={PAL.white} strokeWidth="3" />
+      <rect className="rk-glass" x={x + 8} y={awY + 32} width={winW} height="46" rx="5" fill={PAL.glass} stroke={PAL.white} strokeWidth="3" />
       <Goods kind={kind} x={x + 8} y={awY + 32} w={winW} />
       <path d={`M${x + 14} ${awY + 40} l10 -4`} stroke={PAL.white} strokeWidth="3" strokeLinecap="round" opacity="0.8" />
       {/* pintu: kusen + daun pintu yang membuka */}
-      <rect x={doorX - 3} y={awY + 30} width={doorW + 6} height={baseY - awY - 30} rx="4" fill={PAL.brown} />
+      <rect className="rk-frame" x={doorX - 3} y={awY + 30} width={doorW + 6} height={baseY - awY - 30} rx="4" fill={PAL.brown} />
       <rect x={doorX} y={awY + 33} width={doorW} height={baseY - awY - 33} fill="#fff3c4" />
       <g className="door" style={{ transformOrigin: `${doorX}px ${awY + 33}px`, animationDelay: `${doorDelay}s` }}>
-        <rect x={doorX} y={awY + 33} width={doorW} height={baseY - awY - 33} fill={awningA === PAL.white ? PAL.pink : awningA} />
-        <rect x={doorX + 4} y={awY + 38} width={doorW - 8} height="16" rx="2" fill={PAL.glass} />
+        <rect className="rk-main" x={doorX} y={awY + 33} width={doorW} height={baseY - awY - 33} fill={awningA === PAL.white ? PAL.pink : awningA} />
+        <rect className="rk-glass" x={doorX + 4} y={awY + 38} width={doorW - 8} height="16" rx="2" fill={PAL.glass} />
         <circle cx={doorX + doorW - 5} cy={awY + 33 + (baseY - awY - 33) / 2} r="2" fill={PAL.yellow} />
       </g>
       {/* label diskon menggantung */}
@@ -347,7 +351,7 @@ export function ShopStreet() {
       <Ruko x={125} y={14} w={110} h={186} sign="ALAT SEKOLAH" signColor={PAL.blue} awningA={PAL.blue} wall="#2a1747" kind="sekolah" tag="-20%" doorDelay={1.2} />
       <Ruko x={244} y={30} w={110} h={170} sign="ES KRIM" signColor={PAL.green} awningA={PAL.green} wall="#251640" kind="eskrim" tag="-10%" doorDelay={2.4} />
       {/* trotoar */}
-      <rect x="0" y="200" width="360" height="36" fill={PAL.walk} />
+      <rect className="rk-walk" x="0" y="200" width="360" height="36" fill={PAL.walk} />
       {Array.from({ length: 12 }, (_, i) => (
         <rect key={i} x={i * 32 - 4} y="200" width="28" height="4" rx="2" fill={i % 2 ? PAL.green : PAL.walkLine} opacity="0.8" />
       ))}
@@ -410,7 +414,7 @@ export function JourneyStreet({ stage, walking }) {
         height="200"
         style={{ transform: `translateX(${-journeyX(stage)}px)` }}
       >
-        <rect x="0" y="180" width={W} height="20" fill={PAL.walk} />
+        <rect className="rk-walk" x="0" y="180" width={W} height="20" fill={PAL.walk} />
         <rect x="0" y="178" width={W} height="3" fill={PAL.walkLine} />
         <Gate cx={journeyX(0)} />
         <Ruko x={journeyX(1) - 60} y={20} w={120} h={160} sign="TOKO BAJU" signColor={PAL.pink} awningA={PAL.pink} kind="baju" tag="-25%" active={stage === 1} />
@@ -441,28 +445,30 @@ export function ProductIcon({ kind, size = 56 }) {
 export function StoreFront({ name }) {
   return (
     <svg viewBox="0 0 360 150" className="storefront" role="img" aria-label={name}>
-      <rect x="0" y="134" width="360" height="16" fill={PAL.walk} />
+      <rect className="rk-walk" x="0" y="134" width="360" height="16" fill={PAL.walk} />
       <rect x="0" y="134" width="360" height="2.5" fill={PAL.walkLine} />
-      <rect x="20" y="10" width="320" height="10" rx="4" fill={PAL.purple} />
-      <rect x="24" y="18" width="312" height="118" fill={PAL.cream} />
-      <rect x="60" y="24" width="240" height="24" rx="10" fill={PAL.board} stroke={PAL.pink} strokeWidth="2.5" />
-      <text x="180" y="41" textAnchor="middle" fontSize="12.5" fontWeight="700" fill={PAL.pink} className="svg-display neon-sign">{name}</text>
-      {Array.from({ length: 12 }, (_, i) => (
-        <g key={i}>
-          <rect x={24 + i * 26} y="54" width="26" height="14" fill={i % 2 ? PAL.white : PAL.pink} />
-          <circle cx={37 + i * 26} cy="68" r="13" fill={i % 2 ? PAL.white : PAL.pink} />
-        </g>
-      ))}
-      <rect x="40" y="86" width="100" height="46" rx="6" fill={PAL.glass} stroke="#fff" strokeWidth="3" />
-      <Goods kind="baju" x={40} y={88} w={100} />
-      <rect x="220" y="86" width="100" height="46" rx="6" fill={PAL.glass} stroke="#fff" strokeWidth="3" />
-      <Goods kind="tas" x={220} y={88} w={100} />
-      <rect x="154" y="82" width="52" height="54" rx="4" fill={PAL.brown} />
+      <g className="rk-pink">
+        <rect className="rk-roof-lav" x="20" y="10" width="320" height="10" rx="4" fill={PAL.purple} />
+        <rect className="rk-wall" x="24" y="18" width="312" height="118" fill={PAL.cream} />
+        <rect className="rk-board" x="60" y="24" width="240" height="24" rx="10" fill={PAL.board} stroke={PAL.pink} strokeWidth="2.5" />
+        <text x="180" y="41" textAnchor="middle" fontSize="12.5" fontWeight="700" fill={PAL.pink} className="svg-display neon-sign rk-sign">{name}</text>
+        {Array.from({ length: 12 }, (_, i) => (
+          <g key={i}>
+            <rect className={i % 2 ? undefined : 'rk-main'} x={24 + i * 26} y="54" width="26" height="14" fill={i % 2 ? PAL.white : PAL.pink} />
+            <circle className={i % 2 ? undefined : 'rk-main'} cx={37 + i * 26} cy="68" r="13" fill={i % 2 ? PAL.white : PAL.pink} />
+          </g>
+        ))}
+        <rect className="rk-glass" x="40" y="86" width="100" height="46" rx="6" fill={PAL.glass} stroke="#fff" strokeWidth="3" />
+        <Goods kind="baju" x={40} y={88} w={100} />
+        <rect className="rk-glass" x="220" y="86" width="100" height="46" rx="6" fill={PAL.glass} stroke="#fff" strokeWidth="3" />
+        <Goods kind="tas" x={220} y={88} w={100} />
+        <rect className="rk-frame" x="154" y="82" width="52" height="54" rx="4" fill={PAL.brown} />
+      </g>
       <rect x="157" y="85" width="46" height="51" fill="#fff3c4" />
-      <g className="door-enter" style={{ transformOrigin: '157px 85px' }}>
-        <rect x="157" y="85" width="46" height="51" fill={PAL.pink} />
-        <rect x="161" y="90" width="38" height="16" rx="2" fill={PAL.glass} />
-        <text x="180" y="122" textAnchor="middle" fontSize="8" fontWeight="800" fill="#fff">BUKA</text>
+      <g className="door-enter rk-pink" style={{ transformOrigin: '157px 85px' }}>
+        <rect className="rk-door" x="157" y="85" width="46" height="51" fill={PAL.pink} />
+        <rect className="rk-glass" x="161" y="90" width="38" height="16" rx="2" fill={PAL.glass} />
+        <text className="rk-sign" x="180" y="122" textAnchor="middle" fontSize="8" fontWeight="800" fill="#fff">BUKA</text>
       </g>
       <g className="walk-in">
         <Critter type="bunny" shirt={PAL.pink} x={180} y={148} scale={0.42} />

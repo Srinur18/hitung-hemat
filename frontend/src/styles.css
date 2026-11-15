@@ -82,6 +82,56 @@
   --glow-cyan: 0 0 18px rgb(34 211 238 / 0.45);
   --shadow-soft: 0 8px 22px rgb(0 0 0 / 0.35);
   --shadow-chunky: 0 4px 0 rgb(0 0 0 / 0.35), 0 0 0 1px rgb(139 92 246 / 0.22);
+  /* latar Beranda: toko kelontong MALAM (ui/GroceryBackdrop.jsx) */
+  --gs-sky-top: #0f0822;
+  --gs-sky-mid: #2a1347;
+  --gs-sky-bot: #4a2266;
+  --gs-star: #fff6c9;
+  --gs-moon: #fde68a;
+  --gs-sun: #fde68a;
+  --gs-sun-glow: #fde68a;
+  --gs-cloud: #3a2357;
+  --gs-ground: #1d1233;
+  --gs-ground-line: #8b5cf6;
+  --gs-glow: #ffcf70;
+  --gs-roof: #6b21a8;
+  --gs-wall: #4b2a5e;
+  --gs-wall-shade: #3a2050;
+  --gs-sign: #1d0f31;
+  --gs-sign-border: #f472b6;
+  --gs-sign-text: #fcd34d;
+  --gs-string: #c084fc;
+  --gs-bulb: #ffd27a;
+  --gs-flag-a: #f472b6;
+  --gs-flag-b: #fcd34d;
+  --gs-flag-c: #22d3ee;
+  --gs-awning-a: #8b5cf6;
+  --gs-awning-b: #f472b6;
+  --gs-frame: #2a1747;
+  --gs-window: #ffe6a8;
+  --gs-inside: #ffd98f;
+  --gs-shelf: #8a5a34;
+  --gs-crate: #8a5a34;
+  --gs-crate-line: #5c3a1e;
+  --gs-lamp-shade: #f472b6;
+  --gs-counter: #5b3394;
+  --gs-counter-top: #8b5cf6;
+  --gs-basket: #22d3ee;
+  --gs-basket-dark: #0e7490;
+  --gs-pot: #b45309;
+  --gs-leaf: #2f9e6e;
+  --gs-veil: rgb(22 13 37 / 0.5);
+  --gs-wall-2: #3d2a5c;      /* toko pakaian */
+  --gs-awning-c: #f472b6;
+  --gs-awning-d: #fbcfe8;
+  --gs-door: #6b21a8;
+  /* contoh warna di panel pilihan tema (tetap sama di kedua tema) */
+  --sw-dark-bg: #160d25;
+  --sw-dark-card: #2e1a45;
+  --sw-dark-accent: #f472b6;
+  --sw-light-bg: #f6f0ff;
+  --sw-light-card: #fffaf7;
+  --sw-light-accent: #ec4899;
   color-scheme: dark;
 }
 
@@ -652,7 +702,7 @@ body {
 /* variasi latar per halaman, tetap satu tema */
 .page[data-bg='shop'] { background: radial-gradient(circle at 80% 10%, rgb(244 114 182 / 0.2), transparent 45%); }
 .page[data-bg='quiz'] { background: radial-gradient(circle at 20% 15%, rgb(34 211 238 / 0.16), transparent 45%); }
-.page[data-bg='learn'] { background: radial-gradient(circle at 85% 30%, rgb(192 132 252 / 0.2), transparent 45%); }
+.page[data-bg='learn'] { background: var(--bg); } /* materi: latar polos */
 .page[data-bg='profile'] { background: radial-gradient(circle at 50% 0%, rgb(244 114 182 / 0.16), transparent 40%), radial-gradient(circle at 10% 60%, rgb(139 92 246 / 0.18), transparent 40%); }
 
 /* header: panel ungu dengan garis neon */
@@ -941,3 +991,364 @@ input[type='range'] { accent-color: var(--neon-pink); }
 .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; vertical-align: middle; }
 .dot.final { background: var(--c-result); }
 .dot.cut { background: var(--c-discount); }
+
+/* =========================================================
+   v0.7 — Panel pilihan tema (Profil)
+   ========================================================= */
+.theme-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.theme-opt {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 8px 10px; min-height: 104px;
+  border-radius: 18px; border: 2px solid var(--line-neon); background: var(--card-2); color: var(--text);
+  font-family: var(--font-display); cursor: pointer; transition: transform 0.08s, box-shadow 0.12s;
+}
+.theme-opt b { font-size: 16px; }
+.theme-opt small { font-family: var(--font); font-size: 12.5px; color: var(--text-2); }
+.theme-opt.on { border-color: var(--neon-pink); box-shadow: 0 0 0 2px var(--neon-pink) inset, var(--glow-pink); }
+.theme-opt.on small { color: var(--coral-text); font-weight: 800; }
+.theme-opt:active { transform: scale(0.97); }
+.theme-swatch { display: flex; width: 72px; height: 28px; border-radius: 10px; overflow: hidden; border: 1.5px solid var(--line-neon); }
+.theme-swatch i { flex: 1; }
+.sw-dark i:nth-child(1) { background: var(--sw-dark-bg); }
+.sw-dark i:nth-child(2) { background: var(--sw-dark-card); }
+.sw-dark i:nth-child(3) { background: var(--sw-dark-accent); }
+.sw-light i:nth-child(1) { background: var(--sw-light-bg); }
+.sw-light i:nth-child(2) { background: var(--sw-light-card); }
+.sw-light i:nth-child(3) { background: var(--sw-light-accent); }
+
+/* =========================================================
+   v0.7 — TEMA TERANG "Plum Lavender" (<html data-theme="light">)
+   Lavender muda + ungu lembut + putih hangat + aksen pink. Bentuk, ilustrasi, Kucing Plum,
+   dan gaya komponen sama dengan tema gelap; hanya token warna & bayangan yang diganti.
+   Semua hex tema terang HANYA di blok token ini (dijaga tests/theme.test.js).
+   ========================================================= */
+:root[data-theme='light'] {
+  --bg: #f6f0ff;           /* lavender muda */
+  --bg-2: #efe4fd;         /* header, panel, sheet */
+  --card: #fffaf7;         /* putih hangat */
+  --card-2: #f5edff;       /* kartu terangkat: tombol sekunder, tombol angka */
+  --neon-purple: #8b5cf6;
+  --neon-pink: #ec4899;
+  --neon-cyan: #06b6d4;
+  --plum-lavender: #9333ea;
+  --text: #2a1540;         /* plum tua */
+  --text-2: #5b4374;
+  --gold: #fcd34d;
+  --purple-btn: #7c3aed;
+  --line-neon: #dccbf3;
+
+  /* tambahan khusus tema terang */
+  --on-primary: #ffffff;   /* teks di atas tombol ungu */
+  --purple-deep: #6d28d9;
+  --purple-mid: #9333ea;
+  --press: #dcc8f5;        /* bayangan "tombol mainan" lavender (pengganti #120a1f) */
+  --press-strong: #c4a8ec;
+  --pink-pastel: #fbcfe8;
+  --placeholder: #6f5b85;
+
+  /* pastel cerah: tombol Mulai Belajar, ruko, dan mesin arcade latar */
+  --pastel-lav: #d9c9fe;
+  --pastel-pink: #fcc8e4;
+  --pastel-peach: #ffe1c7;
+  --rk-walk: #ecdffb;
+  --rk-board: #ffffff;
+  --rk-glass: #dff3fd;
+  --rk-frame: #cbb7f7;
+  --rk-pink: #f9b8d9;  --rk-pink-deep: #be185d;  --rk-pink-wall: #fff2f8;
+  --rk-purple: #c9b8fb; --rk-purple-deep: #6d28d9; --rk-purple-wall: #f6f1ff;
+  --rk-cyan: #a8ecf6;  --rk-cyan-deep: #0e7490;  --rk-cyan-wall: #effcfe;
+  --rk-lav: #e3cffd;   --rk-lav-deep: #7e22ce;   --rk-lav-wall: #fbf6ff;
+  --rk-orange: #fed2aa; --rk-orange-deep: #c2410c; --rk-orange-wall: #fff7ef;
+  --arc-a: #ede1fe;
+  --arc-b: #f6efff;
+  --arc-c: #e2d3fc;
+  --arc-panel: #d4c3fb;
+
+  /* latar Beranda: toko kelontong SIANG — bangunan sama, cahaya & warna siang */
+  --gs-sky-top: #8fd3fb;
+  --gs-sky-mid: #c4e9ff;
+  --gs-sky-bot: #fff1dc;
+  --gs-star: #ffffff;
+  --gs-moon: #ffffff;
+  --gs-sun: #ffd166;
+  --gs-sun-glow: #ffe9a8;
+  --gs-cloud: #ffffff;
+  --gs-ground: #f3dfbd;
+  --gs-ground-line: #e7c393;
+  --gs-glow: #fff3c4;
+  --gs-roof: #ff9f7a;
+  --gs-wall: #fbe9cc;
+  --gs-wall-shade: #f2d6a9;
+  --gs-sign: #fffaf0;
+  --gs-sign-border: #ff9f7a;
+  --gs-sign-text: #c2410c;
+  --gs-string: #c79a6b;
+  --gs-bulb: #fff3c4;
+  --gs-flag-a: #ffb38a;
+  --gs-flag-b: #9be3c4;
+  --gs-flag-c: #fde68a;
+  --gs-awning-a: #ffb38a;
+  --gs-awning-b: #fffaf0;
+  --gs-frame: #c98f5d;
+  --gs-window: #e3f5fd;
+  --gs-inside: #fff4dc;
+  --gs-shelf: #d49a62;
+  --gs-crate: #e0a76d;
+  --gs-crate-line: #b97a43;
+  --gs-lamp-shade: #9be3c4;
+  --gs-counter: #9be3c4;
+  --gs-counter-top: #6fcfa8;
+  --gs-basket: #fde68a;
+  --gs-basket-dark: #b97a43;
+  --gs-pot: #f29e6b;
+  --gs-leaf: #4caf7d;
+  --gs-veil: rgb(255 248 238 / 0.5);
+  --gs-wall-2: #fde8ef;
+  --gs-awning-c: #ffb8d2;
+  --gs-awning-d: #fffaf0;
+  --gs-door: #b9e6d3;
+
+  --coral: #ec4899;
+  --coral-deep: #be185d;
+  --coral-soft: rgb(236 72 153 / 0.12);
+  --butter: #fcd34d;
+  --butter-deep: #d97706;
+  --butter-soft: rgb(252 211 77 / 0.24);
+  --mint: #22d3ee;
+  --mint-deep: #0891b2;
+  --mint-soft: rgb(6 182 212 / 0.12);
+  --lavender: #c084fc;
+  --lavender-deep: #8b5cf6;
+  --lavender-soft: rgb(168 85 247 / 0.12);
+  --cream: #f6f0ff;
+  --white: #fffaf7;
+  --cocoa: #2a1540;
+  --muted-brown: #5b4374;
+  --success: #16a34a;
+  --success-soft: rgb(22 163 74 / 0.12);
+  --error: #e11d48;
+  --error-soft: rgb(225 29 72 / 0.1);
+  --test-good: #047857;
+  --test-bad: #be123c;
+
+  --c-on-color: #160d25;
+  --coral-text: #be185d;
+  --butter-text: #92400e;
+  --mint-text: #0e7490;
+  --lavender-text: #7e22ce;
+
+  /* angka berperan: versi tua agar kontras di kartu putih hangat (P6, bentuk penanda tetap) */
+  --c-price: #7e22ce;
+  --c-percent: #a14a07;
+  --c-discount: #be123c;
+  --c-result: #157a3a;
+
+  --c-bg: #f6f0ff;
+  --c-header: #efe4fd;
+  --c-yellow: #fcd34d;
+  --c-pink: #ec4899;
+  --c-surface: #fffaf7;
+  --c-surface-2: #f5edff;
+  --c-surface-3d: #fffaf7;
+  --c-text: #2a1540;
+  --c-muted: #5b4374;
+  --c-focus: #7c3aed;
+  --c-line: #dccbf3;
+  --c-disabled-bg: #ece4f5;
+  --c-disabled-text: #6f5b85;
+
+  --glow-purple: 0 0 14px rgb(139 92 246 / 0.28);
+  --glow-pink: 0 0 14px rgb(236 72 153 / 0.26);
+  --glow-cyan: 0 0 14px rgb(6 182 212 / 0.24);
+  --shadow-soft: 0 8px 20px rgb(91 33 182 / 0.1);
+  --shadow-chunky: 0 4px 0 rgb(124 58 237 / 0.12), 0 0 0 1px rgb(139 92 246 / 0.16);
+  color-scheme: light;
+}
+
+/* latar: lavender muda dengan cahaya lembut ungu/pink (bukan putih polos) */
+[data-theme='light'] body {
+  background:
+    radial-gradient(circle at 15% -5%, rgb(168 85 247 / 0.2), transparent 42%),
+    radial-gradient(circle at 95% 15%, rgb(236 72 153 / 0.14), transparent 38%),
+    radial-gradient(circle at 50% 110%, rgb(6 182 212 / 0.1), transparent 48%),
+    var(--bg);
+  background-attachment: fixed;
+}
+[data-theme='light'] .header { background: linear-gradient(180deg, var(--card), var(--bg-2)); box-shadow: 0 6px 18px rgb(139 92 246 / 0.16); }
+[data-theme='light'] .header h1 { color: var(--text); text-shadow: none; }
+[data-theme='light'] .sheet-backdrop,
+[data-theme='light'] .badge-toast { background: rgb(42 21 64 / 0.38); }
+[data-theme='light'] .sheet { box-shadow: 0 -10px 30px rgb(236 72 153 / 0.16); }
+
+/* tombol: bentuk "mainan" sama, bayangan lavender */
+[data-theme='light'] .btn:not(.btn-primary) { box-shadow: 0 4px 0 var(--press), 0 0 10px rgb(139 92 246 / 0.12); }
+[data-theme='light'] .btn:hover:not(:disabled) { box-shadow: 0 4px 0 var(--press), var(--glow-purple); }
+[data-theme='light'] .btn-primary {
+  background: linear-gradient(180deg, var(--purple-btn), var(--purple-deep)); color: var(--on-primary);
+  box-shadow: 0 5px 0 var(--press-strong), var(--glow-purple);
+}
+[data-theme='light'] .btn-primary:active:not(:disabled) { box-shadow: 0 2px 0 var(--press-strong), var(--glow-purple); }
+[data-theme='light'] .btn:disabled,
+[data-theme='light'] .btn-primary:disabled { background: var(--c-disabled-bg); color: var(--c-disabled-text); box-shadow: none; }
+[data-theme='light'] .chip { box-shadow: 0 3px 0 var(--press); }
+[data-theme='light'] .numpad button { box-shadow: 0 4px 0 var(--press); }
+[data-theme='light'] .numpad button:active { box-shadow: 0 1px 0 var(--press), var(--glow-cyan); }
+[data-theme='light'] .input::placeholder,
+[data-theme='light'] .textarea::placeholder,
+[data-theme='light'] .answer .ph { color: var(--placeholder); }
+[data-theme='light'] .btn-help.on { box-shadow: 0 4px 0 var(--press), var(--glow-cyan) !important; }
+[data-theme='light'] .btn-disc.on { box-shadow: 0 4px 0 var(--press), var(--glow-pink) !important; }
+
+/* beranda */
+[data-theme='light'] .home-title { color: var(--purple-btn); text-shadow: 0 4px 0 var(--pink-pastel), 0 8px 18px rgb(139 92 246 / 0.25); }
+[data-theme='light'] .menu-btn { box-shadow: 0 5px 0 var(--press), 0 0 12px rgb(139 92 246 / 0.1); }
+[data-theme='light'] .menu-btn:hover { box-shadow: 0 5px 0 var(--press), 0 0 18px var(--tone); }
+/* tombol Mulai Belajar: gradasi pastel cerah lavender → pink → peach, teks plum tua */
+[data-theme='light'] .menu-btn.menu-main {
+  background: linear-gradient(135deg, var(--pastel-lav), var(--pastel-pink) 60%, var(--pastel-peach)); color: var(--text);
+  border: 1.5px solid var(--card); box-shadow: 0 5px 0 var(--press-strong), 0 0 18px rgb(236 72 153 / 0.22);
+}
+[data-theme='light'] .menu-btn.menu-main small { color: var(--text-2); }
+[data-theme='light'] .menu-main .menu-ic { background: rgb(255 255 255 / 0.7); color: var(--purple-deep); }
+
+/* ruko pastel (Beranda, Perjalanan, Simulasi) — hanya tema terang */
+[data-theme='light'] .rk-pink { --rk: var(--rk-pink); --rk-deep: var(--rk-pink-deep); --rk-wall: var(--rk-pink-wall); }
+[data-theme='light'] .rk-purple { --rk: var(--rk-purple); --rk-deep: var(--rk-purple-deep); --rk-wall: var(--rk-purple-wall); }
+[data-theme='light'] .rk-cyan { --rk: var(--rk-cyan); --rk-deep: var(--rk-cyan-deep); --rk-wall: var(--rk-cyan-wall); }
+[data-theme='light'] .rk-lav { --rk: var(--rk-lav); --rk-deep: var(--rk-lav-deep); --rk-wall: var(--rk-lav-wall); }
+[data-theme='light'] .rk-orange { --rk: var(--rk-orange); --rk-deep: var(--rk-orange-deep); --rk-wall: var(--rk-orange-wall); }
+[data-theme='light'] .rk-main, [data-theme='light'] .rk-door { fill: var(--rk); }
+[data-theme='light'] .rk-roof-lav { fill: var(--rk-lav); }
+[data-theme='light'] .rk-wall { fill: var(--rk-wall); stroke: var(--rk); }
+[data-theme='light'] .rk-board { fill: var(--rk-board); stroke: var(--rk); }
+[data-theme='light'] .rk-sign { fill: var(--rk-deep); }
+[data-theme='light'] .rk-sign.neon-sign { filter: none; }
+[data-theme='light'] .door-enter .rk-sign { fill: var(--text); } /* "BUKA" di pintu pastel */
+[data-theme='light'] .rk-glass { fill: var(--rk-glass); }
+[data-theme='light'] .rk-frame { fill: var(--rk-frame); }
+[data-theme='light'] .rk-walk { fill: var(--rk-walk); }
+
+/* mesin arcade latar (tampak di Materi dll.) pastel — hanya tema terang */
+[data-theme='light'] .arc-cab-a { stop-color: var(--arc-a); }
+[data-theme='light'] .arc-cab-b { stop-color: var(--arc-b); }
+[data-theme='light'] .arc-cab-c { stop-color: var(--arc-c); }
+[data-theme='light'] .arc-board { fill: var(--rk-board); }
+[data-theme='light'] .arc-screen { fill: var(--rk-glass); }
+[data-theme='light'] .arc-panel { fill: var(--arc-panel); }
+[data-theme='light'] .sound-btn { box-shadow: 0 3px 0 var(--press); }
+[data-theme='light'] .sound-btn.on { box-shadow: 0 3px 0 var(--press), var(--glow-cyan); }
+@media (min-width: 960px) {
+  [data-theme='light'] .screen.home .home-hero { background: rgb(255 250 247 / 0.78); }
+}
+
+/* nada warna: isi tetap cerah, teks & bayangan versi tua agar terbaca di kartu putih */
+[data-theme='light'] .tone-purple { --tone-dark: var(--press-strong); --tone-text: var(--purple-deep); --tone-ink: var(--on-primary); }
+[data-theme='light'] .tone-coral, [data-theme='light'] .tone-blue { --tone-dark: var(--pink-pastel); --tone-text: var(--coral-text); }
+[data-theme='light'] .tone-pink, [data-theme='light'] .tone-lavender { --tone-dark: var(--press-strong); --tone-text: var(--lavender-text); }
+[data-theme='light'] .tone-mint, [data-theme='light'] .tone-green { --tone-text: var(--mint-text); }
+[data-theme='light'] .tone-butter, [data-theme='light'] .tone-yellow { --tone-text: var(--butter-text); }
+[data-theme='light'] .module.card.btn:hover:not(:disabled) { box-shadow: 0 6px 0 var(--press), var(--glow-purple); }
+[data-theme='light'] .feature-btn { box-shadow: 0 5px 0 var(--press), 0 0 12px var(--tone-soft); }
+[data-theme='light'] .stat { box-shadow: 0 4px 0 var(--press), 0 0 10px var(--tone-soft); }
+[data-theme='light'] .stat b { text-shadow: none; }
+[data-theme='light'] .formula-card .formula-short,
+[data-theme='light'] .disc-formula,
+[data-theme='light'] .score-chip { color: var(--butter-text); }
+[data-theme='light'] .score-chip { border-color: var(--butter-deep); box-shadow: none; }
+
+/* simulasi belanja */
+[data-theme='light'] .product { box-shadow: 0 4px 0 var(--press); }
+[data-theme='light'] .product:hover { box-shadow: 0 6px 0 var(--press), var(--glow-pink); }
+[data-theme='light'] .product-tag { box-shadow: 0 2px 0 var(--butter-deep); }
+[data-theme='light'] .product-final { text-shadow: none; }
+[data-theme='light'] .cmp-bar b,
+[data-theme='light'] .pb-bar span { color: var(--on-primary); }
+[data-theme='light'] .cmp-bar.before { background: linear-gradient(90deg, var(--purple-btn), var(--c-price)); }
+[data-theme='light'] .cmp-bar.after { background: linear-gradient(90deg, var(--mint-text), var(--c-result)); box-shadow: none; }
+
+/* kuis, tes & hasil */
+[data-theme='light'] .score b,
+[data-theme='light'] .finish-cat b { color: var(--coral-text); text-shadow: none; }
+[data-theme='light'] .finish-title { color: var(--purple-btn); text-shadow: 0 3px 0 var(--pink-pastel); }
+[data-theme='light'] .result-banner.good .rb-title,
+[data-theme='light'] .result-banner.good .rb-points,
+[data-theme='light'] .result-banner.bad .rb-title { text-shadow: none; }
+
+/* profil & lencana */
+[data-theme='light'] .badge.locked .badge-ic { color: var(--placeholder); }
+[data-theme='light'] .badge-toast-in { background: var(--card); }
+
+/* perjalanan, sapaan & latar */
+[data-theme='light'] .journey-view { background: linear-gradient(180deg, var(--pink-pastel), var(--bg-2) 70%); }
+[data-theme='light'] .greet-title { color: var(--purple-btn); text-shadow: 0 3px 0 var(--pink-pastel); }
+[data-theme='light'] .decor { opacity: 0.75; }
+[data-theme='light'] .decor .d-arcade-l,
+[data-theme='light'] .decor .d-arcade-r { opacity: 0.7; }
+[data-theme='light'] .decor .d-spark { background: var(--neon-pink); }
+[data-theme='light'] .decor.calm { opacity: 0.4; }
+
+/* =========================================================
+   v0.7 — Latar Beranda: Toko Kelontong Mini "HITUNG HEMAT"
+   Tema gelap = malam, tema terang = siang (bangunan sama; warna dari token --gs-*).
+   ========================================================= */
+.decor.grocery { opacity: 1; background: linear-gradient(180deg, var(--gs-sky-top), var(--gs-sky-mid) 42%, var(--gs-sky-bot) 78%); }
+[data-theme='light'] .decor.grocery { opacity: 1; }
+/* langit, trotoar, dan dua bangunan di tepi yang sedikit miring saling berhadapan */
+.gs-sky { position: absolute; left: 0; top: 0; width: 100%; height: 45vh; }
+.gs-ground {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 9vh; background:
+    repeating-linear-gradient(90deg, transparent 0 28px, var(--gs-ground-line) 28px 64px) 0 45% / 100% 4px no-repeat,
+    var(--gs-ground);
+  border-top: 5px solid var(--gs-ground-line);
+}
+.gs-store { position: absolute; bottom: calc(9vh - 2px); height: min(82vh, 700px); width: auto; aspect-ratio: 300 / 600; overflow: visible; }
+.gs-left { left: -8px; transform-origin: left bottom; transform: perspective(1400px) rotateY(22deg); }
+.gs-right { right: -8px; transform-origin: right bottom; transform: perspective(1400px) rotateY(-22deg); }
+.gs-day { display: none; }
+[data-theme='light'] .gs-day { display: inline; }
+[data-theme='light'] .gs-night { display: none; }
+.gs-sign-text { filter: drop-shadow(0 0 6px rgb(252 211 77 / 0.7)); }
+[data-theme='light'] .gs-sign-text { filter: none; }
+.gs-plum { animation: none; }
+.gs-cloud { animation: gs-drift 9s ease-in-out infinite alternate; }
+@keyframes gs-drift { to { transform: translateX(14px); } }
+@media (prefers-reduced-motion: reduce) { .gs-cloud { animation: none !important; } }
+.gs-veil {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, transparent 0%, transparent 14%, var(--gs-veil) 23%, var(--gs-veil) 100%);
+}
+/* Ukuran bangunan: kecil, utuh di dalam layar, berdiri di trotoar. Lebar bangunan ≈ tinggi ÷ 2,15
+   (SVG 300×600, miring 22°), dan papan nama ≈ 83% lebar bangunan → papan muat di ruang kosong. */
+.gs-left { left: 0; }
+.gs-right { right: 0; }
+.decor.grocery.calm .gs-store { display: none; } /* sedang mengerjakan soal: bangunan disembunyikan */
+.gs-narrow { display: none; }
+@media (max-width: 959px) {
+  .gs-narrow { display: inline; }
+  .gs-wide { display: none; }
+  /* HP: dua bangunan berdampingan muat satu layar */
+  .gs-store { height: min(50vh, calc(50vw * 2.05)); }
+  /* Beranda HP: papan nama tepat di sela balon sapaan & deretan ruko */
+  /* (papan nama = y 70–124 dari 600 → di tinggi 330px: 38–68px dari puncak bangunan)
+     kiri: di bawah Plum (276–306px); kanan: di bawah balon sapaan (248–278px) */
+  .grocery.is-home .gs-store { bottom: auto; height: 330px; }
+  .grocery.is-home .gs-left { top: 238px; }
+  .grocery.is-home .gs-right { top: 210px; }
+  .grocery.is-home .gs-veil { display: none; } /* papan nama tetap cerah */
+}
+@media (min-width: 960px) {
+  /* halaman biasa (kolom konten 520px di tengah): bangunan mengisi ruang kosong kiri-kanan */
+  .gs-store { height: clamp(260px, calc((50vw - 268px) * 2.15), 62vh); }
+  .gs-veil { display: none; }
+  .screen.home .home-hero,
+  [data-theme='light'] .screen.home .home-hero { background: var(--bg-2); }
+}
+@media (min-width: 1280px) {
+  /* Beranda laptop (konten 1080px): bangunan selebar ruang di samping kartu */
+  .grocery.is-home .gs-store { height: clamp(240px, calc((50vw - 516px) * 2.15), 62vh); }
+}
+@media (min-width: 960px) and (max-width: 1279px) {
+  /* Beranda laptop sempit: tidak ada ruang samping → papan nama di atas kartu
+     (kiri 12px dari atas, kanan 95px di bawah tombol suara); alas tetap di trotoar */
+  .grocery.is-home .gs-left { height: calc((91vh - 12px) * 1.1321); transform: perspective(1400px) rotateY(9deg); }
+  .grocery.is-home .gs-right { height: calc((91vh - 95px) * 1.1321); transform: perspective(1400px) rotateY(-9deg); }
+}

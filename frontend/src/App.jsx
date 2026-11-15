@@ -25,7 +25,7 @@ import { LearningMap, Quiz, Remedial, ResearchPanel } from './features/Screens.j
 import { t } from './i18n/id.js';
 import { musicModeFor, play, setMusicMode, unlock } from './ui/audio.js';
 import { HomeContext } from './ui/components.jsx';
-import Decor from './ui/Decor.jsx';
+import GroceryBackdrop from './ui/GroceryBackdrop.jsx';
 
 const quietSync = () => syncEvents().catch(() => {});
 const NEEDS_PROFILE = new Set(['start', 'test', 'profile']);
@@ -355,13 +355,14 @@ export default function App() {
     return <LearningMap {...mapProps()} />;
   })();
 
-  const scenic = screen.name === 'journey'; // perjalanan punya latar jalan sendiri
   const BG = { sim: 'shop', testhub: 'quiz', literacy: 'quiz', 'literacy-result': 'quiz', profile: 'profile', 'material-hub': 'learn', material: 'learn', formulas: 'learn', glossary: 'learn', module: 'learn' };
   // Transisi halus antarhalaman: kunci berubah → halaman baru masuk dengan animasi pendek.
   const pageKey = `${screen.name}-${screen.index ?? ''}-${screen.card ?? ''}`;
   return (
     <HomeContext.Provider value={screen.name === 'home' ? null : goHome}>
-      {!scenic && <Decor calm={solving && (screen.name === 'module' || screen.name === 'literacy')} />}
+      {/* Semua halaman: latar Toko Pakaian & Bakery Plumie's (siang/malam mengikuti tema).
+          calm saat mengerjakan soal → bangunan disembunyikan (aturan lama latar arcade dipertahankan). */}
+      {['home', 'sim', 'profile'].includes(screen.name) && <GroceryBackdrop home={screen.name === 'home'} />}
       <div className="page" key={pageKey} data-bg={BG[screen.name] ?? 'home'}>{view}</div>
       {newBadges.length > 0 && <BadgeToast ids={newBadges} onClose={() => setNewBadges([])} />}
     </HomeContext.Provider>

@@ -27,6 +27,11 @@ Warna semantik **hanya** dipakai untuk peran besaran. Warna lain bersifat netral
 > Angka berperan di atas kartu gelap: harga awal `#C084FC`, persen `#FCD34D`, potongan `#FB7185`, harga akhir `#4ADE80` (semua ≥ 5,8:1, dijaga `tests/theme.test.js`).
 > Maskot utama: **Kucing Plum** (`ui/Mascot.jsx`, SVG bergradien 3D, celemek pink, keranjang mini); Kiko tetap tersedia sebagai `KikoFox`.
 > Latar: `ui/Decor.jsx` (mesin arcade neon, lampu pink/cyan, grid neon, partikel). Mesin, partikel, dan grid disembunyikan saat mengerjakan soal. Variasi latar per halaman lewat `.page[data-bg]`.
+>
+> **Pilihan tema (v0.7, 15 Nov 2026):** Tema Gelap (Plum Arcade di atas, **bawaan**) dan Tema Terang "Plum Lavender". Dipilih di Profil → *Tema Tampilan*, berlaku langsung, disimpan di `localStorage` `hh-theme-v1` (`ui/theme.js`), dipasang sebagai `<html data-theme>`.
+> Tema terang: latar lavender muda `#F6F0FF`, panel `#EFE4FD`, kartu putih hangat `#FFFAF7`, teks plum `#2A1540`/`#5B4374`, tombol utama `#7C3AED`→`#6D28D9` dengan teks putih, aksen pink `#EC4899`.
+> Angka berperan di kartu terang: harga awal `#7E22CE`, persen `#A14A07`, potongan `#BE123C`, harga akhir `#157A3A` (semua ≥ 4,5:1, dijaga `tests/theme.test.js`). Maskot, ilustrasi SVG, bentuk tombol, dan penanda bentuk angka sama di kedua tema.
+> Semua hex tema terang hanya di blok `:root[data-theme='light']`; aturan `[data-theme='light'] …` hanya memakai token.
 > Token lama (`--coral`, `--white`, ...) dipertahankan sebagai alias ke palet arcade agar semua komponen ikut berubah.
 
 **Tema "Playful Pastel Candy Shop"** (pemilik produk, 14 Nov 2026, digantikan Plum Arcade) menggantikan tema "Vibe". Semua warna didefinisikan **satu kali** di `:root` (`frontend/src/styles.css`). Tidak ada warna hex di luar blok itu (dijaga `tests/theme.test.js`). Palet ilustrasi SVG (`ui/ShopArt.jsx`, `ui/Decor.jsx`, `ui/Mascot.jsx`) memakai nilai hex yang sama. Mode gelap dinonaktifkan.

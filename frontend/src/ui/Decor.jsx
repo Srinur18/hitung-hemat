@@ -17,9 +17,9 @@ function Arcade({ className, label = 'HEMAT', screen = CYAN, accent = PINK }) {
     <svg className={`d ${className}`} viewBox="0 0 120 200" aria-hidden="true">
       <defs>
         <linearGradient id={`cab-${label}`} x1="0" x2="1">
-          <stop offset="0" stopColor="#3B1F63" />
-          <stop offset="0.55" stopColor="#4C2A7A" />
-          <stop offset="1" stopColor="#2A1547" />
+          <stop className="arc-cab-a" offset="0" stopColor="#3B1F63" />
+          <stop className="arc-cab-b" offset="0.55" stopColor="#4C2A7A" />
+          <stop className="arc-cab-c" offset="1" stopColor="#2A1547" />
         </linearGradient>
       </defs>
       {/* cahaya lantai */}
@@ -27,12 +27,12 @@ function Arcade({ className, label = 'HEMAT', screen = CYAN, accent = PINK }) {
       {/* kabinet */}
       <path d="M18 196 V70 L26 22 H94 L102 70 V196 Z" fill={`url(#cab-${label})`} stroke={PURPLE} strokeWidth="2.5" />
       {/* papan nama neon */}
-      <rect x="24" y="8" width="72" height="22" rx="6" fill={DEEP} stroke={accent} strokeWidth="2.5" />
+      <rect className="arc-board" x="24" y="8" width="72" height="22" rx="6" fill={DEEP} stroke={accent} strokeWidth="2.5" />
       <text x="60" y="24" textAnchor="middle" fontSize="12" fontWeight="800" fill={accent} fontFamily="Fredoka, sans-serif" className="lamp">
         {label}
       </text>
       {/* layar */}
-      <rect x="28" y="38" width="64" height="48" rx="6" fill="#0B1E33" stroke={screen} strokeWidth="2" />
+      <rect className="arc-screen" x="28" y="38" width="64" height="48" rx="6" fill="#0B1E33" stroke={screen} strokeWidth="2" />
       <g className="screen-glow">
         <rect x="30" y="40" width="60" height="44" rx="5" fill={screen} opacity="0.18" />
         {/* koin piksel & panah turun harga */}
@@ -42,14 +42,14 @@ function Arcade({ className, label = 'HEMAT', screen = CYAN, accent = PINK }) {
         <rect x="34" y="74" width="52" height="4" rx="2" fill={screen} opacity="0.6" />
       </g>
       {/* panel kontrol */}
-      <path d="M18 100 H102 L96 118 H24 Z" fill="#5B3394" />
+      <path className="arc-panel" d="M18 100 H102 L96 118 H24 Z" fill="#5B3394" />
       <circle cx="40" cy="104" r="3" fill="#160D25" />
       <line x1="40" y1="104" x2="36" y2="92" stroke="#160D25" strokeWidth="3" strokeLinecap="round" />
       <circle cx="36" cy="91" r="5" fill={PINK} />
       <circle cx="70" cy="108" r="5" fill={CYAN} />
       <circle cx="84" cy="106" r="5" fill={GOLD} />
       {/* celah koin bercahaya */}
-      <rect x="52" y="140" width="16" height="22" rx="3" fill={DEEP} stroke={GOLD} strokeWidth="1.5" />
+      <rect className="arc-board" x="52" y="140" width="16" height="22" rx="3" fill={DEEP} stroke={GOLD} strokeWidth="1.5" />
       <rect x="58" y="145" width="4" height="10" rx="2" fill={GOLD} className="lamp" />
       {/* garis neon samping */}
       <line x1="20" y1="72" x2="20" y2="194" stroke={accent} strokeWidth="2" opacity="0.8" />
@@ -106,7 +106,7 @@ function Grid() {
 
 const Tag = ({ className }) => (
   <svg className={`d float ${className}`} viewBox="0 0 60 40" aria-hidden="true">
-    <path d="M4 20 L16 4 L56 4 L56 36 L16 36 Z" fill={CARD} stroke={PINK} strokeWidth="3" strokeLinejoin="round" />
+    <path className="arc-board" d="M4 20 L16 4 L56 4 L56 36 L16 36 Z" fill={CARD} stroke={PINK} strokeWidth="3" strokeLinejoin="round" />
     <circle cx="16" cy="20" r="3.5" fill={CYAN} />
     <text x="37" y="27" textAnchor="middle" fontSize="20" fontWeight="700" fill={PINK} fontFamily="Fredoka, sans-serif">%</text>
   </svg>

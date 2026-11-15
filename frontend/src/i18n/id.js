@@ -301,6 +301,18 @@ export const t = {
   musicManual: 'Jika musik tidak berbunyi, ketuk tombol 🎵 di atas untuk memulainya.',
   musicTestOff: 'Musik dimatikan selama tes',
 
+  // v0.7 — Latar Beranda: papan nama toko kelontong
+  bakeryName: "Bakery Plumie's",
+  clothesName: 'TOKO PAKAIAN',
+
+  // v0.7 — Tema tampilan
+  themeTitle: 'Tema Tampilan',
+  themeDark: 'Tema Gelap',
+  themeLight: 'Tema Terang',
+  themeActive: 'Sedang dipakai',
+  themeChoose: 'Ketuk untuk memakai',
+  themeNote: 'Pilihan tema tersimpan di HP ini. Progres dan nilaimu tidak berubah.',
+
   // v0.4 — Kuis
   pretestStatus: (s, n) => `Tes Awal: selesai (skor ${s}/${n})`,
   posttestLocked: 'Tes Akhir terbuka setelah semua modul latihan selesai.',
