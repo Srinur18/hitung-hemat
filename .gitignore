@@ -1,7 +1,16 @@
+# Rahasia & konfigurasi lokal (API key Gemini, token peneliti). JANGAN di-commit.
+.env
+.env.*
+*.env
+!.env.example
+!*.env.example
+!.env.*.example
+backend/.env
+frontend/.env
+
 # JavaScript
 node_modules/
 frontend/dist/
-frontend/.env
 
 # Android (dibuat ulang oleh Gradle/Capacitor)
 frontend/android/.gradle/

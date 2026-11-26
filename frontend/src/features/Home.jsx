@@ -14,8 +14,11 @@ import { Critter, JourneyStreet, PAL, ShopStreet } from '../ui/ShopArt.jsx';
 import { SoundButtons } from '../ui/SoundToggle.jsx';
 import { MaterialList } from './Material.jsx';
 
+// Mulai Belajar & Teman Mikir: lebar penuh (berurutan, ikon bendera yang sama);
+// sisanya grid dua kolom.
 const MENU = [
   { key: 'start', icon: 'start', tone: 'coral' },
+  { key: 'chat', icon: 'start', tone: 'mint', wide: true },
   { key: 'material', icon: 'book', tone: 'butter' },
   { key: 'sim', icon: 'cart', tone: 'mint' },
   { key: 'test', icon: 'quiz', tone: 'lavender' },
@@ -55,7 +58,7 @@ export function Home({ profile, onMenu }) {
         {MENU.map((m) => (
           <button
             key={m.key}
-            className={`menu-btn tone-${m.tone} ${m.key === 'start' ? 'menu-main' : ''} ${pressed === m.key ? 'pop' : ''}`}
+            className={`menu-btn tone-${m.tone} ${m.key === 'start' ? 'menu-main' : ''} ${m.wide ? 'menu-wide' : ''} ${pressed === m.key ? 'pop' : ''}`}
             onClick={() => go(m.key)}
           >
             <span className="menu-ic"><Icon name={m.icon} size={26} /></span>

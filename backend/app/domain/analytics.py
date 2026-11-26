@@ -25,7 +25,7 @@ def summarize(events: list[dict], max_score: int) -> dict:
     per = defaultdict(lambda: {
         "pre": 0, "post": 0, "pre_n": 0, "post_n": 0,
         "answers": 0, "correct": 0, "hints": 0, "problems": 0,
-        "mc": Counter(), "effort": [],
+        "mc": Counter(), "calc": 0, "effort": [],
         "process": defaultdict(lambda: {"pre": 0, "post": 0}),
         "literacy": [],
     })
@@ -43,7 +43,9 @@ def summarize(events: list[dict], max_score: int) -> dict:
         elif t == "answer_submit":
             s["answers"] += 1
             s["correct"] += bool(p.get("correct"))
-            if p.get("mc"):
+            if p.get("mc") == "CALC":  # salah hitung (R2) bukan miskonsepsi → dihitung terpisah
+                s["calc"] += 1
+            elif p.get("mc"):
                 s["mc"][p["mc"]] += 1
         elif t == "hint_open":
             s["hints"] += 1
@@ -51,7 +53,8 @@ def summarize(events: list[dict], max_score: int) -> dict:
             s["problems"] += 1
         elif t == "effort_rating" and isinstance(p.get("value"), (int, float)):
             s["effort"].append(p["value"])
-        elif t == "literacy_result" and p.get("kind") == "test" and isinstance(p.get("total"), int):
+        elif t == "literacy_result" and p.get("kind") == "test" and isinstance(p.get("total"), (int, float)) \
+                and not isinstance(p.get("total"), bool):  # skor bisa pecahan (ECF/salah hitung 0,5)
             s["literacy"].append({"total": p["total"], "max": p.get("max", 24), "byProcess": p.get("byProcess", {})})
 
     students = []
@@ -66,6 +69,7 @@ def summarize(events: list[dict], max_score: int) -> dict:
             "accuracy": round(s["correct"] / s["answers"], 3) if s["answers"] else None,
             "hints_per_problem": round(s["hints"] / s["problems"], 2) if s["problems"] else None,
             "misconceptions": dict(s["mc"]),
+            "calc_errors": s["calc"],
             "mean_effort": round(mean(s["effort"]), 2) if s["effort"] else None,
             "process": {k: dict(v) for k, v in s["process"].items()},
             # Tes Literasi Matematis (4 soal uraian bertahap, maks. 24): percobaan pertama & terakhir

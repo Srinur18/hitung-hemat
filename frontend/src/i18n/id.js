@@ -157,11 +157,12 @@ export const t = {
   appTitle: 'HITUNGHEMAT',
   slogan: 'Belajar Diskon, Belanja Jadi Pintar!',
   menu: {
-    start: { label: 'Mulai Belajar', sub: 'Jelajahi Jalan Ruko Hemat' },
-    material: { label: 'Materi', sub: 'Rumus & contoh diskon' },
-    sim: { label: 'Simulasi Belanja', sub: 'Belanja & hitung di kasir' },
-    test: { label: 'Kuis / Tes', sub: 'Tes Literasi Matematis' },
-    profile: { label: 'Profil', sub: 'Identitas & nilaimu' },
+  start: { label: 'Mulai Belajar', sub: 'Jelajahi Jalan Ruko Hemat' },
+  material: { label: 'Materi', sub: 'Rumus & contoh diskon' },
+  sim: { label: 'Simulasi Belanja', sub: 'Belanja & hitung di kasir' },
+  test: { label: 'Kuis / Tes', sub: 'Tes Literasi Matematis' },
+  chat: { label: 'Teman Mikir', sub: 'Diskusi matematika bersama Plum' },
+  profile: { label: 'Profil', sub: 'Identitas & nilaimu' },
   },
   identityTitle: 'Identitas Siswa',
   identityIntro: 'Kenalan dulu, yuk! Isi identitasmu.',
@@ -316,4 +317,17 @@ export const t = {
   // v0.4 — Kuis
   pretestStatus: (s, n) => `Tes Awal: selesai (skor ${s}/${n})`,
   posttestLocked: 'Tes Akhir terbuka setelah semua modul latihan selesai.',
+
+  // R1 — cek besar hasil lewat jalan lain (bukan hanya "lebih kecil?")
+  checkTitle: 'Cek besar hasil',
+  checkGood: (name) => `Cocok! Dua cara memberi hasil sama, yaitu {${name}|result}. Hasilmu wajar.`,
+  checkBad: (name) => `Belum sama dengan hasilmu {${name}|result}. Kalau dua cara berbeda, salah satunya keliru. Cek lagi hitungan cara ini.`,
+
+  // v0.5 — Teman Mikir (tutor mediasi; teks balasan dari tutor.json atau Gemini lewat server)
+  tutor: {
+    button: 'Teman Mikir',
+    title: 'Teman Mikir',
+    thinking: 'Plum sedang berpikir…',
+    choices: 'Pilihan jawaban untuk Plum',
+  },
 };

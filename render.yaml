@@ -1,0 +1,36 @@
+# Blueprint Render: backend HitungHemat dengan HTTPS otomatis (https://<nama>.onrender.com).
+# Panduan lengkap: docs/deploy-https.md
+# Nilai bertanda `sync: false` diisi SENDIRI di dasbor Render (tidak pernah ditulis di repo).
+services:
+  - type: web
+    name: hitunghemat-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    plan: free            # gratis; tidak mengaktifkan billing Gemini
+    autoDeploy: false     # deploy hanya saat diminta
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        sync: false
+      - key: HH_RESEARCH_TOKEN
+        generateValue: true
+      # Origin aplikasi Android (Capacitor, androidScheme https) — keamanan WebView tidak diturunkan.
+      - key: HH_CORS_ORIGINS
+        value: https://localhost,capacitor://localhost
+      - key: HH_CORS_ALLOW_LOCALHOST
+        value: "0"
+      - key: TUTOR_DAILY_LIMIT
+        value: "500"
+      - key: TUTOR_SESSION_LIMIT
+        value: "40"
+      - key: CHAT_CLIENT_LIMIT
+        value: "200"
+      - key: GEMINI_TIMEOUT
+        value: "8"
+      # PERHATIAN: paket gratis tidak punya disk tetap → SQLite terhapus saat server restart.
+      # Untuk data penelitian, pakai disk berbayar (mount /srv/data) atau PostgreSQL. Lihat panduan.
+      - key: HH_DATABASE_URL
+        value: sqlite:////srv/data/hitunghemat.db

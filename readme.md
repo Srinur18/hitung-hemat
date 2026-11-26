@@ -20,6 +20,7 @@ Proyek ini dikembangkan dengan model ADDIE. Dasar perancangannya adalah wawancar
 - **Materi 5 bab** dengan kartu bertahap, **Rangkuman Rumus**, dan **Kamus Istilah**. **Simulasi Belanja** lengkap dengan keranjang dan struk digital. **Profil** dengan lencana, riwayat nilai, dan aspirasi. Animasi ringan dan **efek suara** yang bisa dimatikan; musik latar mati bawaan.
 - **Menu Materi | Latihan | Tes**: ringkasan materi 7 topik dengan contoh bertahap, Latihan Literasi per indikator, dan **Tes Literasi Matematis** 4 soal (4 indikator, skor bertahap maks. 24 poin, skor parsial).
 - **Kisi-kisi tes** untuk guru di Panel Peneliti (PIN).
+- **Teman Mikir** (v0.5, belum dirilis): tutor mediasi bertahap T1→T4 di layar soal (pertanyaan pemantik → alat bantu → petunjuk → contoh serupa) dengan pilihan jawaban, plus refleksi di akhir soal. Kalimat bisa disusun Gemini lewat server; tanpa server tetap berjalan dengan teks cadangan. Tidak pernah menyebut jawaban.
 
 ## Coba Langsung
 
@@ -64,7 +65,8 @@ cd backend
 py -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 .venv\Scripts\python -m app.tools.validate_content   # periksa kualitas soal
-.venv\Scripts\python -m pytest                       # 21 tes
+.venv\Scripts\python -m pytest                       # 67 tes
+.venv\Scripts\python -m app.tools.gemini_check      # (opsional) cek API key & model Gemini di backend/.env
 .venv\Scripts\uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 # dokumentasi API: http://localhost:8000/docs
 ```

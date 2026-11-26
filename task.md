@@ -70,6 +70,10 @@ Legenda: `[x]` selesai · `[ ]` belum · **TBD** = menunggu keputusan lewat inte
 - [x] DV23d Redesain v0.3 "Jalan Ruko Hemat": beranda 5 menu, identitas + sapaan, perjalanan 6 tahap, Simulasi Belanja, Profil, tombol Beranda di semua halaman (14 Nov 2026)
 - [x] DV23e v0.4: Materi 5 bab + Rangkuman Rumus + Kamus Istilah; Simulasi Belanja lengkap (keranjang, struk); Profil (lencana, riwayat, aspirasi); animasi & efek suara (14 Nov 2026)
 - [x] DV23f v0.5 (belum dirilis): tema "Playful Pastel Candy Shop" terpusat di :root + uji kontras otomatis (14 Nov 2026)
+- [x] DV23g v0.5 (belum dirilis): **Teman Mikir** — mesin langkah deterministik (Python ≡ JS, 308 vektor paritas), guard anti-bocor jawaban, klien Gemini opsional + kuota, cadangan offline, sheet di layar soal, event `tutor_turn` (19 Nov 2026). 67 pytest + 528 Vitest lulus
+- [x] DV23i Penyempurnaan dari uji coba instrumen (25 Nov 2026): R1 cek besar hasil lewat jalan lain (m1, m3, m4, m6-t1) + tahap sanity/sanity_help diperkuat; R2 mediasi salah hitung `CALC` (deteksi + teks tutor + jawaban siswa di prompt); R3 penilaian literasi = rubrik manual (ECF 0,5; salah hitung 0,5; L4 lembar uji coba → 4,5/6, total 22,5). 89 pytest + 552 Vitest lulus
+- [ ] DV23j Validasi ahli atas R1–R3: aturan 0,5 untuk L1–L3/latihan, ambang deteksi CALC (0,5×–1,5×), cek besar hasil untuk m5/m7-t2
+- [ ] DV23h Teman Mikir: validasi ahli teks tutor.json (status masih *hipotesis*) + uji coba dengan API key Gemini sungguhan (`gemini_check --try`)
 - [ ] DV23c Validasi ahli untuk soal latihan literasi P1–P4 & ringkasan materi T1–T7
 - [ ] DV24 Uji kinerja di perangkat acuan (fps, ukuran APK, waktu buka)
 - [ ] DV25 Build APK rilis + panduan instalasi untuk sekolah

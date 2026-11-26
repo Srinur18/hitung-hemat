@@ -1,0 +1,255 @@
+{
+  "version": 1,
+  "status": "hipotesis",
+  "note": "Konten mediasi Teman Mikir. Pemetaan teori RMT ke perilaku tutor adalah INTERPRETASI DESAIN (hipotesis), bukan isi buku: Kinard & Kozulin (2008) tidak membahas AI/chatbot. Nomor halaman = halaman cetak buku (halaman PDF = cetak + 8). Bukti empiris dari siswa hanya ringkasan wawancara S01 di prd.md; data Cognitive Load dan uji coba soal belum ada. Semua teks perlu divalidasi ahli dan diuji coba sebelum dianggap efektif.",
+  "source": "Kinard, J. T., & Kozulin, A. (2008). Rigorous Mathematical Thinking: Conceptual Formation in the Mathematics Classroom. Cambridge University Press.",
+  "limits": { "maxWords": 40, "maxSentenceWords": 15, "maxQuestions": 1, "maxChips": 3 },
+  "bannedTerms": ["rabat", "potongan kotor", "harga bandrol", "harga bersih", "jawabannya adalah", "jawaban akhirnya"],
+  "competencePrefix": "Tepat!",
+  "levels": {
+    "1": { "name": "T1 Pertanyaan mediasi", "move": "orientation", "rmt": [{ "term": "Mediated learning experience: intentionality and reciprocity", "page": 77 }] },
+    "2": { "name": "T2 Tawaran alat bantu", "move": "tool", "rmt": [{ "term": "Mathematically specific psychological tools", "page": 28 }] },
+    "3": { "name": "T3 Petunjuk H1–H3", "move": "hint", "rmt": [{ "term": "Dynamic assessment (\"cake\" format)", "page": 60 }] },
+    "4": { "name": "T4 Contoh serupa (H4)", "move": "example", "rmt": [{ "term": "Zone of proximal development", "page": 59 }] }
+  },
+  "roleLabels": { "discount": "Besar diskon (Rp)", "result": "Harga akhir", "price": "Harga awal", "percent": "Persen" },
+  "roleDistractor": { "discount": "result", "result": "discount", "price": "result", "percent": "discount" },
+  "difficulties": {
+    "memahami_soal": "Salah memahami apa yang ditanyakan",
+    "mengidentifikasi_informasi": "Salah mengenali informasi penting",
+    "memilih_operasi": "Salah memilih operasi atau hubungan besaran",
+    "konversi_persen": "Salah mengubah persen (posisi koma)",
+    "kewajaran": "Hasil tidak masuk akal (belum memeriksa kewajaran)",
+    "menentukan_strategi": "Belum menentukan strategi",
+    "salah_hitung": "Cara kemungkinan benar, tetapi hasil hitung persen meleset (mis. saat mengubah pecahan persen ke desimal)",
+    "belum_teridentifikasi": "Jawaban salah tanpa pola miskonsepsi yang dikenal (mungkin salah hitung)"
+  },
+  "moves": {
+    "orientation": {
+      "stage": "Orientation",
+      "rmt": [{ "term": "Learning activity: orientation", "page": 25 }, { "term": "Intentionality and reciprocity", "page": 77 }],
+      "knowledge": "procedures_operations",
+      "core": ["quantity", "representation"],
+      "goal": "Ajak siswa menyebut informasi yang diketahui dari soal, yaitu harga awal dan persen diskon.",
+      "fallback": "Yuk mulai dari soal. Lihat angka yang diketahui. Mana harga awal dan mana persen diskon?",
+      "chips": [
+        { "id": "or_ok", "label": "Aku sudah tahu", "next": "transformation" },
+        { "id": "or_info", "label": "Bingung pilih angka", "escalate": true, "difficulty": "mengidentifikasi_informasi" },
+        { "id": "or_help", "label": "Aku bingung", "escalate": true, "difficulty": "memahami_soal" }
+      ]
+    },
+    "transformation": {
+      "stage": "Transformation into a problem",
+      "rmt": [{ "term": "Learning activity: transformation of the presented material into a problem", "page": 25 }, { "term": "Defining the problem (Table 4.1)", "page": 87 }],
+      "knowledge": "concepts",
+      "core": ["relationship"],
+      "goal": "Bantu siswa menentukan besaran apa yang dicari pada langkah ini, tanpa menghitung.",
+      "fallback": "Sekarang fokus ke pertanyaannya. Langkah ini mencari besaran apa?",
+      "chips": "roles"
+    },
+    "transformation_retry": {
+      "stage": "Transformation into a problem",
+      "rmt": [{ "term": "Defining the problem (Table 4.1)", "page": 87 }],
+      "knowledge": "concepts",
+      "core": ["relationship"],
+      "goal": "Pilihan siswa belum sesuai. Ajak membaca ulang kalimat pertanyaan pada soal, tanpa memberi tahu pilihan yang benar.",
+      "fallback": "Hampir. Baca lagi kalimat terakhir soal. Langkah ini mencari besaran apa?",
+      "chips": "roles"
+    },
+    "planning": {
+      "stage": "Planning",
+      "rmt": [{ "term": "Learning activity: planning", "page": 25 }, { "term": "Mathematically specific psychological tools", "page": 28 }, { "term": "Part/whole schematic", "page": 69 }],
+      "knowledge": "concepts",
+      "core": ["representation", "relationship"],
+      "goal": "Tawarkan alat bantu: Diagram Kotak (harga awal = besar diskon + harga akhir) atau kartu rumus. Ajak siswa memilih.",
+      "fallback": "Pilih alat bantu dulu. Diagram Kotak membagi harga awal jadi besar diskon dan harga akhir. Mau pakai yang mana?",
+      "chips": [
+        { "id": "pl_box", "label": "Diagram Kotak", "tool": "box", "next": "execute" },
+        { "id": "pl_formula", "label": "Kartu rumus", "tool": "formula", "next": "execute" },
+        { "id": "pl_help", "label": "Belum tahu", "escalate": true, "difficulty": "menentukan_strategi" }
+      ]
+    },
+    "execute": {
+      "stage": "Planning",
+      "rmt": [{ "term": "Feeling of competence", "page": 81 }],
+      "knowledge": "procedures_operations",
+      "core": ["precision"],
+      "goal": "Dorong siswa mencoba menghitung sendiri di layar soal. Jangan menyebut hasil.",
+      "fallback": "Bagus. Sekarang coba hitung sendiri di layar soal. Aku menunggu kalau kamu perlu bantuan.",
+      "chips": [{ "id": "ex_go", "label": "Oke, aku coba", "next": "close" }]
+    },
+    "error": {
+      "stage": "Mediasi kesalahan",
+      "rmt": [{ "term": "Dynamic assessment (\"cake\" format)", "page": 60 }, { "term": "Mediation of meaning", "page": 80 }],
+      "knowledge": "concepts",
+      "core": ["relationship", "logic_proof"],
+      "goal": "mc",
+      "fallback": "mc",
+      "chips": [
+        { "id": "er_retry", "label": "Aku coba lagi", "next": "close" },
+        { "id": "er_why", "label": "Kenapa begitu?", "next": "error_why" },
+        { "id": "er_help", "label": "Butuh bantuan", "escalate": true }
+      ]
+    },
+    "error_why": {
+      "stage": "Mediation of meaning",
+      "rmt": [{ "term": "Mediation of meaning", "page": 80 }],
+      "knowledge": "concepts",
+      "core": ["relationship", "logic_proof"],
+      "goal": "mc_why",
+      "fallback": "mc_why",
+      "chips": [
+        { "id": "ew_retry", "label": "Aku coba lagi", "next": "close" },
+        { "id": "ew_help", "label": "Butuh bantuan", "escalate": true }
+      ]
+    },
+    "tool": {
+      "stage": "Psychological tools",
+      "rmt": [{ "term": "Mathematically specific psychological tools", "page": 28 }, { "term": "Part/whole schematic", "page": 69 }],
+      "knowledge": "concepts",
+      "core": ["representation"],
+      "goal": "Ajak siswa memakai Diagram Kotak di atas soal: kotak mana yang sudah terisi dan mana yang masih kosong.",
+      "fallback": "Coba lihat Diagram Kotak di atas soal. Kotak mana yang masih kosong?",
+      "chips": [
+        { "id": "to_box", "label": "Lihat Diagram Kotak", "tool": "box", "next": "close" },
+        { "id": "to_help", "label": "Masih bingung", "escalate": true }
+      ]
+    },
+    "hint": {
+      "stage": "Dynamic assessment",
+      "rmt": [{ "term": "Dynamic assessment (\"cake\" format)", "page": 60 }],
+      "knowledge": "procedures_operations",
+      "core": ["precision"],
+      "goal": "Beri tahu bahwa petunjuk bertahap dibuka. Ajak membaca satu per satu lalu mencoba lagi.",
+      "fallback": "Aku buka petunjuk bertahap untukmu. Baca satu per satu, lalu coba lagi.",
+      "chips": [
+        { "id": "hi_retry", "label": "Aku coba lagi", "next": "close" },
+        { "id": "hi_help", "label": "Masih bingung", "escalate": true }
+      ]
+    },
+    "example": {
+      "stage": "Zone of proximal development",
+      "rmt": [{ "term": "Zone of proximal development", "page": 59 }, { "term": "Transcendence", "page": 78 }],
+      "knowledge": "procedures_operations",
+      "core": ["generalization_abstraction"],
+      "goal": "Ajak siswa melihat contoh soal lain yang mirip dan memakai urutan langkah yang sama.",
+      "fallback": "Lihat contoh soal lain yang mirip. Perhatikan urutannya, lalu pakai urutan yang sama.",
+      "chips": [{ "id": "exm_retry", "label": "Aku coba lagi", "next": "close" }]
+    },
+    "sanity": {
+      "stage": "Self-evaluation",
+      "rmt": [{ "term": "Learning activity: self-evaluation", "page": 25 }, { "term": "Reflection: evaluating oneself", "page": 65 }],
+      "knowledge": "concepts",
+      "core": ["logic_proof", "quantity"],
+      "goal": "Ajak siswa menilai BESAR hasil, bukan hanya arahnya. Lebih kecil dari harga awal belum cukup. Ajak menghitung ulang lewat jalan lain, yaitu (100% − persen diskon) × harga awal, lalu membandingkan kedua hasil. Jangan menyebut hasil.",
+      "fallback": "Lebih kecil dari harga awal saja belum cukup. Cek besarnya dengan cara lain: (100% − persen diskon) × harga awal. Apakah hasilnya sama?",
+      "evidence": "R1, uji coba instrumen 25 Nov 2026, Soal 4 Tahap 6: siswa hanya memeriksa 'harga akhir lebih rendah daripada awal' sehingga salah hitung (Rp290.000, seharusnya Rp280.000) tidak tertangkap.",
+      "chips": [
+        { "id": "sa_ok", "label": "Masuk akal", "next": "close" },
+        { "id": "sa_unsure", "label": "Belum yakin", "next": "sanity_help", "difficulty": "kewajaran" }
+      ]
+    },
+    "sanity_help": {
+      "stage": "Self-evaluation",
+      "rmt": [{ "term": "Part/whole schematic", "page": 69 }],
+      "knowledge": "concepts",
+      "core": ["relationship", "logic_proof"],
+      "goal": "Ingatkan bahwa harga awal adalah keseluruhan (100%) dan harga akhir adalah sisa persennya. Ajak menghitung sisa persen dikali harga awal, misalnya lewat patokan 10%, lalu membandingkan dengan hasil siswa. Jangan menyebut hasil.",
+      "fallback": "Ingat Diagram Kotak. Harga awal adalah 100%. Harga akhir adalah sisa persennya. Coba cari 10% dari harga awal dulu, lalu bandingkan.",
+      "chips": [{ "id": "sh_ok", "label": "Oke, aku cek", "next": "close" }]
+    },
+    "reflection": {
+      "stage": "Reflection",
+      "rmt": [{ "term": "Learning activity: reflection", "page": 65 }, { "term": "Feeling of competence", "page": 81 }],
+      "knowledge": "concepts",
+      "core": ["generalization_abstraction"],
+      "goal": "Siswa sudah menyelesaikan soal. Ajak merefleksikan cara berpikir yang paling membantu.",
+      "fallback": "Kamu sudah menyelesaikan soal ini. Cara berpikir apa yang paling membantumu?",
+      "chips": [
+        { "id": "re_mark", "label": "Menandai angka penting", "reflect": "defining_problem", "next": "transcendence" },
+        { "id": "re_box", "label": "Diagram Kotak", "reflect": "psychological_tool", "next": "transcendence" },
+        { "id": "re_check", "label": "Mengecek kewajaran", "reflect": "self_evaluation", "next": "transcendence" }
+      ]
+    },
+    "transcendence": {
+      "stage": "Transcendence",
+      "rmt": [{ "term": "Transcendence", "page": 78 }],
+      "knowledge": "insights",
+      "core": ["generalization_abstraction"],
+      "goal": "Hubungkan cara berpikir tadi dengan situasi belanja lain. Jangan memberi soal baru untuk dihitung.",
+      "fallback": "Cara berpikir ini berguna di tempat lain juga. Kapan kamu bisa memakainya lagi?",
+      "chips": [
+        { "id": "tr_market", "label": "Belanja di pasar", "reflect": "transfer_market", "next": "end" },
+        { "id": "tr_online", "label": "Promo belanja online", "reflect": "transfer_online", "next": "end" },
+        { "id": "tr_skip", "label": "Lewati", "next": "end" }
+      ]
+    }
+  },
+  "mc": {
+    "MC1": {
+      "difficulty": "memilih_operasi",
+      "function": { "term": "Analyzing-integrating (Table 4.1)", "page": 86 },
+      "goal": "Siswa menulis besar diskon padahal yang ditanya harga akhir. Ajak melihat bahwa masih ada satu bagian yang dicari.",
+      "fallback": "Angkamu itu besar diskonnya. Coba lihat Diagram Kotak. Bagian mana yang masih kosong?",
+      "whyGoal": "Jelaskan makna: harga awal terbagi menjadi besar diskon dan harga akhir; yang dibayar adalah sisanya.",
+      "why": "Harga awal terbagi dua: besar diskon dan harga akhir. Yang dibayar adalah sisa setelah diskon diambil."
+    },
+    "MC2": {
+      "difficulty": "memilih_operasi",
+      "function": { "term": "Forming proportional quantitative relationships (Table 4.1)", "page": 87 },
+      "goal": "Siswa menjumlahkan dua persen diskon bertingkat. Ajak menyadari diskon kedua dihitung dari sisa harga.",
+      "fallback": "Diskon kedua tidak dihitung dari harga awal. Diskon kedua dihitung dari harga yang mana?",
+      "whyGoal": "Jelaskan makna: setelah diskon pertama harga sudah turun, jadi diskon kedua memotong harga yang sudah turun.",
+      "why": "Setelah diskon pertama, harganya sudah turun. Diskon kedua memotong harga yang sudah turun itu. Jadi persennya tidak dijumlahkan."
+    },
+    "MC3": {
+      "difficulty": "konversi_persen",
+      "function": { "term": "Being precise (Table 4.1)", "page": 86 },
+      "goal": "Siswa salah menggeser koma saat mengubah persen. Ajak memeriksa bahwa persen berarti dibagi 100.",
+      "fallback": "Cek lagi posisi komanya. Persen artinya per seratus. Sudah dibagi 100 belum?",
+      "whyGoal": "Jelaskan makna persen sebagai per seratus dan pergeseran koma dua angka ke kiri.",
+      "why": "Persen berarti per seratus. Jadi persen diubah dengan membagi 100. Koma bergeser dua angka ke kiri."
+    },
+    "MC4": {
+      "difficulty": "memilih_operasi",
+      "function": { "term": "Projecting and restructuring relationships (Table 4.1)", "page": 87 },
+      "goal": "Pada soal terbalik, siswa mengalikan harga akhir dengan sisa persen. Ajak melihat harga akhir hanya sebagian dari 100%.",
+      "fallback": "Harga akhir itu baru sebagian dari harga awal. Harga awal itu berapa persen?",
+      "whyGoal": "Jelaskan makna: harga awal dianggap 100%, harga akhir hanya sisanya; cari 1% dulu lalu kalikan 100.",
+      "why": "Harga awal dianggap 100%. Harga akhir hanya sisanya. Kita cari dulu nilai 1%, lalu kalikan 100."
+    },
+    "MC5": {
+      "difficulty": "kewajaran",
+      "function": { "term": "Providing and articulating mathematical logical evidence (Table 4.1)", "page": 87 },
+      "goal": "Hasil siswa lebih besar dari harga awal. Ajak menilai kewajaran: diskon selalu mengurangi harga.",
+      "fallback": "Hasilmu lebih besar dari harga awal. Setelah diskon, mungkinkah harganya jadi lebih mahal?",
+      "whyGoal": "Jelaskan makna: diskon selalu mengurangi harga, jadi harga setelah diskon lebih kecil dari harga awal.",
+      "why": "Diskon selalu mengurangi harga. Jadi harga setelah diskon harus lebih kecil dari harga awal."
+    },
+    "MC6": {
+      "difficulty": "memilih_operasi",
+      "function": { "term": "Comparing (Table 4.1)", "page": 86 },
+      "goal": "Siswa membagi dengan harga akhir saat mencari persen diskon. Ajak menentukan harga mana yang menjadi 100%.",
+      "fallback": "Persen diskon selalu dibandingkan dengan satu harga. Harga awal atau harga akhir?",
+      "whyGoal": "Jelaskan makna: harga awal dianggap 100%, jadi besar diskon dibandingkan dengan harga awal.",
+      "why": "Harga awal dianggap 100%. Jadi besar diskon dibandingkan dengan harga awal, bukan harga akhir."
+    },
+    "CALC": {
+      "difficulty": "salah_hitung",
+      "evidence": "Uji coba instrumen 25 Nov 2026, Soal 4 Tahap 4: model 30/100 × Rp400.000 benar, tetapi 0,3 × 400.000 ditulis 110.000. Pemetaan fungsi RMT di bawah memakai ulang entri MC3 dan perlu validasi ahli.",
+      "function": { "term": "Being precise (Table 4.1)", "page": 86 },
+      "goal": "Cara siswa kemungkinan sudah benar, tetapi hasil hitung persennya meleset. Ajak menghitung ulang lewat bentuk lain: pecahan per seratus, desimal, atau patokan 10%. Jangan menyebut hasil.",
+      "fallback": "Caramu mungkin sudah benar. Coba hitung ulang lewat patokan 10%. Berapa 10% dari harga awal?",
+      "whyGoal": "Jelaskan bahwa pecahan per seratus, desimal, dan kelipatan 10% bernilai sama, sehingga dua cara hitung harus memberi hasil yang sama.",
+      "why": "Persen bisa ditulis sebagai pecahan per seratus atau desimal. Nilainya sama. Jadi dua cara hitung harus memberi hasil yang sama."
+    },
+    "NONE": {
+      "difficulty": "belum_teridentifikasi",
+      "function": { "term": "Searching systematically to gather clear and complete information (Table 4.1)", "page": 86 },
+      "goal": "Jawaban siswa belum tepat tanpa pola miskonsepsi yang dikenal. Ajak memeriksa langkah satu per satu, tanpa menghakimi.",
+      "fallback": "Belum tepat, tidak apa-apa. Periksa langkahmu satu per satu. Bagian mana yang mau kamu cek dulu?",
+      "whyGoal": "Jelaskan bahwa kesalahan membantu belajar; ajak memeriksa angka yang dipakai lalu hitungannya.",
+      "why": "Kesalahan membantu kita belajar. Periksa angka yang dipakai dulu. Lalu periksa hitungannya pelan-pelan."
+    }
+  }
+}

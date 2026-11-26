@@ -16,6 +16,7 @@ import { scoreTest } from './domain/literacy.js';
 import { formatRp } from './domain/money.js';
 import { earnedBadges } from './domain/progress.js';
 import { Greeting, Home, Identity, Journey, MaterialHub } from './features/Home.jsx';
+import ChatPage from './features/ChatPage.jsx';
 import { LiteracyResult, LiteracyRunner, testItems } from './features/Literacy.jsx';
 import { FormulaSummary, Glossary, MaterialChapter } from './features/Material.jsx';
 import { BadgeToast, META, Profile } from './features/Profile.jsx';
@@ -104,8 +105,7 @@ export default function App() {
   /** Menu beranda. Mulai Belajar, Kuis/Tes, dan Profil butuh identitas siswa dulu. */
   const openMenu = (key) => {
     if (NEEDS_PROFILE.has(key) && !profile?.studentCode) return go('identity', { next: key });
-    const target = { start: 'greeting', material: 'material-hub', sim: 'sim', test: 'testhub', profile: 'profile' }[key];
-    return go(target);
+const target = { start: 'greeting', material: 'material-hub', sim: 'sim', test: 'testhub', chat: 'chat', profile: 'profile' }[key];    return go(target);
   };
 
   /** Tes/latihan literasi selesai: hitung skor lewat domain, simpan, catat event penelitian. */
@@ -206,6 +206,8 @@ export default function App() {
       );
     }
 
+    if (s === 'chat') return <ChatPage onBack={goHome} />;
+    
     if (s === 'identity' || !profile?.studentCode) {
       return (
         <Identity

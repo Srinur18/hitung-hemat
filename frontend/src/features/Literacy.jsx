@@ -9,7 +9,7 @@
 import { useState } from 'react';
 import { glossary, literacy } from '../content/index.js';
 import { logEvent } from '../data/events.js';
-import { category, discussionVars, keyFor, scoreTest, stepFeedback, studentVars, tally } from '../domain/literacy.js';
+import { category, discussionVars, formatScore, keyFor, scoreTest, stepFeedback, studentVars, tally } from '../domain/literacy.js';
 import { formatRp, parseRupiah } from '../domain/money.js';
 import { initialHintState, nextHint, onWrong } from '../domain/scaffold.js';
 import { fillText } from '../domain/text.js';
@@ -128,7 +128,7 @@ function TestRunner({ items, onFinish, onExit }) {
     const f = stepFeedback(item, st.id, a, mine);
     const next = { ...answers, [item.id]: { ...mine, [st.id]: a } };
     setAnswers(next);
-    setChecked({ ...f, earned: f.correct ? st.points : 0 });
+    setChecked(f);
     setShowHelp(false);
     play(f.correct ? 'correct' : 'wrong');
     logEvent('assessment_answer', {
@@ -205,7 +205,7 @@ function TestRunner({ items, onFinish, onExit }) {
         <div className="test-status card">
           <div className="row small">
             <span className="grow">{t.stepProgress(Math.min(doneSteps, totalSteps), totalSteps)}</span>
-            <b className="score-chip" aria-label={t.tempScore}>⭐ {score.total}/{score.max}</b>
+            <b className="score-chip" aria-label={t.tempScore}>⭐ {formatScore(score.total)}/{score.max}</b>
           </div>
           <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={totalSteps} aria-valuenow={doneSteps} aria-label={t.progressTest}>
             <span style={{ width: `${(100 * doneSteps) / totalSteps}%` }} />
@@ -266,7 +266,7 @@ function TestRunner({ items, onFinish, onExit }) {
         {checked && (
           <div className={`result-banner ${checked.correct ? 'good' : 'bad'}`} role="status">
             <div className="rb-title">{checked.correct ? t.bannerGood : t.bannerBad}</div>
-            <div className="rb-points">{checked.correct ? `+${checked.earned} ${t.points}` : `+0 ${t.points}`}</div>
+            <div className="rb-points">{`+${formatScore(checked.earned)} ${t.points}`}</div>
             {!checked.correct && (
               <div className="rb-key">{t.correctAnswer}: <b>{keyText}</b></div>
             )}
@@ -449,7 +449,7 @@ function PracticeRunner({ mode, items, onFinish, onExit }) {
           <div className="test-status card practice-status">
             <div className="row small">
               <span className="grow">{t.stepProgress(doneSteps, totalSteps)}</span>
-              <b className="score-chip" aria-label={t.firstTryScore}>⭐ {firstScore.total}/{firstScore.max}</b>
+              <b className="score-chip" aria-label={t.firstTryScore}>⭐ {formatScore(firstScore.total)}/{firstScore.max}</b>
             </div>
             <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={totalSteps} aria-valuenow={doneSteps}>
               <span style={{ width: `${(100 * doneSteps) / totalSteps}%` }} />
@@ -547,9 +547,9 @@ function IndicatorBars({ byProcess }) {
           <div key={p} className="stack" style={{ gap: 4 }}>
             <div className="row small">
               <span className="grow">{ind.order}. {ind.name}</span>
-              <b>{b.earned}/{b.max}</b>
+              <b>{formatScore(b.earned)}/{b.max}</b>
             </div>
-            <div className="bar" role="img" aria-label={`${ind.name}: ${b.earned} dari ${b.max} poin`}>
+            <div className="bar" role="img" aria-label={`${ind.name}: ${formatScore(b.earned)} dari ${b.max} poin`}>
               <span style={{ width: `${b.max ? (100 * b.earned) / b.max : 0}%` }} />
             </div>
           </div>
@@ -585,7 +585,7 @@ export function LiteracyResult({ mode, items, answers, texts = {}, onRetry, onBa
               <div><small>{t.itemsDone}</small><b>{tl.itemsDone} soal · {tl.answered} tahap</b></div>
               <div className="fg-good"><small>{t.correctCount}</small><b>{tl.correct}</b></div>
               <div className="fg-bad"><small>{t.wrongCount}</small><b>{tl.wrong}</b></div>
-              <div><small>{t.totalScore}</small><b>{r.total} / {r.max}</b></div>
+              <div><small>{t.totalScore}</small><b>{formatScore(r.total)} / {r.max}</b></div>
               <div><small>{t.percentLabel}</small><b>{tl.percent}%</b></div>
             </div>
             <div className="finish-cat">{t.categoryLabel}: <b>{cat}</b></div>
@@ -597,7 +597,7 @@ export function LiteracyResult({ mode, items, answers, texts = {}, onRetry, onBa
         <div className="card score-card">
           <div className="step-label">{isTest ? 'Skor total' : t.firstTryScore}</div>
           <div className="score">
-            <b>{r.total}</b>
+            <b>{formatScore(r.total)}</b>
             <span>/ {r.max}</span>
           </div>
           <div className="muted">{category(r.total, r.max)}</div>
@@ -611,7 +611,7 @@ export function LiteracyResult({ mode, items, answers, texts = {}, onRetry, onBa
             <details key={`${it.id}-${openAll}`} className="card review" open={items.length === 1 || openAll}>
               <summary>
                 <span className="grow">Soal {k + 1}. {it.title}</span>
-                <b>{res.earned}/{res.max}</b>
+                <b>{formatScore(res.earned)}/{res.max}</b>
               </summary>
               <div className="muted small">{indicators[it.process].name}</div>
               <ol className="review-steps">
@@ -620,10 +620,10 @@ export function LiteracyResult({ mode, items, answers, texts = {}, onRetry, onBa
                   const f = stepFeedback(it, st.id, mine[st.id] ?? null, mine);
                   const note = texts[`${it.id}.${st.id}`];
                   return (
-                    <li key={st.id} className={s.earned ? 'ok' : 'no'}>
+                    <li key={st.id} className={s.via === 'key' || s.via === 'ecf' ? 'ok' : 'no'}>
                       <div className="row small">
-                        <b className="grow">{s.earned ? '✓' : '✗'} {t.tahap(stepLabel(st), st.points)}</b>
-                        <span>+{s.earned}</span>
+                        <b className="grow">{s.via === 'key' || s.via === 'ecf' ? '✓' : '✗'} {t.tahap(stepLabel(st), st.points)}</b>
+                        <span>+{formatScore(s.earned)}</span>
                       </div>
                       <div className="small">{fillText(st.ask, studentVars(it, mine), glossary)}</div>
                       <div className="small">

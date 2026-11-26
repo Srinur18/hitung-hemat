@@ -128,6 +128,11 @@ describe('mengerjakan soal', () => {
     click(btn('Periksa'));
     expect(await screen.findByText('Cek kewajaran')).toBeTruthy();
     click(btn('Ya'));
+    // R1: cek besar hasil lewat jalan lain sebelum soal selesai
+    expect(await screen.findByText('Cek besar hasil')).toBeTruthy();
+    typeNumber(container, p.vars.final);
+    click(btn('Periksa'));
+    click(await screen.findByRole('button', { name: 'Lanjut' }));
     expect(onDone).toHaveBeenCalledTimes(1);
     expect(onDone.mock.calls[0][0]).toMatchObject({ correct: false, maxHint: 2 });
   });

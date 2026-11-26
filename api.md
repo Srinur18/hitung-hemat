@@ -172,16 +172,17 @@ interface ResearchEvent {
 | `session_start` / `session_end` | `{ appVersion, device }` |
 | `assessment_answer` | `{ kind: 'pre'\|'post'\|'literacy', itemId, process, correct }`; untuk `literacy` juga `stepId, answer, via ('key'\|'ecf'\|null), points` |
 | `problem_start` | `{ stage, process, seed }` |
-| `answer_submit` | `{ answer, correct, mc, attempt, ms }` |
-| `hint_open` | `{ level, auto: boolean }` |
+| `answer_submit` | `{ answer, correct, mc, attempt, ms }` — `mc` bisa `'CALC'` (salah hitung persen, R2); di ringkasan peneliti dihitung terpisah sebagai `calc_errors`, bukan miskonsepsi |
+| `hint_open` | `{ level, auto: boolean, via?: 'tutor' }` |
 | `mark_numbers` | `{ marked: [{value, role}], correct }` (Mode Tandai) |
-| `sanity_check` | `{ choice, correct }` |
+| `sanity_check` | `{ kind: 'direction', choice, correct }` lalu (R1) `{ kind: 'magnitude', answer, correct, attempt }` untuk cek besar hasil lewat jalan lain |
 | `explain_submit` | `{ order: string[], correct, reasonId }` |
 | `scene_interact` | `{ scene, action, mode: '3d'\|'2d' }` |
 | `effort_rating` | `{ value: 1..9, afterStage }` |
 | `mastery_change` | `{ from, to }` |
 | `literacy_result` | `{ kind: 'test'\|'practice', total, max (24 untuk tes), byProcess: { reason\|formulate\|employ\|interpret: { earned, max } }, texts }` |
 | `material_view` | `{ topic: 'T1'..'T7' }` |
+| `tutor_turn` | `{ event, fromMove, chip, move, level (1–4), mc, difficulty, reflect, action, source ('gemini'\|'fallback'\|'offline'), reason }` (Teman Mikir, §9) |
 
 Ekspor CSV: `research/export.ts → exportCsv(table: 'events'|'attempts'|'assessments'): Promise<Blob>`, lalu dibagikan lewat plugin Capacitor Share.
 
@@ -206,6 +207,8 @@ Base URL: `http://<host>:8000`. Dokumentasi interaktif tersedia di `/docs`. Impl
 | GET | `/api/v1/content/version` | publik | `{ version }` (hash 12 karakter dari konten) |
 | GET | `/api/v1/content/{curriculum\|glossary\|diagnostic\|assessment}` | publik | isi JSON |
 | GET | `/api/v1/problems/{templateId}?seed=N` | publik | `{ vars, answers }`: pratinjau soal, identik dengan yang muncul di aplikasi |
+| GET | `/api/v1/tutor/status` | publik | `{ enabled }` — hanya status; nama model & API key tidak pernah dikirim |
+| POST | `/api/v1/tutor/turn` | publik | `TutorTurnIn` → `TutorTurnOut` (Teman Mikir, §9) |
 | POST | `/api/v1/sync/events` | publik | `{ events: EventIn[] }` (maks 500) → `{ accepted, duplicates }` |
 | GET | `/api/v1/research/summary` | `X-Research-Token` | N-gain per siswa & kelas, akurasi, petunjuk/soal, miskonsepsi, usaha mental, skor per proses PISA |
 | GET | `/api/v1/research/export.csv` | `X-Research-Token` | seluruh event dalam CSV |
@@ -215,3 +218,39 @@ Base URL: `http://<host>:8000`. Dokumentasi interaktif tersedia di `/docs`. Impl
 Kode galat: `401` token peneliti salah, `404` konten/template tidak ada, `413` lebih dari 500 event, `422` data tidak sah (mis. kode siswa berisi spasi atau tipe event tak dikenal). Event duplikat tidak dianggap galat; jumlahnya dilaporkan di `duplicates`.
 
 Fase 2 (TBD): kode kelas & dashboard guru.
+
+## 9. Teman Mikir (tutor mediasi) ✅ diimplementasikan (v0.5, belum dirilis)
+
+Pemetaan teori RMT (Kinard & Kozulin, 2008) ke perilaku tutor adalah **interpretasi desain (hipotesis)**; lihat `shared/content/tutor.json` (`status`, `note`). Teks wajib divalidasi ahli dan diuji coba.
+
+**Pembagian peran**
+- Benar/salah tetap ditentukan `domain/` eksak. Gemini tidak pernah menilai.
+- Mesin langkah deterministik `backend/app/tutor/engine.py` ≡ `frontend/src/domain/tutor.js` memilih tahap (paritas: `test-vectors.json → tutor`).
+- Gemini (opsional, lewat server) hanya menyusun **satu kalimat balasan** di dalam tujuan tahap. `guard.py` menolak balasan yang membocorkan angka kunci, memakai istilah tak baku, > 1 pertanyaan, kalimat > 15 kata, atau tautan; > 40 kata dipangkas per kalimat. Bila ditolak / galat / kuota habis / offline → **teks cadangan** dari `tutor.json`.
+- Angka terlarang = semua nilai yang belum tampil di teks soal dan belum dihasilkan langkah sebelumnya (`service.shown_names`), tanpa pengecualian nilai kembar.
+
+**Peristiwa & tahap**
+
+| event | tahap awal |
+|---|---|
+| `open` (langkah 1) / `open` (langkah ≥ 2) / `open` (fase sanity) | `orientation` / `transformation` / `sanity` |
+| `wrong` (dibuka setelah jawaban salah) | `error` dengan teks MC1–MC6 atau `NONE` |
+| `chip` | sesuai `next` chip; chip `escalate` menaikkan tingkat T1→T4 (`tool` → `hint` → `example`) |
+| `done` (soal selesai & Teman Mikir dipakai) | `reflection` → `transcendence` |
+
+`action` pada balasan: `hint` (buka H1–H3 berikutnya), `example` (H4), `box` (Diagram Kotak), `formula` (kartu rumus). Semua ditampilkan di sheet yang sama (P5); maksimal 3 chip (P2); tanpa auto-advance (P7).
+
+```jsonc
+// POST /api/v1/tutor/turn — TutorTurnIn (tanpa student_code)
+{ "template_id": "m1-t1", "seed": 1, "step_id": "s1", "event": "chip", "phase": "solve",
+  "move": "orientation", "chip_id": "or_ok", "mc": null, "level": 1, "session_id": "<uuid sesi>",
+  "answer": null }   // R2: jawaban salah siswa (opsional; hanya dipakai di prompt tahap error/error_why)
+// TutorTurnOut
+{ "move": "transformation", "stage": "Transformation into a problem", "level": 1, "text": "…",
+  "source": "gemini|fallback", "reason": null, "chips": [{ "id": "role_discount", "label": "Besar diskon (Rp)" }],
+  "action": null, "difficulty": null, "reflect": null, "mc": null, "close": false }
+```
+
+Galat: `404` template/langkah tidak ada, `422` event/tahap/chip tidak dikenal atau format salah. Label chip yang diteruskan ke Gemini diambil dari konten server, bukan dari klien.
+
+Konfigurasi (`backend/.env`, lihat `.env.example`): `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_TIMEOUT`, `TUTOR_DAILY_LIMIT`, `TUTOR_SESSION_LIMIT`. Periksa dengan `python -m app.tools.gemini_check [--try]`. Frontend memakai batas waktu 10 detik lalu jatuh ke teks cadangan.

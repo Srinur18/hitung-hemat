@@ -6,10 +6,11 @@ Dokumentasi interaktif: http://localhost:8000/docs
 import csv
 import io
 import json
+import logging
 from contextlib import asynccontextmanager
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Query
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from sqlalchemy import select
@@ -17,16 +18,28 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from . import content
-from .config import CORS_ORIGINS, MAX_EVENTS_PER_REQUEST, RESEARCH_TOKEN
+from .chat import service as chat_service
+from .config import CORS_ORIGIN_REGEX, CORS_ORIGINS, MAX_EVENTS_PER_REQUEST, RESEARCH_TOKEN
 from .db import Event, get_session, init_db
 from .domain.analytics import summarize
 from .domain.problems import GenerationError, instantiate
-from .schemas import SyncRequest, SyncResponse
+from .schemas import (
+    SyncRequest, SyncResponse,
+    TutorTurnIn, TutorTurnOut,
+    ChatTurnIn, ChatTurnOut,
+)
+from .tutor import service as tutor_service
+from .tutor.engine import TurnError, chips_for
+
+
+log = logging.getLogger("hitunghemat")
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     init_db()
+    # Membantu diagnosis "Failed to fetch": origin yang aktif dicetak saat server menyala (bukan rahasia).
+    log.warning("CORS origins: %s | localhost semua port: %s", ", ".join(CORS_ORIGINS), bool(CORS_ORIGIN_REGEX))
     yield
 
 
@@ -34,6 +47,7 @@ app = FastAPI(title="HitungHemat API", version="0.4.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
+    allow_origin_regex=CORS_ORIGIN_REGEX,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type", "X-Research-Token"],
 )
@@ -76,6 +90,44 @@ def preview_problem(template_id: str, seed: int = Query(1, ge=0, le=2**32 - 1)):
         return {"template": template_id, "seed": seed, **instantiate(t, seed)}
     except GenerationError as e:
         raise HTTPException(422, str(e))
+
+
+# ---------- Teman Mikir ----------
+@app.get("/api/v1/tutor/status")
+def tutor_status():
+    """Hanya status aktif/tidak. Nama model & API key tidak pernah dikirim ke klien."""
+    return {"enabled": tutor_service.enabled()}
+
+
+@app.post("/api/v1/tutor/turn", response_model=TutorTurnOut)
+def tutor_turn(body: TutorTurnIn):
+    tutor = content.load("tutor")
+    chip_label = None
+    if body.event == "chip" and body.move in tutor["moves"]:
+        # Label diambil dari konten, bukan dari klien, agar tidak ada teks bebas yang diteruskan ke Gemini.
+        steps = (content.load("curriculum")["templates"].get(body.template_id) or {}).get("steps", [])
+        step = next((s for s in steps if s["id"] == body.step_id), {})
+        chip = next((c for c in chips_for(tutor, body.move, step.get("role", "result")) if c["id"] == body.chip_id), None)
+        chip_label = chip["label"] if chip else None
+    try:
+        return tutor_service.respond(
+            template_id=body.template_id, seed=body.seed, step_id=body.step_id, event=body.event, phase=body.phase,
+            move=body.move, chip_id=body.chip_id, chip_label=chip_label, mc=body.mc, level=body.level,
+            answer=body.answer, session_id=body.session_id,
+        )
+    except KeyError:
+        raise HTTPException(404, "Soal atau langkah tidak ditemukan")
+    except (TurnError, GenerationError) as e:
+        raise HTTPException(422, str(e))
+
+
+@app.post("/api/v1/chat/turn", response_model=ChatTurnOut)
+def chat_turn(body: ChatTurnIn, request: Request):
+    history = [item.model_dump() for item in body.history]
+    # IP hanya untuk kuota per pengirim (di memori). Di belakang proxy HTTPS, uvicorn dijalankan
+    # dengan --proxy-headers agar ini IP asli, bukan IP proxy (lihat backend/Dockerfile).
+    client = request.client.host if request.client else "unknown"
+    return chat_service.respond(body.message, history, client_key=client)
 
 
 # ---------- sinkronisasi ----------

@@ -28,14 +28,35 @@ export const FEEDBACK = {
   MC4: 'Harga akhir itu baru sebagian. Cari dulu 1%, lalu kalikan 100.',
   MC5: 'Setelah diskon, harga harus lebih murah dari harga awal. Coba cek lagi.',
   MC6: 'Persen diskon dibandingkan dengan harga AWAL, bukan harga akhir.',
+  // R2: bukan miskonsepsi — cara kemungkinan benar, tetapi hitungan persen meleset
+  CALC: 'Caramu mungkin sudah benar, tetapi hitungannya meleset. Hitung ulang lewat cara lain, misalnya cari 10% dulu.',
   DEFAULT: 'Belum tepat. Coba periksa lagi langkahnya.',
 };
 
-/** @returns {string|null} kode MC pertama yang cocok */
+/** Langkah yang memakai persen (pecahan per seratus ↔ desimal) — tempat salah hitung representasi terjadi. */
+export const CALC_FNS = new Set(['discountAmount', 'finalPrice']);
+/** Rentang "masih satu besaran" terhadap kunci: 0,5× – 1,5×. */
+export const CALC_RANGE = [0.5, 1.5];
+
+/**
+ * Salah hitung (CALC): langkah persen, jawaban bukan pola miskonsepsi, bukan angka lain di soal,
+ * dan masih sebesaran dengan kunci (mis. 0,3 × 400.000 ditulis 110.000).
+ * Hanya memilih teks mediasi; TIDAK dipakai untuk menilai.
+ */
+export function isCalcSlip(step, vars, answer) {
+  const key = step.answer;
+  if (!Number.isInteger(answer) || !Number.isInteger(key) || key <= 0 || answer === key || answer <= 0) return false;
+  if (step.input === 'choice' || !CALC_FNS.has(step.compute?.fn)) return false;
+  if (Object.values(vars).some((x) => x === answer)) return false;
+  const r = answer / key;
+  return r >= CALC_RANGE[0] && r <= CALC_RANGE[1];
+}
+
+/** @returns {string|null} kode MC pertama yang cocok, lalu 'CALC' bila salah hitung, selain itu null */
 export function classify(step, vars, answer) {
   if (answer === null || answer === undefined) return null;
   for (const code of step.mc ?? []) {
     if (DETECTORS[code]?.(vars, answer)) return code;
   }
-  return null;
+  return isCalcSlip(step, vars, answer) ? 'CALC' : null;
 }

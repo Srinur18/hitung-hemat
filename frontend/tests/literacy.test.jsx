@@ -134,7 +134,8 @@ describe('layar tes literasi', () => {
     // L1: Toko A salah (Rp50.000) → 5; L4: ikut cara kasir → 4; L2 & L3 kosong → 0
     const answers = { L1: { ...FULL.L1, s2a: 50000 }, L4: { ...FULL.L4, s4: 30, s5: 399970 } };
     render(<LiteracyResult mode="test" items={literacy.test} answers={answers} onBack={() => {}} />);
-    expect(document.querySelector('.score b').textContent).toBe('9');
+    // R3: L4 tahap 6 (alasan benar, tetapi hasilnya ikut cara kasir) kini 0,5 → 5 + 3,5 = 8,5 (dulu 9)
+    expect(document.querySelector('.score b').textContent).toBe('8,5');
     expect(screen.getAllByText('5/6')).toHaveLength(2); // indikator + soal
     expect(screen.getByText(/Itu cara kasir/)).toBeTruthy();
     expect(screen.getByText(/Itu hasil kasir yang keliru/)).toBeTruthy();
@@ -296,8 +297,9 @@ describe('tes interaktif: bantuan, benar/salah, pembahasan, skor tidak ganda, ha
     expect(grid).toMatch(/Dikerjakan2 soal · 12 tahap/);
     expect(grid).toMatch(/Tahap benar9/);
     expect(grid).toMatch(/Tahap salah3/);
-    expect(grid).toMatch(/Total skor9 \/ 24/);
-    expect(grid).toMatch(/Persentase38%/);
+    // R3: tahap 6 L4 = ECF 0,5 → total 8,5 (dulu 9), persentase 35% (dulu 38%)
+    expect(grid).toMatch(/Total skor8,5 \/ 24/);
+    expect(grid).toMatch(/Persentase35%/);
     expect(document.querySelector('.finish-cat').textContent).toMatch(/Perlu berlatih lagi/);
     expect(document.querySelector('.finish-card .bubble').textContent).toMatch(/Tetap semangat, Sri!/);
     click(btn('Lihat Pembahasan'));

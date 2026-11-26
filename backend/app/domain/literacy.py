@@ -4,9 +4,12 @@ Identik dengan frontend/src/domain/literacy.js (dicek lewat shared/test-vectors.
 
 Aturan penilaian (pedoman penskoran peneliti):
 - Setiap tahap dinilai sendiri, jadi siswa tetap mendapat skor parsial untuk tahap yang benar.
-- Langkah bertanda ``ecf`` (error carried forward) juga dinilai benar bila konsisten dengan
+- Langkah bertanda ``ecf`` (error carried forward) juga dinilai bila konsisten dengan
   jawaban siswa sendiri di tahap sebelumnya. Contoh: salah hitung di tahap 2, tetapi tahap 3
-  dikerjakan dengan cara benar dari hasil tahap 2 itu → tahap 3 tetap mendapat poin.
+  dikerjakan dengan cara benar dari hasil tahap 2 itu → tahap 3 mendapat skor parsial 0,5 × poin
+  (rubrik manual hasil uji coba instrumen; sebelumnya poin penuh).
+- ``calcFrom`` / ``ecfCalcOnly`` / ``ecfFrom``: lihat ``judge_steps``. Ketiganya sengaja hanya dipasang
+  pada soal yang punya bukti penilaian manual (L4), dan perlu validasi ahli.
 - Kunci angka TIDAK ditulis manual: dihitung dari registri fungsi domain (tanpa eval).
 """
 import re
@@ -52,23 +55,71 @@ def answer_key(item: dict) -> dict:
     return key
 
 
-def score_item(item: dict, answers: dict) -> dict:
+PARTIAL = 0.5  # skor parsial ECF & salah hitung (rubrik manual instrumen uji coba, 25 Nov 2026)
+CREDIT = {"key": 1, "ecf": PARTIAL, "calc": PARTIAL}
+
+
+def _is_int(a) -> bool:
+    return isinstance(a, int) and not isinstance(a, bool)
+
+
+def step_refs(st: dict) -> list[str]:
+    """Nama argumen kunci langkah (bisa variabel soal atau id langkah sebelumnya)."""
+    spec = st.get("key")
+    return [a for a in spec["args"] if isinstance(a, str)] if isinstance(spec, dict) else []
+
+
+def is_trap(st: dict, a, v: dict) -> bool:
+    return any(evaluate(tr["value"], v) == a for tr in st.get("traps", []))
+
+
+def judge_steps(item: dict, answers: dict) -> list[dict]:
+    """Penilaian berurutan → [{id, via, trap}] dengan via = key | ecf | calc | None.
+
+    - key  : sama dengan kunci (poin penuh), kecuali bila langkah ``ecfFrom`` belum benar penuh → ecf.
+    - ecf  : konsisten dengan jawaban siswa sendiri (``ecf``). Dengan ``ecfCalcOnly`` ECF tidak berlaku
+             bila kesalahan sebelumnya adalah jebakan miskonsepsi (mis. cara kasir Rp30).
+    - calc : ``calcFrom`` = langkah model yang dijawab benar, tetapi hasil hitungnya salah
+             (bukan jebakan & bukan angka lain dari soal) → salah hitung dengan tahapan berpikir benar.
+    """
     key = answer_key(item)
+    v_key = {**item["vars"], **key}
     student = dict(item["vars"])
+    via: dict = {}
+    trapped: set = set()
+    out = []
+    for st in item["steps"]:
+        sid = st["id"]
+        a = answers.get(sid)
+        res = None
+        trap = _is_int(a) and is_trap(st, a, v_key)
+        if trap:
+            trapped.add(sid)
+        if _is_int(a):
+            if a == key[sid]:
+                res = "ecf" if any(via.get(d) != "key" for d in st.get("ecfFrom", [])) else "key"
+            elif st.get("ecf") and not (st.get("ecfCalcOnly") and trapped & set(step_refs(st))) \
+                    and evaluate(st["key"], student) == a:
+                res = "ecf"
+            elif st.get("calcFrom") and st["input"] != "choice" and via.get(st["calcFrom"]) == "key" \
+                    and a > 0 and not trap and a not in {x for x in {**student, **key}.values() if _is_int(x)}:
+                res = "calc"
+        via[sid] = res
+        out.append({"id": sid, "via": res, "trap": trap})
+        student[sid] = a
+    return out
+
+
+def score_item(item: dict, answers: dict) -> dict:
+    judged = {j["id"]: j for j in judge_steps(item, answers)}
     steps = []
     for st in item["steps"]:
         a = answers.get(st["id"])
-        via = None
-        if isinstance(a, int) and not isinstance(a, bool):
-            if a == key[st["id"]]:
-                via = "key"
-            elif st.get("ecf") and evaluate(st["key"], student) == a:
-                via = "ecf"
+        via = judged[st["id"]]["via"]
         steps.append({
             "id": st["id"], "tahap": st["tahap"], "points": st["points"],
-            "earned": st["points"] if via else 0, "answer": a, "via": via,
+            "earned": st["points"] * CREDIT[via] if via else 0, "answer": a, "via": via,
         })
-        student[st["id"]] = a
     return {
         "id": item["id"], "process": item["process"],
         "earned": sum(s["earned"] for s in steps), "max": sum(s["points"] for s in steps),
@@ -155,7 +206,15 @@ def validate_item(item: dict, *, practice: bool) -> list[str]:
                     errs.append(f"{sid}: jebakan tidak sah / sama dengan kunci")
         else:
             errs.append(f"{sid}: input {st['input']} tidak dikenal")
-        texts = [st.get("fb", ""), st.get("good", ""), *st.get("hints", []), *st.get("optionFeedback", {}).values()]
+        earlier = ids[: ids.index(st["id"])]
+        if st.get("calcFrom") and (st["calcFrom"] not in earlier or st["input"] == "choice"):
+            errs.append(f"{sid}: calcFrom harus menunjuk langkah model sebelumnya pada langkah isian")
+        if any(d not in earlier for d in st.get("ecfFrom", [])):
+            errs.append(f"{sid}: ecfFrom menunjuk langkah yang belum dikerjakan")
+        if st.get("ecfCalcOnly") and not st.get("ecf"):
+            errs.append(f"{sid}: ecfCalcOnly hanya berlaku bersama ecf")
+        texts = [st.get("fb", ""), st.get("good", ""), st.get("calcFb", ""), *st.get("hints", []),
+                 *st.get("optionFeedback", {}).values()]
         for t in filter(None, texts):
             errs += text_problems(sid, t)
             if st["input"] == "rupiah" and format_rp(k) in t:

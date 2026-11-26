@@ -13,6 +13,7 @@ from ..domain.literacy import answer_key, score_test
 from ..domain.money import format_value
 from ..domain.problems import instantiate
 from ..domain.rng import mulberry32
+from ..tutor.engine import chips_for, plan_turn
 
 
 # Skenario jawaban tes literasi: benar semua, kosong, salah hitung + error carried forward,
@@ -25,6 +26,11 @@ LITERACY_SCENARIOS = {
         "L3": {"s1": 2, "s2a": 1, "s2b": 8000, "s3a": 2, "s3b": 312000, "s4": 1},
         "L4": {"s1": 2, "s2": 2, "s3": 1, "s4": 30, "s5": 399970, "s6": 0},
     },
+    # Lembar jawaban docs/instrumen/hasil-uji-coba-instrumen: L1–L3 benar semua; L4 salah kali
+    # (0,3 × 400.000 = 110.000) lalu konsisten → rubrik manual 4,5/6, total 22,5/24.
+    "uji_coba_instrumen": {
+        "L4": {"s1": 1, "s2": 0, "s3": 2, "s4": 110000, "s5": 290000, "s6": 1},
+    },
 }
 
 
@@ -35,9 +41,28 @@ def literacy_vectors(lit: dict) -> list[dict]:
         scenarios = {"benar": {it["id"]: answer_key(it) for it in items}}
         if kind == "test":
             scenarios.update(LITERACY_SCENARIOS)
+            full = scenarios["benar"]
+            scenarios["uji_coba_instrumen"] = {**full, **LITERACY_SCENARIOS["uji_coba_instrumen"]}
         for name, answers in scenarios.items():
             out.append({"set": kind, "scenario": name, "answers": answers, "result": score_test(items, answers)})
     return out
+
+
+def tutor_vectors(tutor: dict) -> list[dict]:
+    """Semua (tahap, chip) untuk tiap peran & tingkat, plus peristiwa open/wrong/done → rencana giliran."""
+    cases = []
+    for role in sorted(tutor["roleLabels"]):
+        for phase, idx in (("solve", 0), ("solve", 1), ("sanity", 1)):
+            cases.append({"role": role, "event": "open", "phase": phase, "step_index": idx})
+        cases.append({"role": role, "event": "done"})
+        for mc in [*tutor["mc"], None, "MC99"]:
+            cases.append({"role": role, "event": "wrong", "mc": mc})
+        for move in tutor["moves"]:
+            for chip in chips_for(tutor, move, role):
+                for level in (1, 4):
+                    cases.append({"role": role, "event": "chip", "move": move, "chip_id": chip["id"],
+                                  "level": level, "mc": "MC2" if move.startswith("error") else None})
+    return [{"input": c, "out": plan_turn(tutor, **c)} for c in cases]
 
 
 def main() -> None:
@@ -69,6 +94,7 @@ def main() -> None:
         for seed in (1, 7, 2026):
             vectors["problems"].append({"template": tid, "seed": seed, **instantiate(t, seed)})
     vectors["literacy"] = literacy_vectors(content.load("literacy"))
+    vectors["tutor"] = tutor_vectors(content.load("tutor"))
     out = SHARED_DIR / "test-vectors.json"
     out.write_text(json.dumps(vectors, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"Ditulis: {out} ({len(vectors['problems'])} soal)")

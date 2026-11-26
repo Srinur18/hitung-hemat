@@ -107,6 +107,7 @@
         "price": { "range": [10000, 100000, 10000] },
         "pct": { "choices": [1000, 2000, 5000] }
       },
+      "derived": { "rest": { "fn": "complementBp", "args": ["pct"] } },
       "text": "Struk belanja: {item} {price|price}, diskon {pct|percent}. Berapa yang harus dibayar?",
       "boxes": { "awal": "price", "diskon": "disc", "akhir": "final" },
       "steps": [
@@ -135,7 +136,19 @@
           "mc": ["MC1", "MC5"]
         }
       ],
-      "sanity": { "left": "final", "op": "<", "right": "price" }
+      "sanity": {
+        "left": "final", "op": "<", "right": "price",
+        "check": {
+          "ask": "Cek besarnya dengan cara lain. Harga akhir = (100% − persen diskon) × harga awal. Berapa {rest|percent} × {price|price}?",
+          "compute": { "fn": "discountAmount", "args": ["price", "rest"] },
+          "target": "final",
+          "hints": [
+            "100% − {pct|percent} = {rest|percent}. Tulis sebagai {rest|frac}.",
+            "Cari 10% dari {price|price} dulu: geser koma satu angka ke kiri.",
+            "{rest|frac} × {price|price} = ___. Bandingkan dengan {final|result}."
+          ]
+        }
+      }
     },
     "m2-t1": {
       "process": "employ",
@@ -168,6 +181,7 @@
         "price": { "range": [50000, 400000, 10000] },
         "pct": { "choices": [1000, 1500, 2000, 2500, 3000, 4000] }
       },
+      "derived": { "rest": { "fn": "complementBp", "args": ["pct"] } },
       "text": "{item} seharga {price|price} diberi [[potongan-harga]] {pct|percent}. Berapa harga yang harus dibayar?",
       "boxes": { "awal": "price", "diskon": "disc", "akhir": "final" },
       "steps": [
@@ -196,7 +210,19 @@
           "mc": ["MC1", "MC5"]
         }
       ],
-      "sanity": { "left": "final", "op": "<", "right": "price" }
+      "sanity": {
+        "left": "final", "op": "<", "right": "price",
+        "check": {
+          "ask": "Cek besarnya dengan cara lain. Harga akhir = (100% − persen diskon) × harga awal. Berapa {rest|percent} × {price|price}?",
+          "compute": { "fn": "discountAmount", "args": ["price", "rest"] },
+          "target": "final",
+          "hints": [
+            "100% − {pct|percent} = {rest|percent}. Tulis sebagai {rest|frac}.",
+            "Cari 10% dari {price|price} dulu: geser koma satu angka ke kiri.",
+            "{rest|frac} × {price|price} = ___. Bandingkan dengan {final|result}."
+          ]
+        }
+      }
     },
     "m4-t1": {
       "process": "employ",
@@ -207,7 +233,8 @@
       },
       "derived": {
         "pctX10": { "fn": "mul", "args": ["pct", 10] },
-        "pctD10": { "fn": "div", "args": ["pct", 10] }
+        "pctD10": { "fn": "div", "args": ["pct", 10] },
+        "rest": { "fn": "complementBp", "args": ["pct"] }
       },
       "text": "{item} seharga {price|price} diskon {pct|percent}. Berapa harga yang dibayar?",
       "boxes": { "awal": "price", "diskon": "disc", "akhir": "final" },
@@ -252,7 +279,19 @@
           "mc": ["MC1", "MC5"]
         }
       ],
-      "sanity": { "left": "final", "op": "<", "right": "price" }
+      "sanity": {
+        "left": "final", "op": "<", "right": "price",
+        "check": {
+          "ask": "Cek besarnya dengan cara lain. Harga akhir = (100% − persen diskon) × harga awal. Berapa {rest|percent} × {price|price}?",
+          "compute": { "fn": "discountAmount", "args": ["price", "rest"] },
+          "target": "final",
+          "hints": [
+            "100% − {pct|percent} = {rest|percent}. Tulis sebagai desimal {rest|dec}.",
+            "Cari 10% dari {price|price} dulu: geser koma satu angka ke kiri.",
+            "{rest|dec} × {price|price} = ___. Bandingkan dengan {final|result}."
+          ]
+        }
+      }
     },
     "m5-t1": {
       "process": "reason",
@@ -358,7 +397,19 @@
           "mc": ["MC4"]
         }
       ],
-      "sanity": { "left": "orig", "op": ">", "right": "final" }
+      "sanity": {
+        "left": "orig", "op": ">", "right": "final",
+        "check": {
+          "ask": "Cek dengan cara maju. Hitung {rest|percent} × harga awalmu {orig|price}. Berapa hasilnya?",
+          "compute": { "fn": "discountAmount", "args": ["orig", "rest"] },
+          "target": "final",
+          "hints": [
+            "Tulis {rest|percent} sebagai {rest|frac}.",
+            "Cari 10% dari {orig|price} dulu: geser koma satu angka ke kiri.",
+            "Hasilnya harus sama dengan harga akhir di soal. Kalau berbeda, cek lagi hitunganmu."
+          ]
+        }
+      }
     },
     "m6-t2": {
       "process": "formulate",

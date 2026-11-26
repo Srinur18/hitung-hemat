@@ -48,6 +48,8 @@ export function instantiate(t, seed) {
       }
     }
     if (ok && (t.constraints ?? []).every(([a, op, b]) => OPS[op](v[a], v[b]))) {
+      // R1: kunci cek besar hasil lewat jalan lain (tanpa RNG → soal tidak berubah)
+      if (t.sanity?.check) answers.sanity = compute(t.sanity.check.compute, v);
       return { vars: v, answers };
     }
   }
@@ -101,6 +103,7 @@ export function buildProblem(curriculum, templateId, seed, { transfer = false } 
     steps,
     boxes: t.boxes ?? null,
     sanity: t.sanity ?? null,
+    checkAnswer: answers.sanity ?? null, // R1: kunci cek besar hasil lewat jalan lain
     baseNames,
     transfer,
   };
@@ -111,6 +114,11 @@ export function knownNames(problem, solvedCount) {
   const known = new Set(problem.baseNames);
   problem.steps.slice(0, solvedCount).forEach((s) => s.saveAs && known.add(s.saveAs));
   return known;
+}
+
+/** R1: apakah hasil cek jalan lain sama dengan kuncinya (= harga akhir yang sudah ditemukan)? */
+export function checkMagnitude(problem, answer) {
+  return problem.checkAnswer !== null && Number.isInteger(answer) && answer === problem.checkAnswer;
 }
 
 export function checkAnswer(step, answer) {

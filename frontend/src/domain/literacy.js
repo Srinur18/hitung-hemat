@@ -39,22 +39,60 @@ export function answerKey(item) {
   return key;
 }
 
-/** Apakah jawaban `a` benar untuk langkah `st`? → 'key' | 'ecf' | null */
-function judge(st, a, key, student) {
-  if (!isInt(a)) return null;
-  if (a === key[st.id]) return 'key';
-  if (st.ecf && evaluate(st.key, student) === a) return 'ecf';
-  return null;
+/** Skor parsial ECF & salah hitung (rubrik manual hasil uji coba instrumen, 25 Nov 2026). */
+export const PARTIAL = 0.5;
+export const CREDIT = { key: 1, ecf: PARTIAL, calc: PARTIAL };
+
+const stepRefs = (st) => (st.key && typeof st.key === 'object' ? st.key.args.filter((a) => typeof a === 'string') : []);
+const isTrap = (st, a, v) => (st.traps ?? []).some((tr) => evaluate(tr.value, v) === a);
+
+/**
+ * Penilaian berurutan (identik dengan judge_steps di Python) → [{id, via, trap}].
+ * via: 'key' penuh | 'ecf' konsisten dengan jawaban sendiri | 'calc' model benar, salah hitung | null.
+ */
+export function judgeSteps(item, answers = {}) {
+  const key = answerKey(item);
+  const vKey = { ...item.vars, ...key };
+  const student = { ...item.vars };
+  const via = {};
+  const trapped = new Set();
+  return item.steps.map((st) => {
+    const a = answers[st.id] ?? null;
+    let res = null;
+    const trap = isInt(a) && isTrap(st, a, vKey);
+    if (trap) trapped.add(st.id);
+    if (isInt(a)) {
+      if (a === key[st.id]) {
+        res = (st.ecfFrom ?? []).some((d) => via[d] !== 'key') ? 'ecf' : 'key';
+      } else if (
+        st.ecf &&
+        !(st.ecfCalcOnly && stepRefs(st).some((d) => trapped.has(d))) &&
+        evaluate(st.key, student) === a
+      ) {
+        res = 'ecf';
+      } else if (
+        st.calcFrom &&
+        st.input !== 'choice' &&
+        via[st.calcFrom] === 'key' &&
+        a > 0 &&
+        !trap &&
+        !Object.values({ ...student, ...key }).some((x) => isInt(x) && x === a)
+      ) {
+        res = 'calc';
+      }
+    }
+    via[st.id] = res;
+    student[st.id] = a;
+    return { id: st.id, via: res, trap };
+  });
 }
 
 export function scoreItem(item, answers = {}) {
-  const key = answerKey(item);
-  const student = { ...item.vars };
-  const steps = item.steps.map((st) => {
+  const judged = judgeSteps(item, answers);
+  const steps = item.steps.map((st, i) => {
     const a = answers[st.id] ?? null;
-    const via = judge(st, a, key, student);
-    student[st.id] = a;
-    return { id: st.id, tahap: st.tahap, points: st.points, earned: via ? st.points : 0, answer: a, via };
+    const { via } = judged[i];
+    return { id: st.id, tahap: st.tahap, points: st.points, earned: via ? st.points * CREDIT[via] : 0, answer: a, via };
   });
   return {
     id: item.id,
@@ -96,34 +134,49 @@ export function studentVars(item, answers = {}) {
 
 /**
  * Umpan balik untuk satu langkah. Tidak pernah memuat kunci jawaban (aturan P8).
- * @returns {{correct:boolean, via:string|null, text:string, code:string|null}}
+ * @returns {{correct:boolean, via:string|null, earned:number, text:string, code:string|null}}
  */
 export function stepFeedback(item, stepId, answer, answers = {}) {
-  const st = item.steps.find((s) => s.id === stepId);
+  const idx = item.steps.findIndex((s) => s.id === stepId);
+  const st = item.steps[idx];
   const key = answerKey(item);
-  const student = { ...item.vars };
-  for (const s of item.steps) {
-    if (s.id === stepId) break;
-    student[s.id] = answers[s.id] ?? null;
-  }
-  const via = judge(st, answer, key, student);
-  if (via) {
+  // hanya jawaban SEBELUM langkah ini + jawaban sekarang yang dinilai
+  const upto = {};
+  item.steps.slice(0, idx).forEach((s) => { upto[s.id] = answers[s.id] ?? null; });
+  upto[stepId] = answer;
+  const { via } = judgeSteps(item, upto)[idx];
+  const earned = via ? st.points * CREDIT[via] : 0;
+  if (via === 'key' || via === 'ecf') {
     return {
       correct: true,
       via,
+      earned,
       code: null,
       text: via === 'ecf' ? 'Caramu benar dan konsisten dengan hasilmu sebelumnya.' : st.good ?? 'Benar!',
     };
   }
+  if (via === 'calc') {
+    // Salah hitung dengan model benar: tetap dianggap salah agar siswa memperbaikinya sendiri (R2).
+    return {
+      correct: false,
+      via,
+      earned,
+      code: 'calc',
+      text: st.calcFb ?? 'Modelmu sudah benar, tetapi hasil hitungnya belum tepat. Hitung ulang dengan teliti.',
+    };
+  }
   if (st.input === 'choice') {
     const text = st.optionFeedback?.[String(answer)] ?? st.fb ?? 'Belum tepat. Baca lagi soalnya.';
-    return { correct: false, via: null, code: null, text };
+    return { correct: false, via: null, earned: 0, code: null, text };
   }
   const v = { ...item.vars, ...key };
   const trap = (st.traps ?? []).find((tr) => evaluate(tr.value, v) === answer);
-  if (trap) return { correct: false, via: null, code: 'trap', text: trap.fb };
-  return { correct: false, via: null, code: null, text: st.fb ?? 'Belum tepat. Periksa lagi langkahnya.' };
+  if (trap) return { correct: false, via: null, earned: 0, code: 'trap', text: trap.fb };
+  return { correct: false, via: null, earned: 0, code: null, text: st.fb ?? 'Belum tepat. Periksa lagi langkahnya.' };
 }
+
+/** Skor untuk tampilan: koma desimal Indonesia (22,5). */
+export const formatScore = (n) => String(Math.round(Number(n || 0) * 100) / 100).replace('.', ',');
 
 /** Kategori capaian (untuk tampilan siswa saja). */
 export function category(total, max) {
@@ -153,7 +206,8 @@ export function keyFor(item, stepId) {
 export function tally(result) {
   const steps = result.items.flatMap((r) => r.steps);
   const answered = steps.filter((s) => s.answer !== null && s.answer !== undefined);
-  const correct = answered.filter((s) => s.earned > 0).length;
+  // benar = tahapan berpikir benar (kunci atau konsisten/ECF); salah hitung (calc) dihitung salah walau dapat 0,5
+  const correct = answered.filter((s) => s.via === 'key' || s.via === 'ecf').length;
   return {
     totalSteps: steps.length,
     answered: answered.length,

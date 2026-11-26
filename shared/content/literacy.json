@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Tes & latihan Literasi Matematis (4 indikator, maks. 24 poin). Soal tes diambil dari Tabel 2 (kisi-kisi peneliti). Kunci angka dihitung lewat registri fungsi domain, bukan ditulis manual. 'ecf' = error carried forward: langkah dinilai benar bila konsisten dengan jawaban siswa sebelumnya (skor parsial). Perlu validasi ahli.",
+  "note": "Tes & latihan Literasi Matematis (4 indikator, maks. 24 poin). Soal tes diambil dari Tabel 2 (kisi-kisi peneliti). Kunci angka dihitung lewat registri fungsi domain, bukan ditulis manual. 'ecf' = error carried forward: langkah dinilai bila konsisten dengan jawaban siswa sebelumnya, bernilai 0,5 × poin (rubrik manual uji coba instrumen 25 Nov 2026). 'calcFrom' = model benar tetapi salah hitung → 0,5; 'ecfCalcOnly' = ECF tidak berlaku setelah jebakan miskonsepsi; 'ecfFrom' = kesimpulan benar tetapi bertumpu pada hasil keliru → 0,5. Ketiga penanda terakhir baru dipasang di L4. Perlu validasi ahli.",
   "maxScore": 24,
   "indicators": {
     "reason": {
@@ -844,6 +844,8 @@
             }
           ],
           "fb": "Hitung 30/100 × harga awal. Bagi 100 dulu, lalu kalikan 30.",
+          "calcFrom": "s3",
+          "calcFb": "Modelmu sudah benar, tetapi hasil kalinya belum tepat. Cek lagi: berapa 10% dari harga awal? Lalu kalikan 3.",
           "rubricText": "0,3 × Rp400.000 = Rp120.000.",
           "hints": [
             "Ubah 30% menjadi 0,3. Lalu kalikan dengan harga awal sepatu."
@@ -855,6 +857,8 @@
           "points": 1,
           "input": "rupiah",
           "ask": "Berapa harga akhir yang benar?",
+          "ecf": true,
+          "ecfCalcOnly": true,
           "key": {
             "fn": "subtract",
             "args": [
@@ -897,6 +901,7 @@
             "Tidak masuk akal, karena harga akhir harus sama dengan harga awal."
           ],
           "key": 1,
+          "ecfFrom": ["s4", "s5"],
           "optionFeedback": {
             "0": "Potongan Rp30 terlalu kecil untuk diskon 30%. Hasil kasir tidak wajar.",
             "2": "Diskon selalu membuat harga akhir lebih kecil dari harga awal."

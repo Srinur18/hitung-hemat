@@ -5,13 +5,15 @@
 Memeriksa setiap template: angka selalu bulat, opsi benar tepat satu, cek kewajaran lolos,
 petunjuk tidak membocorkan jawaban, teks soal ≤ 40 kata.
 Juga memeriksa Tes/Latihan Literasi Matematis (4 indikator, skor maks. 24, poin per tahap
-sesuai rubrik) dan ringkasan materi (angka contoh selalu bulat).
+sesuai rubrik), ringkasan materi (angka contoh selalu bulat), dan konten Teman Mikir
+(teks cadangan lolos guard, chip ≤ 3, tujuan tahap ada).
 """
 import sys
 
 from .. import content
 from ..domain.literacy import validate_glossary, validate_journey, validate_literacy, validate_material, validate_shop
 from ..domain.problems import validate_template
+from ..tutor.engine import validate_tutor
 
 
 def main() -> int:
@@ -38,6 +40,8 @@ def main() -> int:
     errs += validate_journey(jr)
     shop = content.load("shop")
     errs += validate_shop(shop)
+    tutor = content.load("tutor")
+    errs += validate_tutor(tutor, cur)
     if errs:
         print("\n".join(errs))
         print(f"\nGAGAL: {len(errs)} masalah")
@@ -46,7 +50,8 @@ def main() -> int:
         f"OK: {len(templates)} template, {len(cur['modules'])} modul, "
         f"{len(lit['test'])} soal tes literasi (maks. {lit['maxScore']} poin), "
         f"{len(lit['practice'])} soal latihan, {len(mat['chapters'])} bab materi, {len(mat['formulas'])} rumus, "
-        f"{len(jr['stages'])} tahap perjalanan, {len(shop['products'])} barang simulasi lolos pemeriksaan"
+        f"{len(jr['stages'])} tahap perjalanan, {len(shop['products'])} barang simulasi, "
+        f"{len(tutor['moves'])} tahap Teman Mikir lolos pemeriksaan"
     )
     return 0
 

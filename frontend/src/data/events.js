@@ -10,6 +10,9 @@ const uuid = () =>
 
 const ctx = { studentCode: null, sessionId: uuid() };
 
+/** ID sesi aplikasi (uuid acak, bukan identitas siswa). Dipakai juga untuk kuota Teman Mikir per sesi. */
+export const currentSessionId = () => ctx.sessionId;
+
 export function setStudent(code) {
   ctx.studentCode = code;
 }

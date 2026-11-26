@@ -7,5 +7,8 @@ from pathlib import Path
 _tmp = Path(tempfile.mkdtemp()) / "test.db"
 os.environ["HH_DATABASE_URL"] = f"sqlite:///{_tmp.as_posix()}"
 os.environ["HH_RESEARCH_TOKEN"] = "token-uji"
+# Jangan pernah memakai API key Gemini sungguhan dari backend/.env saat uji.
+os.environ["HH_SKIP_DOTENV"] = "1"
+os.environ.pop("GEMINI_API_KEY", None)
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))

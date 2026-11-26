@@ -65,6 +65,10 @@ def instantiate(t: dict, seed: int) -> dict:
                 if st.get("saveAs"):
                     v[st["saveAs"]] = val
         if ok and all(OPS[op](v[a], v[b]) for a, op, b in t.get("constraints", [])):
+            check = (t.get("sanity") or {}).get("check")
+            if check:
+                # R1: kunci cek besar hasil lewat jalan lain (tidak memakai RNG → soal tidak berubah)
+                answers["sanity"] = compute(check["compute"], v)
             return {"vars": v, "answers": answers}
     raise GenerationError(f"Tidak bisa membuat soal bulat setelah {MAX_TRIES} percobaan")
 
@@ -100,6 +104,19 @@ def validate_template(tid: str, t: dict, seeds=range(1, 301)) -> list[str]:
         if st.get("saveAs"):
             known.add(st["saveAs"])
 
+    chk = (t.get("sanity") or {}).get("check")
+    if chk:
+        everything = known | {st["saveAs"] for st in t["steps"] if st.get("saveAs")}
+        for txt in [chk["ask"], *chk.get("hints", [])]:
+            if _refs(txt) - everything:
+                errs.append(f"{tid}/sanity: cek memakai variabel tak dikenal {sorted(_refs(txt) - everything)}")
+        if len(chk["ask"].split()) > 40:
+            errs.append(f"{tid}/sanity: teks cek > 40 kata (aturan P4)")
+        if len(chk.get("hints", [])) < 3:
+            errs.append(f"{tid}/sanity: petunjuk cek kurang dari 3 tingkat")
+        if chk["target"] not in everything:
+            errs.append(f"{tid}/sanity: target cek {chk['target']} tidak dikenal")
+
     for seed in seeds:
         try:
             p = instantiate(t, seed)
@@ -123,4 +140,8 @@ def validate_template(tid: str, t: dict, seeds=range(1, 301)) -> list[str]:
         s = t.get("sanity")
         if s and not OPS[s["op"]](v[s["left"]], v[s["right"]]):
             errs.append(f"{tid} seed={seed}: cek kewajaran gagal ({s})")
+        chk = (s or {}).get("check")
+        if chk and (p["answers"].get("sanity") is None or p["answers"]["sanity"] != v[chk["target"]]):
+            errs.append(f"{tid} seed={seed}: cek besar hasil tidak sama dengan {chk['target']} (jalan lain harus cocok)")
+            break
     return errs

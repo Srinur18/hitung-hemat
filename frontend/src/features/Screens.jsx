@@ -5,6 +5,7 @@ import { db } from '../data/db.js';
 import { logEvent } from '../data/events.js';
 import { exportCsv } from '../data/export.js';
 import { API_URL, syncEvents } from '../data/sync.js';
+import { formatScore } from '../domain/literacy.js';
 import { parsePercent, parseRupiah } from '../domain/money.js';
 import { t } from '../i18n/id.js';
 import { Header, NumberPad, Stars } from '../ui/components.jsx';
@@ -155,7 +156,7 @@ export function LearningMap({
   const kiko = {
     material: 'Mulai dari Materi, lalu coba Latihan.',
     practice: allDone ? 'Hebat! Semua modul selesai.' : nextModule ? `Yuk, mulai ${nextModule.id}: ${nextModule.title}` : 'Yuk, lanjut belajar!',
-    test: lit ? `Skor terakhirmu ${lit.last.total}/${lit.last.max}. Bisa dicoba lagi!` : 'Siap menguji kemampuan literasimu?',
+    test: lit ? `Skor terakhirmu ${formatScore(lit.last.total)}/${lit.last.max}. Bisa dicoba lagi!` : 'Siap menguji kemampuan literasimu?',
   }[tab];
   return (
     <div className="screen">
@@ -184,7 +185,7 @@ export function LearningMap({
               <ol className="small" style={{ margin: 0, paddingLeft: 20 }}>
                 {testItems.map((it) => <li key={it.id}>{indicators[it.process].name}</li>)}
               </ol>
-              {lit && <div className="small"><b>{t.literacyLast(lit.last.total, lit.last.max)}</b></div>}
+              {lit && <div className="small"><b>{t.literacyLast(formatScore(lit.last.total), lit.last.max)}</b></div>}
               <div className="actions" style={{ paddingTop: 4 }}>
                 {lit && <button className="btn" onClick={onLiteracyResult}>{t.literacySeeResult}</button>}
                 <button className="btn btn-primary" onClick={onLiteracyTest}>{lit ? t.literacyRetry : t.literacyStart}</button>

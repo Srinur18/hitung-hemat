@@ -60,17 +60,19 @@ APK/
 │  ├─ content/material.json     materi 5 bab (kartu) + rangkuman rumus R1–R3
 │  ├─ content/journey.json      perjalanan belajar "Jalan Ruko Hemat" J1–J6
 │  ├─ content/shop.json         barang Simulasi Belanja
+│  ├─ content/tutor.json        Teman Mikir: tahap mediasi, chip, teks cadangan, MC1–MC6 (hipotesis RMT)
 │  └─ test-vectors.json         dibuat otomatis oleh Python
 ├─ backend/                     Python
 │  ├─ app/domain/               money · discount · rng · problems · analytics
-│  ├─ app/tools/                validate_content · gen_vectors
+│  ├─ app/tutor/                engine (deterministik) · service · guard · gemini (REST via httpx)
+│  ├─ app/tools/                validate_content · gen_vectors · gemini_check
 │  ├─ app/main.py               FastAPI
 │  └─ tests/                    pytest
 └─ frontend/                    JavaScript
-   ├─ src/domain/               money · discount · rng · problems · text · misconceptions · scaffold
-   ├─ src/data/                 db (Dexie) · events · sync · export
+   ├─ src/domain/               money · discount · rng · problems · text · misconceptions · scaffold · tutor
+   ├─ src/data/                 db (Dexie) · events · sync · export · tutor (klien + cadangan offline)
    ├─ src/three/                SceneHost · segments · Fallback2D · scenes/{base,bars,hundredCubes}
-   ├─ src/features/             ProblemSolver · Learning · ModuleRunner · Screens · sceneParams
+   ├─ src/features/             ProblemSolver · TutorSheet · Learning · ModuleRunner · Screens · sceneParams
    ├─ src/ui/components.jsx     Header · RichText · BoxDiagram · NumberPad · FormulaDock · Sheet
    ├─ tests/domain.test.js      Vitest (termasuk paritas Python)
    └─ capacitor.config.json
@@ -123,6 +125,7 @@ Fungsi hitung bersifat **eksak**: mengembalikan bilangan bulat atau `null`. Gene
 - Tidak ada nama, email, atau nomor HP. Backend menolak kode siswa yang tidak sesuai pola `^[A-Za-z0-9_-]{2,16}$`.
 - Endpoint peneliti dilindungi header `X-Research-Token` (`HH_RESEARCH_TOKEN`). Panel peneliti di aplikasi dilindungi PIN (`VITE_RESEARCH_PIN`).
 - Sinkronisasi bersifat idempoten: pasangan unik (`student_code`, `client_id`) mencegah event ganda.
+- **Teman Mikir**: endpoint `/api/v1/tutor/turn` tidak menerima `student_code`; yang dikirim ke Gemini hanya teks soal, label langkah, tujuan tahap, dan label chip dari konten. API key hanya di `backend/.env` (diabaikan Git), dikirim lewat header `x-goog-api-key`, tidak pernah di URL, log, atau frontend. Tanpa key/server, tutor tetap jalan dengan teks cadangan (api.md §9).
 
 ## 8. Build & Rilis
 
@@ -133,6 +136,10 @@ Fungsi hitung bersifat **eksak**: mengembalikan bilangan bulat atau `null`. Gene
 | Perbarui APK setelah ubah kode | `npm run android:sync` lalu Run di Android Studio |
 | APK debug | `cd frontend/android && ./gradlew assembleDebug` |
 | Backend | `cd backend && .venv\Scripts\uvicorn app.main:app --host 0.0.0.0 --port 8000` |
+| APK rilis (di luar OneDrive) | `source ~/hh-tools/env.sh && VITE_API_URL=https://… bash scripts/build-apk.sh` (menolak backend `http://`/lokal) |
+| Backend HTTPS untuk HP | `render.yaml` + `backend/Dockerfile` — panduan di `docs/deploy-https.md` |
+
+APK memakai `androidScheme: "https"`; Teman Mikir di HP hanya jalan dengan backend HTTPS publik. Tanpa itu APK tetap berjalan offline.
 
 ## 9. Anggaran Kinerja
 

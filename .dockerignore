@@ -1,0 +1,10 @@
+# Image backend hanya butuh kode backend + konten bersama. Rahasia & data lokal TIDAK ikut.
+**
+!backend/requirements.txt
+!backend/app/**
+!shared/content/**
+!shared/test-vectors.json
+**/__pycache__
+**/.env
+**/.env.*
+**/*.db

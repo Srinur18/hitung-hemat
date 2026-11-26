@@ -3,6 +3,7 @@
 // Teks aspirasi/refleksi hanya disimpan di perangkat, tidak dikirim sebagai data penelitian.
 import { useState } from 'react';
 import { assessment, material, modules } from '../content/index.js';
+import { formatScore } from '../domain/literacy.js';
 import { activity, BADGES, earnedBadges, overallProgress } from '../domain/progress.js';
 import { t } from '../i18n/id.js';
 import { Header } from '../ui/components.jsx';
@@ -56,7 +57,7 @@ export function Profile({ profile, progress, onEdit, onSave }) {
   };
 
   const history = [
-    ...(lit?.history ?? []).map((h, i) => ({ at: h.at, label: `${t.profileLitShort} #${i + 1}`, value: `${h.total}/${h.max}` })),
+    ...(lit?.history ?? []).map((h, i) => ({ at: h.at, label: `${t.profileLitShort} #${i + 1}`, value: `${formatScore(h.total)}/${h.max}` })),
     ...(profile.simHistory ?? []).map((h) => ({ at: h.at, label: t.simTitle, value: `hemat ${h.savedText}` })),
   ].sort((x, y) => String(y.at).localeCompare(String(x.at)));
 
@@ -111,8 +112,8 @@ export function Profile({ profile, progress, onEdit, onSave }) {
         <div className="card stack">
           <div className="row small profile-row"><span className="grow">{t.profilePre}</span><b>{profile.pretestDone ? `${profile.preScore ?? 0}/${nPre}` : t.notYet}</b></div>
           <div className="row small profile-row"><span className="grow">{t.profilePost}</span><b>{profile.posttestDone ? `${profile.postScore ?? 0}/${nPre}` : t.notYet}</b></div>
-          <div className="row small profile-row"><span className="grow">{t.profileLitFirst}</span><b>{lit ? `${lit.first.total}/${lit.first.max}` : t.notYet}</b></div>
-          <div className="row small profile-row"><span className="grow">{t.profileLit}</span><b>{lit ? `${lit.last.total}/${lit.last.max}` : t.notYet}</b></div>
+          <div className="row small profile-row"><span className="grow">{t.profileLitFirst}</span><b>{lit ? `${formatScore(lit.first.total)}/${lit.first.max}` : t.notYet}</b></div>
+          <div className="row small profile-row"><span className="grow">{t.profileLit}</span><b>{lit ? `${formatScore(lit.last.total)}/${lit.last.max}` : t.notYet}</b></div>
           <div className="row small profile-row"><span className="grow">{t.profileTotal}</span><b>{a.literacyBest !== null ? `${a.literacyBest}/24` : t.notYet}</b></div>
         </div>
         <details className="card review">
