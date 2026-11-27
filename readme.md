@@ -20,25 +20,26 @@ Proyek ini dikembangkan dengan model ADDIE. Dasar perancangannya adalah wawancar
 - **Materi 5 bab** dengan kartu bertahap, **Rangkuman Rumus**, dan **Kamus Istilah**. **Simulasi Belanja** lengkap dengan keranjang dan struk digital. **Profil** dengan lencana, riwayat nilai, dan aspirasi. Animasi ringan dan **efek suara** yang bisa dimatikan; musik latar mati bawaan.
 - **Menu Materi | Latihan | Tes**: ringkasan materi 7 topik dengan contoh bertahap, Latihan Literasi per indikator, dan **Tes Literasi Matematis** 4 soal (4 indikator, skor bertahap maks. 24 poin, skor parsial).
 - **Kisi-kisi tes** untuk guru di Panel Peneliti (PIN).
-- **Teman Mikir** (v0.5, belum dirilis): tutor mediasi bertahap T1→T4 di layar soal (pertanyaan pemantik → alat bantu → petunjuk → contoh serupa) dengan pilihan jawaban, plus refleksi di akhir soal. Kalimat bisa disusun Gemini lewat server; tanpa server tetap berjalan dengan teks cadangan. Tidak pernah menyebut jawaban.
+- **Teman Mikir** (aktif sejak v0.8.0): tutor mediasi bertahap T1→T4 di layar soal (pertanyaan pemantik → alat bantu → petunjuk → contoh serupa) dengan pilihan jawaban, plus refleksi di akhir soal, dan menu **chat Teman Mikir** di Beranda (rumus tampil rapi dengan KaTeX). Kalimat disusun Gemini lewat server HTTPS; tanpa internet tetap berjalan dengan teks cadangan. Tidak pernah menyebut jawaban.
 
-## Coba Langsung
+## Coba Langsung (v0.8.0)
 
 | | Link |
 |---|---|
-| 🌐 **Versi web** (buka di browser HP/laptop) | https://srinur18.github.io/hitung-hemat/ |
-| 📱 **APK Android** | https://github.com/Srinur18/hitung-hemat/raw/main/release/HitungHemat-v0.4.0-debug.apk |
+| 🌐 **Versi web terbaru** (buka di browser HP/laptop) | https://hitunghemat.enzonic.dev |
+| 📱 **APK Android v0.8.0** | https://github.com/Srinur18/hitung-hemat/raw/main/release/HitungHemat-v0.8.0-debug.apk |
+| 🔌 **Backend (API)** | https://hitunghemat-api.enzonic.dev — cek: `/api/v1/health` |
 | 💻 **Kode sumber** | https://github.com/Srinur18/hitung-hemat |
 
-Memperbarui versi web setelah kode berubah (dari folder `APK`, Git Bash):
-
-```bash
-source ~/hh-tools/env.sh && bash scripts/deploy-web.sh
-```
+Versi web di GitHub Pages (https://srinur18.github.io/hitung-hemat/) adalah versi lama tanpa Teman Mikir.
+Backend berjalan di Enzonic Deploy (gratis); API key Gemini hanya disimpan sebagai variabel lingkungan
+rahasia di server, tidak ada di repo maupun APK. Panduan: [docs/deploy-https.md](docs/deploy-https.md).
 
 ## Unduh & Pasang APK
 
-APK siap pakai: [`release/HitungHemat-v0.4.0-debug.apk`](release/HitungHemat-v0.4.0-debug.apk) (4 MB, Android 5.1+).
+APK siap pakai: [`release/HitungHemat-v0.8.0-debug.apk`](release/HitungHemat-v0.8.0-debug.apk) (5,4 MB, Android 5.1+).
+Versi lama tetap tersedia di folder [`release/`](release/). v0.8.0 bisa dipasang menimpa versi lama (tanda tangan sama).
+Teman Mikir butuh internet; fitur lain berjalan offline.
 
 1. Kirim berkas APK ke HP (WhatsApp, Google Drive, atau kabel USB).
 2. Ketuk berkasnya. Bila muncul peringatan, izinkan **"Instal dari sumber tidak dikenal"** untuk aplikasi pembuka berkas tersebut.
@@ -65,7 +66,7 @@ cd backend
 py -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 .venv\Scripts\python -m app.tools.validate_content   # periksa kualitas soal
-.venv\Scripts\python -m pytest                       # 67 tes
+.venv\Scripts\python -m pytest                       # 98 tes
 .venv\Scripts\python -m app.tools.gemini_check      # (opsional) cek API key & model Gemini di backend/.env
 .venv\Scripts\uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 # dokumentasi API: http://localhost:8000/docs

@@ -10,6 +10,7 @@ Token API (Console → Account → API tokens, scope deploy) dibaca dari berkas 
 atau variabel ENZONIC_TOKEN. Token, GEMINI_API_KEY, dan token peneliti TIDAK PERNAH dicetak.
 GEMINI_API_KEY/GEMINI_MODEL diambil dari backend/.env dan disimpan di Enzonic sebagai variabel *sensitive*.
 """
+import io
 import json
 import os
 import secrets
@@ -21,9 +22,18 @@ from pathlib import Path
 
 import httpx
 
+# Log build memuat karakter seperti "│"; konsol Windows (cp1252) gagal mencetaknya saat output di-pipe.
+for _s in (sys.stdout, sys.stderr):
+    try:
+        _s.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 ROOT = Path(__file__).resolve().parents[1]
 API = "https://panel.enzonic.com/api/cloud"
 PROJECT = os.getenv("ENZONIC_PROJECT", "hitunghemat-api")
+WEB_PROJECT = os.getenv("ENZONIC_WEB_PROJECT", "hitunghemat")
+WEB_ORIGIN = f"https://{WEB_PROJECT}.enzonic.dev"  # versi web untuk dicek di browser
 HOME = Path.home()
 TOKEN_FILE = HOME / ".enzonic-token"
 RESEARCH_TOKEN_FILE = HOME / ".hitunghemat-research-token"
@@ -116,7 +126,7 @@ def env_vars() -> list[dict]:
     research = RESEARCH_TOKEN_FILE.read_text(encoding="utf-8").strip()
     plain = {
         "GEMINI_MODEL": local["GEMINI_MODEL"],
-        "HH_CORS_ORIGINS": "https://localhost,capacitor://localhost",
+        "HH_CORS_ORIGINS": f"https://localhost,capacitor://localhost,{WEB_ORIGIN}",
         "HH_CORS_ALLOW_LOCALHOST": "0",
         "HH_SKIP_DOTENV": "1",
         "HH_DATABASE_URL": "sqlite:////tmp/hitunghemat.db",
@@ -152,8 +162,10 @@ def cmd_deploy() -> None:
         r = httpx.put(up["put_url"], content=data, headers={"Content-Type": up.get("content_type") or "application/zip"}, timeout=120)
         if r.status_code >= 300:
             sys.exit(f"Unggah ZIP gagal: HTTP {r.status_code}")
-        dep = call(c, "POST", f"/v1/projects/{p['id']}/deployments", json={"upload_id": up["upload_id"], "target": "production"})
-        print(f"Deployment #{dep.get('number')} dimulai: {dep.get('state')}")
+        # --preview: uji paket baru di URL preview tanpa menyentuh produksi.
+        target = "preview" if "--preview" in sys.argv else "production"
+        dep = call(c, "POST", f"/v1/projects/{p['id']}/deployments", json={"upload_id": up["upload_id"], "target": target})
+        print(f"Deployment #{dep.get('number')} ({target}) dimulai: {dep.get('state')}")
 
         seq = 0
         for _ in range(300):
@@ -168,7 +180,7 @@ def cmd_deploy() -> None:
         p = call(c, "GET", f"/v1/projects/{p['id']}")
         STATE.write_text(json.dumps({"id": p["id"], "name": p.get("name"), "production_url": p.get("production_url"), "mode": p.get("mode")}, indent=1))
         print(f"Status: {dep.get('state')} {dep.get('error_code') or ''} {dep.get('error_message') or ''}")
-        print(f"Mode: {p.get('mode')} | URL produksi: {p.get('production_url')}")
+        print(f"Mode: {p.get('mode')} | URL produksi: {p.get('production_url')} | URL deployment ini: {dep.get('url')}")
         if dep.get("state") != "ready":
             sys.exit(1)
 
@@ -223,6 +235,49 @@ def cmd_test() -> None:
     sys.exit(0 if ok else 1)
 
 
+def cmd_web() -> None:
+    """Terbitkan frontend (frontend/dist, dibangun dengan VITE_API_URL backend produksi) sebagai situs statis."""
+    dist = ROOT / "frontend" / "dist"
+    if not (dist / "index.html").is_file():
+        sys.exit("frontend/dist belum ada: bangun dulu dengan VITE_API_URL=https://… npx vite build")
+    js = "".join(p.read_text(encoding="utf-8", errors="ignore") for p in (dist / "assets").glob("*.js"))
+    if "127.0.0.1:8000" in js or "localhost:8000" in js:
+        sys.exit("GAGAL: bundle web masih memuat alamat backend lokal")
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+        for p in sorted(dist.rglob("*")):
+            if p.is_file():
+                z.write(p, p.relative_to(dist).as_posix())
+    data = buf.getvalue()
+    names = zipfile.ZipFile(io.BytesIO(data)).namelist()
+    with client() as c:
+        d = call(c, "POST", "/v1/detect", json={"files": names, "contents": {}})
+        print(f"Deteksi: {d.get('framework')} / mode {d.get('mode')}")
+        p = next((x for x in call(c, "GET", "/v1/projects", params={"q": WEB_PROJECT}).get("data", []) if x.get("name") == WEB_PROJECT), None)
+        if not p:
+            p = call(c, "POST", "/v1/projects", json={"name": WEB_PROJECT, "source_type": "upload", "framework": "static"})
+            print(f"Proyek web dibuat: {p.get('name')}")
+        up = call(c, "POST", "/v1/uploads", json={"size_bytes": len(data), "filename": "web.zip"})
+        r = httpx.put(up["put_url"], content=data, headers={"Content-Type": up.get("content_type") or "application/zip"}, timeout=120)
+        if r.status_code >= 300:
+            sys.exit(f"Unggah gagal: HTTP {r.status_code}")
+        dep = call(c, "POST", f"/v1/projects/{p['id']}/deployments", json={"upload_id": up["upload_id"], "target": "production"})
+        seq = 0
+        for _ in range(300):
+            logs = call(c, "GET", f"/v1/deployments/{dep['id']}/logs", params={"after_seq": seq})
+            for ch in logs.get("chunks", []):
+                print("  │ " + ch.get("text", "").rstrip().replace("\n", "\n  │ "))
+            seq = logs.get("next_seq", seq)
+            if logs.get("done"):
+                break
+            time.sleep(2)
+        dep = call(c, "GET", f"/v1/deployments/{dep['id']}")
+        p = call(c, "GET", f"/v1/projects/{p['id']}")
+        print(f"Status: {dep.get('state')} {dep.get('error_message') or ''} | URL web: {p.get('production_url')}")
+        if dep.get("state") != "ready":
+            sys.exit(1)
+
+
 if __name__ == "__main__":
-    {"check": cmd_check, "detect": cmd_detect, "deploy": cmd_deploy, "logs": cmd_logs, "test": cmd_test}.get(
+    {"check": cmd_check, "detect": cmd_detect, "deploy": cmd_deploy, "logs": cmd_logs, "test": cmd_test, "web": cmd_web}.get(
         sys.argv[1] if len(sys.argv) > 1 else "", lambda: sys.exit(__doc__))()
