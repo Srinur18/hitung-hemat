@@ -8,7 +8,32 @@ Pengaturan keamanan Capacitor **tidak** diturunkan.
 Tanpa backend HTTPS, APK tetap berjalan penuh secara offline (materi, latihan, tes, simulasi, petunjuk H1–H4);
 halaman Teman Mikir hanya menampilkan pesan bahwa server belum diatur.
 
-## Pilihan A — Render (disarankan, gratis, HTTPS otomatis)
+## Yang dipakai sekarang — Enzonic Deploy (gratis, tanpa kartu) ✅
+
+Backend produksi: **https://hitunghemat-api.enzonic.dev** (paket Free, mode *serverless function*, Python 3.12).
+Render tidak dipakai karena meminta kartu pembayaran.
+
+| Perintah (dari folder APK) | Fungsi |
+|---|---|
+| `backend\.venv\Scripts\python scripts\deploy-enzonic.py check` | cek token & paket akun |
+| `… deploy-enzonic.py deploy` | bungkus backend (ZIP), atur env, unggah, deploy, tampilkan log build |
+| `… deploy-enzonic.py test` | uji HTTPS, CORS APK, chat & tutor ke Gemini, rumus LaTeX |
+| `… deploy-enzonic.py logs` | log runtime terbaru |
+
+- Token API Enzonic (scope *deploy*) disimpan di `%USERPROFILE%\.enzonic-token` (atau `.enzonic-token.txt`),
+  di luar repo. Token tidak pernah dicetak.
+- `GEMINI_API_KEY` dan `GEMINI_MODEL` diambil dari `backend/.env` dan disimpan di Enzonic sebagai variabel
+  (*API key* bertanda **sensitive**). `HH_RESEARCH_TOKEN` dibuat acak sekali dan disimpan di
+  `%USERPROFILE%\.hitunghemat-research-token` (untuk header `X-Research-Token` saat ekspor CSV).
+- Paket ZIP dibuat oleh `scripts/package-backend.py` (`main.py` memasang aplikasi utuh di `/`;
+  tanpa `.env`, `.db`, dan tes). Hasilnya di `backend/dist/` (diabaikan Git).
+- Perilaku paket gratis: fungsi "dingin" setelah tidak dipakai → permintaan pertama ±10 detik
+  (batas waktu chat aplikasi 60 detik). Kuota pembatas disimpan di memori tiap instance.
+- **Data penelitian:** `HH_DATABASE_URL=sqlite:////tmp/hitunghemat.db` bersifat sementara (hilang saat
+  instance diganti). Data di HP siswa tetap aman & bisa diekspor CSV. Paket Free Enzonic juga menyediakan
+  database gratis; memakainya perlu driver baru (persetujuan pemilik produk, agents.md).
+
+## Pilihan A — Render (butuh kartu; tidak dipakai)
 
 Berkas yang sudah disiapkan: `render.yaml` (akar repo), `backend/Dockerfile`, `.dockerignore`.
 

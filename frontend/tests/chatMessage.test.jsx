@@ -189,3 +189,55 @@ describe('halaman Teman Mikir', () => {
     expect(screen.getByPlaceholderText('Ketik pesanmu di sini...')).toBeTruthy();
   });
 });
+
+describe('daftar bernomor dengan rumus di antaranya (temuan uji di layar HP)', () => {
+  it('rumus blok di antara langkah tidak memotong penomoran: 1, 2 tetap satu daftar', () => {
+    const el = mount(
+      [
+        'Caranya:',
+        '',
+        '1. Hitung besar potongan:',
+        '',
+        String.raw`$$25\% \times Rp120.000 = Rp30.000$$`,
+        '',
+        '2. Kurangkan dari harga awal:',
+        '',
+        '$$Rp120.000 - Rp30.000 = Rp90.000$$',
+        '',
+        'Jadi harga akhirnya **Rp90.000**.',
+      ].join('\n'),
+    );
+    const lists = el.querySelectorAll('ol');
+    expect(lists).toHaveLength(1);
+    const items = lists[0].querySelectorAll(':scope > li');
+    expect(items).toHaveLength(2);
+    expect(items[0].querySelector('.chat-math-block .katex-display')).not.toBeNull();
+    expect(items[1].querySelector('.chat-math-block .katex-display')).not.toBeNull();
+    expect(items[1].textContent).toContain('Kurangkan dari harga awal');
+    expect([...el.querySelectorAll('p')].at(-1).textContent).toBe('Jadi harga akhirnya Rp90.000.');
+    noRawLatex(el);
+  });
+
+  it('nomor awal daftar dipertahankan (mis. mulai dari 3)', () => {
+    const el = mount('3. Langkah tiga\n4. Langkah empat');
+    expect(el.querySelector('ol').getAttribute('start')).toBe('3');
+    expect(el.querySelectorAll('ol li')).toHaveLength(2);
+  });
+
+  it('paragraf biasa setelah baris kosong menutup daftar', () => {
+    const el = mount('1. Satu\n2. Dua\n\nIni paragraf.');
+    expect(el.querySelectorAll('ol li')).toHaveLength(2);
+    expect(el.querySelector('p').textContent).toBe('Ini paragraf.');
+  });
+});
+
+describe('tebal yang membungkus rumus (temuan uji di layar HP)', () => {
+  it('**diskon \(25\%\) dari Rp120.000** menjadi tebal + rumus, tanpa ** mentah', () => {
+    const el = mount(String.raw`Kedua, untuk contoh **diskon \(25\%\) dari Rp120.000**:`);
+    const s = el.querySelector('strong');
+    expect(s).not.toBeNull();
+    expect(s.querySelector('.katex')).not.toBeNull();
+    expect(s.textContent).toContain('dari Rp120.000');
+    expect(el.textContent).not.toContain('**');
+  });
+});

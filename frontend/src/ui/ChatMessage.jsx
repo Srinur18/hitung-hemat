@@ -98,8 +98,28 @@ function renderEmphasis(text, keyBase) {
   return nodes;
 }
 
-/** Teks satu baris/paragraf yang mungkin berisi penanda rumus. */
+/**
+ * Teks satu baris/paragraf yang mungkin berisi penanda rumus.
+ * **tebal** diproses lebih dulu di seluruh baris, sehingga "**diskon \(25\%\) dari Rp120.000**"
+ * (tebal yang membungkus rumus) tetap menjadi tebal, bukan tanda ** mentah.
+ */
 function renderInline(text, math, keyBase = 'x') {
+  const out = [];
+  const re = /\*\*([^*]+?)\*\*/g;
+  let last = 0;
+  let k = 0;
+  let m;
+  while ((m = re.exec(text))) {
+    if (m.index > last) out.push(...renderPieces(text.slice(last, m.index), math, `${keyBase}-t${k++}`));
+    out.push(<strong key={`${keyBase}-s${k++}`}>{renderPieces(m[1], math, `${keyBase}-s${k}`)}</strong>);
+    last = re.lastIndex;
+  }
+  if (last < text.length) out.push(...renderPieces(text.slice(last), math, `${keyBase}-t${k++}`));
+  return out;
+}
+
+/** Potongan teks (tanpa **tebal** lintas rumus): penanda rumus + *miring*. */
+function renderPieces(text, math, keyBase) {
   const nodes = [];
   let last = 0;
   let k = 0;
@@ -129,6 +149,8 @@ export function renderMessage(content) {
   let paragraph = [];
   let listItems = [];
   let listType = null;
+  let listStart = 1;
+  let gap = false; // baris kosong di dalam daftar: daftar baru ditutup bila baris berikutnya bukan bagian daftar
 
   const flushParagraph = () => {
     if (paragraph.length) {
@@ -142,7 +164,7 @@ export function renderMessage(content) {
       const Tag = listType === 'number' ? 'ol' : 'ul';
       const key = `list-${blocks.length}`;
       blocks.push(
-        <Tag key={key}>
+        <Tag key={key} start={listType === 'number' && listStart !== 1 ? listStart : undefined}>
           {listItems.map((item, i) => (
             <li key={i}>{renderInline(item, math, `${key}-${i}`)}</li>
           ))}
@@ -150,16 +172,32 @@ export function renderMessage(content) {
       );
       listItems = [];
       listType = null;
+      listStart = 1;
     }
+    gap = false;
   };
 
   for (const line of flat.split(/\r?\n/)) {
-    const numbered = line.match(/^\s*\d+[.)]\s+(.+)/);
+    const numbered = line.match(/^\s*(\d+)[.)]\s+(.+)/);
     const bulleted = line.match(/^\s*[-*•]\s+(.+)/);
     const heading = line.match(/^\s*#{1,6}\s+(.+)/);
     const lone = line.trim().match(/^\u0000(\d+)\u0000$/);
 
-    if (lone && math[Number(lone[1])].display) {
+    if (!line.trim()) {
+      // Di dalam daftar bernomor, baris kosong belum menutup daftar: Gemini sering menulis
+      // "1. langkah\n\n$$rumus$$\n\n2. langkah" — rumus itu milik langkah 1, nomor tetap berlanjut.
+      if (listItems.length && listType === 'number') gap = true;
+      else {
+        flushParagraph();
+        flushList();
+      }
+      continue;
+    }
+
+    if (lone && math[Number(lone[1])].display && listItems.length && listType === 'number') {
+      listItems[listItems.length - 1] += ` ${line.trim()}`; // rumus blok di dalam butir daftar
+      gap = false;
+    } else if (lone && math[Number(lone[1])].display) {
       flushParagraph();
       flushList();
       const key = `m-${blocks.length}`;
@@ -182,11 +220,12 @@ export function renderMessage(content) {
       flushParagraph();
       const type = numbered ? 'number' : 'bullet';
       if (listType && listType !== type) flushList();
+      if (!listItems.length && numbered) listStart = Number(numbered[1]) || 1;
       listType = type;
-      listItems.push((numbered || bulleted)[1]);
-    } else if (!line.trim()) {
-      flushParagraph();
-      flushList();
+      listItems.push(numbered ? numbered[2] : bulleted[1]);
+      gap = false;
+    } else if (listItems.length && !gap && /^\s{2,}\S/.test(line)) {
+      listItems[listItems.length - 1] += ` ${line.trim()}`; // baris lanjutan (menjorok) milik butir terakhir
     } else {
       flushList();
       paragraph.push(line.trim());

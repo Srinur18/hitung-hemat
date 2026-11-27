@@ -28,6 +28,7 @@ frontend/android/app/src/main/assets/public/
 # Python
 backend/.venv/
 backend/*.db
+backend/dist/
 __pycache__/
 .pytest_cache/
 

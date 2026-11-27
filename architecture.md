@@ -137,7 +137,7 @@ Fungsi hitung bersifat **eksak**: mengembalikan bilangan bulat atau `null`. Gene
 | APK debug | `cd frontend/android && ./gradlew assembleDebug` |
 | Backend | `cd backend && .venv\Scripts\uvicorn app.main:app --host 0.0.0.0 --port 8000` |
 | APK rilis (di luar OneDrive) | `source ~/hh-tools/env.sh && VITE_API_URL=https://… bash scripts/build-apk.sh` (menolak backend `http://`/lokal) |
-| Backend HTTPS untuk HP | `render.yaml` + `backend/Dockerfile` — panduan di `docs/deploy-https.md` |
+| Backend HTTPS untuk HP | **Enzonic Deploy** (gratis, tanpa kartu): `scripts/deploy-enzonic.py deploy` → https://hitunghemat-api.enzonic.dev — panduan di `docs/deploy-https.md` (Render/Docker tersedia sebagai cadangan) |
 
 APK memakai `androidScheme: "https"`; Teman Mikir di HP hanya jalan dengan backend HTTPS publik. Tanpa itu APK tetap berjalan offline.
 

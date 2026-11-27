@@ -38,10 +38,20 @@ engine = make_engine()
 SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
 
 
+_ready = False
+
+
 def init_db(eng=None) -> None:
+    global _ready
     Base.metadata.create_all(eng or engine)
+    if eng is None:
+        _ready = True
 
 
 def get_session():
+    # Hosting mode "function" (serverless) bisa tidak menjalankan event lifespan →
+    # pastikan tabel ada sebelum sesi pertama dipakai. create_all aman diulang.
+    if not _ready:
+        init_db()
     with SessionLocal() as s:
         yield s
